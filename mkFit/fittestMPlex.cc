@@ -1,3 +1,5 @@
+//#include <Profile/Profiler.h>
+
 #include "fittest.h"
 
 #include "Matrix.h"
@@ -135,6 +137,13 @@ double runFittingTestPlex(Event& ev, std::vector<Track>& rectracks)
    int theEnd = ( (Config::endcapTest && Config::readCmsswSeeds) ? ev.seedTracks_.size() : simtracks.size());
    int count = (theEnd + NN - 1)/NN;
 
+  //TAU_PROFILE_TIMER(tautimer,"(foo3)", "void (double*, int, int, double*, int, double*)", TAU_DEFAULT);
+  //TAU_PROFILE_START(tautimer);
+  //TAU_PROFILE_INIT(0, NULL);
+  //TAU_PROFILE_SET_NODE(0);
+
+
+
 #ifdef USE_VTUNE_PAUSE
    __itt_resume();
 #endif
@@ -174,6 +183,8 @@ double runFittingTestPlex(Event& ev, std::vector<Track>& rectracks)
    });
 
    time = dtime() - time;
+
+  //TAU_PROFILE_STOP(tautimer);
 
 #ifdef USE_VTUNE_PAUSE
    __itt_pause();
