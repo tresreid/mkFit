@@ -469,6 +469,13 @@ int main(int argc, const char *argv[])
   __itt_pause();
 #endif
 
+
+#ifdef USE_TAU
+  TAU_PROFILE("int main(int, char **)", " ", TAU_DEFAULT);
+  TAU_INIT(&argc, &argv); 
+#endif
+
+
   lStr_t mArgs;
   for (int i = 1; i < argc; ++i)
   {
