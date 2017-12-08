@@ -1,4 +1,10 @@
 #Tell tau to not profile these functions
+
+BEGIN_FILE_INCLUDE_LIST
+"~/mictest_knl/mkFit/fittestMPlex.cc"
+END_FILE_INCLUDE_LIST
+
+
 #BEGIN_EXCLUDE_LIST
 
 #void quicksort(int *, int, int)
@@ -21,7 +27,7 @@ BEGIN_INSTRUMENT_SECTION
 # A dynamic phase will break up the profile into phase where
 # each events is recorded according to what phase of the application
 # in which it occured.
-dynamic phase name="timed" file="fittestMPlex.cc" line=143 to line=175
+#dynamic phase name="timed" file="fittestMPlex.cc" line=143 to line=175
 
 # instrument all the outer loops in this routine
 #loops file="loop_test.cpp" routine="multiply"
