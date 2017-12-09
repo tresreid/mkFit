@@ -1,4 +1,6 @@
-//#include <Profile/Profiler.h>
+#ifdef USE_TAU
+#include <Profile/Profiler.h>
+#endif
 
 #include "Matriplex/MatriplexCommon.h"
 
@@ -472,7 +474,7 @@ int main(int argc, const char *argv[])
 
 #ifdef USE_TAU
   TAU_PROFILE("int main(int, char **)", " ", TAU_DEFAULT);
-  TAU_INIT(&argc, &argv); 
+  TAU_INIT(&argc, (char ***)&argv); 
 #endif
 
 

@@ -15,7 +15,7 @@
 #include "fittestEndcap.h"
 
 #ifdef TBB
-#include "tbb/task_scheduler_init.h"
+#include <tbb/task_scheduler_init.h>
 #endif
 
 //#define CYLINDER

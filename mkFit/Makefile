@@ -9,7 +9,12 @@
 include ../Makefile.config
 
 CPPEXTRA := -I.. ${USER_CPPFLAGS} ${DEFS}
-LDEXTRA  := -ltbb ${USER_LDFLAGS}
+LDEXTRA  := ${USER_LDFLAGS} -ltbb
+
+ifdef USE_TAU
+TAULIBS = $(TAU_LDFLAGS) $(TAU_LIBS) $(TAU_SHLIBS)  -ltbb
+endif
+
 
 CPPFLAGS := ${CPPEXTRA} ${CPPFLAGS}
 CXXFLAGS += ${USER_CXXFLAGS}
@@ -52,6 +57,7 @@ echo:
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "EXES     = ${EXES}"
 	@echo "CU_OBJ   = ${CU_OBJS}"
+	@echo "TAULIBS  = ${TAULIBS}"
 
 
 ################################################################
@@ -100,7 +106,7 @@ include ${MKFDEPS}
 endif
 
 mkFit: ${ALLOBJS}
-	${CXX} ${CXXFLAGS} ${VEC_HOST} ${LDFLAGS} ${ALLOBJS} -o $@ ${LDFLAGS_HOST} ${LDFLAGS_CU}
+	${CXX} ${CXXFLAGS} ${VEC_HOST} ${LDFLAGS} ${ALLOBJS} -o $@ ${LDFLAGS_HOST} ${LDFLAGS_CU} ${TAULIBS}
 
 ifdef WITH_ROOT
 fittestMPlex.o : CPPFLAGS += $(shell root-config --cflags)

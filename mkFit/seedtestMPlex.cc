@@ -1,5 +1,5 @@
 #include "seedtestMPlex.h"
-#include "tbb/tbb.h"
+#include <tbb/tbb.h>
 
 // #define DEBUG
 #include "Debug.h"

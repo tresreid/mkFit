@@ -1,4 +1,6 @@
-//#include <Profile/Profiler.h>
+#ifdef USE_TAU
+#include <Profile/Profiler.h>
+#endif
 
 #include "fittest.h"
 

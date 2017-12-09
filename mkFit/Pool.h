@@ -1,6 +1,6 @@
 #ifndef Pool_h
 #define Pool_h
-#include "tbb/concurrent_queue.h"
+#include <tbb/concurrent_queue.h>
 
 template <typename TT>
 struct Pool

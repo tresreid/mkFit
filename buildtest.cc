@@ -16,7 +16,7 @@ typedef TrackVec::const_iterator TrkIter;
 #ifndef TBB
 typedef std::vector<cand_t> candvec;
 #else
-#include "tbb/tbb.h"
+#include <tbb/tbb.h>
 #include <mutex>
 // concurrent_vector is only needed if we parallelize the candidate loops;
 // not needed if we only parallelize over seeds.
