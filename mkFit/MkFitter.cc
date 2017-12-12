@@ -1,3 +1,7 @@
+#ifdef USE_TAU
+#include <Profile/Profiler.h>
+#endif
+
 #include "MkFitter.h"
 #include "CandCloner.h"
 
@@ -66,6 +70,10 @@ void MkFitter::InputTracksAndHits(const std::vector<Track>&  tracks,
 
   int itrack;
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputTracksAndHits(const std::vector<Track>&, const std::vector<HitVec>&, int, int)", " ", TAU_USER);
+#endif
+
 // FIXME: uncomment when track building is ported to GPU.
 #if USE_CUDA_NOT_YET
 //#ifdef USE_CUDA
@@ -118,6 +126,11 @@ void MkFitter::InputTracksAndHits(const std::vector<Track>&  tracks,
   // This might not be true for the last chunk!
   // assert(end - beg == NN);
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputTracksAndHits(const std::vector<Track>&, const std::vector<LayerOfHits>&, int, int)", " ", TAU_USER);
+#endif
+
+
   int itrack;
 //#ifdef USE_CUDA
 #if 0
@@ -166,6 +179,11 @@ void MkFitter::SlurpInTracksAndHits(const std::vector<Track>&  tracks,
 
   // This might not be true for the last chunk!
   // assert(end - beg == NN);
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::SlurpInTracksAndHits(const std::vector<Track>&, const std::vector<HitVec>&, int, int)", " ", TAU_USER);
+#endif
+
 
   const Track &trk = tracks[beg];
   const char *varr       = (char*) &trk;
@@ -248,6 +266,11 @@ void MkFitter::InputTracksAndHitIdx(const std::vector<Track>& tracks,
   // This might not be true for the last chunk!
   // assert(end - beg == NN);
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputTracksAndHitsIdx(const std::vector<Track>&, int, int, bool)", " ", TAU_USER);
+#endif
+
+
   const int iI = inputProp ? iP : iC;
 
   int itrack = 0;
@@ -284,6 +307,11 @@ void MkFitter::InputTracksAndHitIdx(const std::vector<std::vector<Track> >& trac
   // This might not be true for the last chunk!
   // assert(end - beg == NN);
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputTracksAndHitsIdx(const std::vector<std::vector<Track> >&, const std::vector<std::pair<int,int> >&, int, int, bool)", " ", TAU_USER);
+#endif
+
+
   const int iI = inputProp ? iP : iC;
 
   int itrack = 0;
@@ -319,6 +347,12 @@ void MkFitter::InputSeedsTracksAndHits(const std::vector<Track>&  seeds,
 
   // This might not be true for the last chunk!
   // assert(end - beg == NN);
+  //
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputSeedsTracksAndHits(const std::vector<Track>&, const std::vector<Track>&, const std::vector<HitVec>&, int, int)", " ", TAU_USER);
+#endif
+
 
   int itrack;
 //#ifdef USE_CUDA
@@ -372,6 +406,11 @@ void MkFitter::ConformalFitTracks(bool fitting, int beg, int end)
   // could consider writing an array for widths for a given hit combo 
   // to give precise widths --> then would drop boolean
   // also used to determine which hits to use
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::ConformalFitTracks(bool, int, int)", " ", TAU_USER);
+#endif
+
 
   int front,middle,back;
   
@@ -430,6 +469,11 @@ void MkFitter::FitTracks(const int N_proc, const Event * ev, const bool useParam
 {
   // Fitting loop.
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::FitTracks(const int, const Event*, const bool)", " ", TAU_USER);
+#endif
+
+
   for (int hi = 0; hi < Nhits; ++hi)
   {
     // Note, charge is not passed (line propagation).
@@ -449,6 +493,12 @@ void MkFitter::FitTracks(const int N_proc, const Event * ev, const bool useParam
 
 void MkFitter::CollectFitValidation(const int hi, const int N_proc, const Event * ev) const
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::CollectFitValidation(const int, const int, const Event*)", " ", TAU_USER);
+#endif
+
+
   for (int n = 0; n < N_proc; ++n)
   {
     const float upt = 1.f/Par[iC](n,3,0);
@@ -472,6 +522,11 @@ void MkFitter::CollectFitValidation(const int hi, const int N_proc, const Event 
 
 void MkFitter::FitTracksTestEndcap(const int N_proc, const Event* ev, const bool useParamBfield)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::FitTracksTestEndcap(const int, const Event*,  const bool)", " ", TAU_USER);
+#endif
+
 
   if (countValidHits(0)<8) return;
   if (Label.ConstAt(0, 0, 0)<0) return;
@@ -529,6 +584,10 @@ void MkFitter::OutputTracks(std::vector<Track>& tracks, int beg, int end, int iC
   // Copies last track parameters (updated) into Track objects.
   // The tracks vector should be resized to allow direct copying.
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::OutputTracks(std::vector<Track>&, int, int, int)", " ", TAU_USER);
+#endif
+
   int itrack = 0;
   for (int i = beg; i < end; ++i, ++itrack)
   {
@@ -548,6 +607,10 @@ void MkFitter::OutputFittedTracksAndHitIdx(std::vector<Track>& tracks, int beg, 
 {
   // Copies last track parameters (updated) into Track objects and up to Nhits.
   // The tracks vector should be resized to allow direct copying.
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::OutputFittedTracksAndHitIdx(std::vector<Track>&, int, int, bool)", " ", TAU_USER);
+#endif
 
   const int iO = outputProp ? iP : iC;
 
@@ -582,6 +645,11 @@ void MkFitter::SelectHitIndices(const LayerOfHits &layer_of_hits, const int N_pr
   const int   iI = iP;
   const float nSigmaPhi = 3;
   const float nSigmaZ   = 3;
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::SelectHitIndices(const LayerOfHits&, const int, bool)", " ", TAU_USER);
+#endif
 
   // Vectorizing this makes it run slower!
   //#pragma ivdep
@@ -721,6 +789,12 @@ void MkFitter::SelectHitIndices(const LayerOfHits &layer_of_hits, const int N_pr
 
 void MkFitter::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::AddBestHit(const LayerOfHits&, const int)", " ", TAU_USER);
+#endif
+
+
   float minChi2[NN];
   int   bestHit[NN];
   // MT: fill_n gave me crap on MIC, NN=8,16, doing in maxSize search below.
@@ -901,6 +975,12 @@ void MkFitter::FindCandidates(const LayerOfHits &layer_of_hits,
                               std::vector<std::vector<Track> >& tmp_candidates,
                               const int offset, const int N_proc)
 {
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::FindCandidates(const LayerOfHits&, std::vector<std::vector<Track>>&, const int, const int)", " ", TAU_USER);
+#endif
+
   const char *varr      = (char*) layer_of_hits.m_hits;
 
   const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
@@ -1065,6 +1145,11 @@ void MkFitter::FindCandidatesEndcap(const LayerOfHits &layer_of_hits,
 				    std::vector<std::vector<Track> >& tmp_candidates,
 				    const int offset, const int N_proc)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void Mkitter::FindCandidatesEndcap(const LayerOfHits&, std::vector<std::vector<Track>>&, const int, const int)", " ", TAU_USER);
+#endif
+
   const char *varr      = (char*) layer_of_hits.m_hits;
 
   const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
@@ -1238,6 +1323,11 @@ void MkFitter::FindCandidatesEndcap(const LayerOfHits &layer_of_hits,
 void MkFitter::FindCandidatesMinimizeCopy(const LayerOfHits &layer_of_hits, CandCloner& cloner,
                                           const int offset, const int N_proc)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::FindCandidatesMinimizeCopy(const LayerOfHits&, CandCloner& cloner, const int, const int)", " ", TAU_USER);
+#endif
+
   const char *varr      = (char*) layer_of_hits.m_hits;
 
   const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
@@ -1381,6 +1471,11 @@ void MkFitter::InputTracksAndHitIdx(const std::vector<std::vector<Track> >& trac
 
   //fixme: why do we need both i and itrack in the loops below?
 
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::InputTracksAndHitIdx(const std::vector<std::vector<Track> >&, const std::vector<std::pair<int,MkFitter::IdxChi2List> >&, int, int, bool)", " ", TAU_USER);
+#endif
+
+
   int itrack = 0;
   for (int i = beg; i < end; ++i, ++itrack)
   {
@@ -1415,6 +1510,11 @@ void MkFitter::InputTracksAndHitIdx(const std::vector<std::vector<Track> >& trac
 
 void MkFitter::UpdateWithLastHit(const LayerOfHits &layer_of_hits, int N_proc)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::UpdateWithLastHit(const LayerOfHits&, int)", " ", TAU_USER);
+#endif
+
   for (int i = 0; i < N_proc; ++i)
   {
     int hit_idx = HitsIdx[Nhits - 1](i, 0, 0);
@@ -1449,6 +1549,13 @@ void MkFitter::UpdateWithLastHit(const LayerOfHits &layer_of_hits, int N_proc)
 
 void MkFitter::UpdateWithLastHitEndcap(const LayerOfHits &layer_of_hits, int N_proc)
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::UpdateWithLastHitEndcap(const LayerOfHits&, int)", " ", TAU_USER);
+#endif
+
+
+
   for (int i = 0; i < N_proc; ++i)
   {
     int hit_idx = HitsIdx[Nhits - 1](i, 0, 0);
@@ -1484,6 +1591,13 @@ void MkFitter::UpdateWithLastHitEndcap(const LayerOfHits &layer_of_hits, int N_p
 void MkFitter::CopyOutParErr(std::vector<std::vector<Track> >& seed_cand_vec,
                              int N_proc, bool outputProp) const
 {
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::CopyOutParErr(std::vector<std::vector<Track> >&, int, bool)", " ", TAU_USER);
+#endif
+
+
+
   const int iO = outputProp ? iP : iC;
 
   for (int i = 0; i < N_proc; ++i)
@@ -1516,12 +1630,26 @@ void MkFitter::CopyOutParErr(std::vector<std::vector<Track> >& seed_cand_vec,
 
 void MkFitter::PropagateTracksToZ(float Z, const int N_proc)
 {
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::PropagateTracksToZ(float, const int)", " ", TAU_USER);
+#endif
+
+
     propagateHelixToZMPlex(Err[iC], Par[iC], Chg, Z,
                            Err[iP], Par[iP], N_proc);
 }
 
 void MkFitter::SelectHitIndicesEndcap(const LayerOfHits &layer_of_hits, const int N_proc, bool dump)
 {
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::SelectHitIndicesEndcap(const LayerOfHits &, const int, bool)", " ", TAU_USER);
+#endif
+
+
   const int   iI = iP;
   const float nSigmaPhi = 3;
   const float nSigmaR   = 3;
@@ -1647,6 +1775,13 @@ void MkFitter::SelectHitIndicesEndcap(const LayerOfHits &layer_of_hits, const in
 
 void MkFitter::AddBestHitEndcap(const LayerOfHits &layer_of_hits, const int N_proc)
 {
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::AddBestHitEndcap(const LayerOfHits &, const int)", " ", TAU_USER);
+#endif
+
+
   float minChi2[NN];
   int   bestHit[NN];
   // MT: fill_n gave me crap on MIC, NN=8,16, doing in maxSize search below.
@@ -1839,6 +1974,13 @@ void MkFitter::AddBestHitEndcap(const LayerOfHits &layer_of_hits, const int N_pr
 void MkFitter::FindCandidatesMinimizeCopyEndcap(const LayerOfHits &layer_of_hits, CandCloner& cloner,
                                                 const int offset, const int N_proc)
 {
+
+
+#ifdef USE_TAU
+  TAU_PROFILE("void MkFitter::FindCandidatesMinimizeCopyEndcap(const LayerOfHits &, CandCloner&, const int, const int)", " ", TAU_USER);
+#endif
+
+
   const char *varr      = (char*) layer_of_hits.m_hits;
 
   const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
