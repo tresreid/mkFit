@@ -246,8 +246,11 @@ void MultHelixPropTranspFull(const MPlexLL& A, const MPlexLL& B, MPlexLL& C)
 #endif
 } // end unnamed namespace
 
-void helixAtRFromIterativeCCSFullJac(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
-                                     const MPlexQF &msRad,       MPlexLL& errorProp,
+
+//==============================================================================
+
+void helixAtRFromIterativeCCSFullJac(const MPlexLV& inPar, const MPlexQI& inChg, const MPlexQF &msRad,
+                                           MPlexLV& outPar,      MPlexLL& errorProp,
                                      const int      N_proc)
 {
   errorProp.SetVal(0.f);
@@ -377,160 +380,31 @@ void helixAtRFromIterativeCCSFullJac(const MPlexLV& inPar, const MPlexQI& inChg,
 //#pragma omp declare simd simdlen(NN) notinbranch linear(n)
 #include "PropagationMPlex.icc"
 
-void helixAtRFromIterativeCCS(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
-                              const MPlexQF &msRad, MPlexLL& errorProp,
-                              const int      N_proc, const bool useParamBfield)
-{
-  errorProp.SetVal(0.f);
-     
-  helixAtRFromIterativeCCS_impl(inPar, inChg, outPar, msRad, errorProp, 0, NN, N_proc, useParamBfield);
-}
-
-
-void helixAtRFromIterative(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
-                           const MPlexQF &msRad, MPlexLL& errorProp,
-                           const int      N_proc, const bool useParamBfield)
+void helixAtRFromIterativeCCS(const MPlexLV& inPar,     const MPlexQI& inChg, const MPlexQF &msRad,
+                                    MPlexLV& outPar,          MPlexLL& errorProp,
+                              const int      N_proc,    const PropagationFlags pflags)
 {
   errorProp.SetVal(0.f);
 
-  helixAtRFromIterative_impl(inPar, inChg, outPar, msRad, errorProp, 0, NN, N_proc, useParamBfield);
+  helixAtRFromIterativeCCS_impl(inPar, inChg, msRad, outPar, errorProp, 0, NN, N_proc, pflags);
 }
 
-
-void applyMaterialEffects(const MPlexQF &hitsRl, const MPlexQF& hitsXi,
-                                MPlexLS &outErr,       MPlexLV& outPar,
-                         const int      N_proc)
-{
-#pragma simd
-  for (int n = 0; n < NN; ++n)
-    {
-#ifdef CCSCOORD
-
-      float radL = hitsRl.ConstAt(n,0,0);
-      if (radL<0.0000000000001f) continue;//ugly, please fixme
-      const float theta = outPar.ConstAt(n,0,5);
-      const float pt = 1.f/outPar.ConstAt(n,0,3);
-      const float p = pt/std::sin(theta);
-      const float p2 = p*p;
-      constexpr float mpi = 0.140; // m=140 MeV, pion
-      constexpr float mpi2 = mpi*mpi; // m=140 MeV, pion
-      const float beta2 = p2/(p2+mpi2);
-      const float beta = std::sqrt(beta2);
-      //radiation lenght, corrected for the crossing angle (cos alpha from dot product of radius vector and momentum)
-      const float invCos = Config::endcapTest ? 1./std::abs(std::cos(theta)) : p/pt;
-      radL = radL * invCos; //fixme works only for barrel geom
-      // multiple scattering
-      //vary independently phi and theta by the rms of the planar multiple scattering angle
-      const float thetaMSC = 0.0136f*std::sqrt(radL)*(1.f+0.038f*std::log(radL))/(beta*p);// eq 32.15
-      const float thetaMSC2 = thetaMSC*thetaMSC;
-      outErr.At(n, 4, 4) += thetaMSC2;
-      outErr.At(n, 5, 5) += thetaMSC2;
-      //std::cout << "beta=" << beta << " p=" << p << std::endl;
-      //std::cout << "multiple scattering thetaMSC=" << thetaMSC << " thetaMSC2=" << thetaMSC2 << " radL=" << radL << std::endl;
-      // energy loss
-      const float gamma = 1.f/std::sqrt(1.f - beta2);
-      const float gamma2 = gamma*gamma;
-      constexpr float me = 0.0005; // m=0.5 MeV, electron
-      const float wmax = 2.f*me*beta2*gamma2 / ( 1.f + 2.f*gamma*me/mpi + me*me/(mpi*mpi) );
-      constexpr float I = 16.0e-9 * 10.75;
-      const float deltahalf = std::log(28.816e-9f * std::sqrt(2.33f*0.498f)/I) + std::log(beta*gamma) - 0.5f;
-      const float dEdx = beta<1.f ? (2.f*(hitsXi.ConstAt(n,0,0) * invCos * (0.5f*std::log(2.f*me*beta2*gamma2*wmax/(I*I)) - beta2 - deltahalf) / beta2)) : 0.f;//protect against infs and nans
-      // dEdx = dEdx*2.;//xi in cmssw is defined with an extra factor 0.5 with respect to formula 27.1 in pdg
-      //std::cout << "dEdx=" << dEdx << " delta=" << deltahalf << " wmax=" << wmax << " Xi=" << hitsXi.ConstAt(n,0,0) << std::endl;
-      const float dP = dEdx/beta;
-      outPar.At(n, 0, 3) = p/((p+dP)*pt);
-      //assume 100% uncertainty
-      outErr.At(n, 3, 3) += dP*dP/(p2*pt*pt);
-#else
-      float radL = hitsRl.ConstAt(n,0,0);
-      if (radL<0.0000000000001f) continue;//ugly, please fixme
-      const float x = outPar.ConstAt(n,0,0);
-      const float y = outPar.ConstAt(n,0,1);
-      const float px = outPar.ConstAt(n,0,3);
-      const float py = outPar.ConstAt(n,0,4);
-      const float pz = outPar.ConstAt(n,0,5);
-      const float r = std::sqrt(x*x+y*y);
-      float pt = px*px + py*py;
-      float p2 = pt + pz*pz;
-      pt = std::sqrt(pt);
-      const float p = std::sqrt(p2);
-      constexpr float mpi = 0.140f; // m=140 MeV, pion
-      constexpr float mpi2 = mpi*mpi; // m=140 MeV, pion
-      const float beta2 = p2/(p2+mpi2);
-      const float beta = std::sqrt(beta2);
-      //radiation lenght, corrected for the crossing angle (cos alpha from dot product of radius vector and momentum)
-      const float invCos = (p*r)/std::abs(x*px+y*py);
-      radL = radL * invCos; //fixme works only for barrel geom
-      // multiple scattering
-      // in a reference frame defined by the orthogonal unit vectors: u=(px/p,py/p,pz/p) v=(-py/pt,px/pt,0) s=(-pzpx/pt/p,-pzpy/pt/p,pt/p)
-      // we consider two planar angles theta1 and theta2 in the uv and us planes respectively
-      // note theta1 and theta2 are different angles but with the same rms value thetaMSC
-      // first order approximation: sin_thetaMSC ~ thetaMSC
-      // px' = px + (py*p*theta1 + pz*px*theta2)/pt; 
-      // py' = py - (px*p*theta1 - pz*py*theta2)/pt;
-      // pz' = pz + pt*theta2;
-      // this actually changes |p| so that p'^2 = p^2(1+2thetaMSC^2) so we should renormalize everything but we neglect this effect here (we are just inflating uncertainties a bit)
-      const float thetaMSC = 0.0136f*std::sqrt(radL)*(1.f+0.038f*std::log(radL))/(beta*p);// eq 32.15
-      const float thetaMSC2 = thetaMSC*thetaMSC;
-      const float thetaMSC2overPt2 = thetaMSC2/(pt*pt);
-      outErr.At(n, 3, 3) += (py*py*p*p + pz*pz*px*px)*thetaMSC2overPt2;
-      outErr.At(n, 4, 4) += (px*px*p*p + pz*pz*py*py)*thetaMSC2overPt2;
-      outErr.At(n, 5, 5) += pt*pt*thetaMSC2;
-      outErr.At(n, 3, 4) += -px*py*thetaMSC2;
-      outErr.At(n, 3, 5) += -pz*px*thetaMSC2;
-      outErr.At(n, 4, 5) += -pz*py*thetaMSC2;
-      // std::cout << "beta=" << beta << " p=" << p << std::endl;
-      // std::cout << "multiple scattering thetaMSC=" << thetaMSC << " thetaMSC2=" << thetaMSC2 << " radL=" << radL << " cxx=" << (py*py*p*p + pz*pz*px*px)*thetaMSC2overPt2 << " cyy=" << (px*px*p*p + pz*pz*py*py)*thetaMSC2overPt2 << " czz=" << pt*pt*thetaMSC2 << std::endl;
-      // energy loss
-      const float gamma = 1.f/std::sqrt(1.f - beta2);
-      const float gamma2 = gamma*gamma;
-      constexpr float me = 0.0005; // m=0.5 MeV, electron
-      const float wmax = 2.f*me*beta2*gamma2 / ( 1.f + 2.f*gamma*me/mpi + me*me/(mpi*mpi) );
-      constexpr float I = 16.0e-9f * 10.75f;
-      const float deltahalf = std::log(28.816e-9f * std::sqrt(2.33f*0.498f)/I) + std::log(beta*gamma) - 0.5f;
-      const float dEdx = 2.f*(hitsXi.ConstAt(n,0,0) * invCos * (0.5f*std::log(2*me*beta2*gamma2*wmax/(I*I)) - beta2 - deltahalf) / beta2) ;
-      //dEdx = dEdx*2.f;//xi in cmssw is defined with an extra factor 0.5 with respect to formula 27.1 in pdg
-      // std::cout << "dEdx=" << dEdx << " delta=" << deltahalf << std::endl;
-      float dP = dEdx/beta;
-      outPar.At(n, 0, 3) -= dP*px/p;
-      outPar.At(n, 0, 4) -= dP*py/p;
-      outPar.At(n, 0, 5) -= dP*pz/p;
-      //assume 100% uncertainty
-      dP = dP*dP;//warning, redefining dP!
-      p2 = 1.f/p2;//warning, redefining p2!
-      outErr.At(n, 3, 3) += dP*px*px*p2;//dP^2*px*px/p^2
-      outErr.At(n, 4, 4) += dP*py*py*p2;
-      outErr.At(n, 5, 5) += dP*pz*pz*p2;
-      p2 = p2/p;//warning, redefining p2!
-      outErr.At(n, 3, 4) += dP*px*py*p2;//dP^2*px*py/p^3
-      outErr.At(n, 3, 5) += dP*px*pz*p2;
-      outErr.At(n, 4, 5) += dP*pz*py*p2;
-#endif
-    }
-
-}
 
 void propagateHelixToRMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
-                            const MPlexQI &inChg,  const MPlexHV& msPar, 
+                            const MPlexQI &inChg,  const MPlexQF& msRad, 
 			          MPlexLS &outErr,       MPlexLV& outPar,
-                            const int      N_proc, const bool useParamBfield)
+                            const int      N_proc, const PropagationFlags pflags)
 {
+   // This is used further down when calculating similarity with errorProp (and before in DEBUG).
+   // MT: I don't think this really needed if we use inErr where required.
    outErr = inErr;
+   // This requirement for helixAtRFromIterativeCCS_impl() and for helixAtRFromIterativeCCSFullJac().
+   // MT: This should be properly handled in both functions (expecting input in output parameters sucks).
    outPar = inPar;
 
    MPlexLL errorProp;
 
-   MPlexQF msRad;
-#pragma simd
-   for (int n = 0; n < NN; ++n) {
-     msRad.At(n, 0, 0) = hipo(msPar.ConstAt(n, 0, 0), msPar.ConstAt(n, 1, 0));
-   }
-
-#ifdef CCSCOORD
-   helixAtRFromIterativeCCS(inPar, inChg, outPar, msRad, errorProp, N_proc, useParamBfield);
-#else
-   helixAtRFromIterative(inPar, inChg, outPar, msRad, errorProp, N_proc, useParamBfield);
-#endif
+   helixAtRFromIterativeCCS(inPar, inChg, msRad, outPar, errorProp, N_proc, pflags.use_param_b_field);
 
 #ifdef DEBUG
    {
@@ -550,24 +424,28 @@ void propagateHelixToRMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
    }
 #endif
    
-   if (Config::useCMSGeom && useParamBfield) // useParamBfield is proxy for fittest 
+   if (pflags.apply_material)
    {
      MPlexQF hitsRl;
      MPlexQF hitsXi;
 #pragma simd
      for (int n = 0; n < NN; ++n) 
      {
-       const int zbin = getZbinME(msPar(n, 2, 0));
-       const int rbin = getRbinME(msRad(n, 0, 0));
+       const int zbin = getZbinME(outPar(n, 2, 0));
+       const int rbin = getRbinME(msRad (n, 0, 0));
        
-       hitsRl(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
-       hitsXi(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
+       hitsRl(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME && rbin>=0 && rbin<Config::nBinsRME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
+       hitsXi(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME && rbin>=0 && rbin<Config::nBinsRME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
      }
      applyMaterialEffects(hitsRl, hitsXi, outErr, outPar, N_proc);
    }
 
+   squashPhiMPlex(outPar,N_proc); // ensure phi is between |pi|
+
    // Matriplex version of:
    // result.errors = ROOT::Math::Similarity(errorProp, outErr);
+
+   // MultHelixProp can be optimized for CCS coordinates, see GenMPlexOps.pl
    MPlexLL temp;
    MultHelixProp      (errorProp, outErr, temp);
    MultHelixPropTransp(errorProp, temp,   outErr);
@@ -594,75 +472,9 @@ void propagateHelixToRMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
      }
    }
 #endif
-}
-
-void propagateHelixToRMPlex(const MPlexLS& inErr,  const MPlexLV& inPar,
-                            const MPlexQI& inChg,  const float    r,
-                            MPlexLS&       outErr, MPlexLV&       outPar,
-                            const int      N_proc)
-{
-   outErr = inErr;
-   outPar = inPar;
-
-   MPlexLL errorProp;
-
-   MPlexQF msRad;
-#pragma simd
-   for (int n = 0; n < NN; ++n) {
-     msRad.At(n, 0, 0) = r;
-   }
-
-#ifdef CCSCOORD
-   helixAtRFromIterativeCCS(inPar, inChg, outPar, msRad, errorProp, N_proc);
-#else
-   helixAtRFromIterative(inPar, inChg, outPar, msRad, errorProp, N_proc);
-#endif
-
-   //add multiple scattering uncertainty and energy loss (FIXME: in this way it is not applied in track fit)
-   if (Config::useCMSGeom) 
-   {
-     MPlexQF hitsRl;
-     MPlexQF hitsXi;
-     
-#pragma simd
-     for (int n = 0; n < N_proc; ++n) 
-     {    
-       const int zbin = getZbinME(outPar(n, 2, 0));
-       const int rbin = getRbinME(r);
-
-       hitsRl(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
-       hitsXi(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
-     }
-     applyMaterialEffects(hitsRl, hitsXi, outErr, outPar, N_proc);
-   }
-
-   // Matriplex version of:
-   // result.errors = ROOT::Math::Similarity(errorProp, outErr);
-
-   //MultHelixProp can be optimized for CCS coordinates, see GenMPlexOps.pl
-   MPlexLL temp;
-   MultHelixProp      (errorProp, outErr, temp);
-   MultHelixPropTransp(errorProp, temp,   outErr);
-
-   // This dump is now out of its place as similarity is done with matriplex ops.
-#ifdef DEBUG
-   if (debug) {
-     for (int kk = 0; kk < N_proc; ++kk)
-     {
-       dprintf("outErr %d\n", kk);
-       for (int i = 0; i < 6; ++i) { for (int j = 0; j < 6; ++j)
-           dprintf("%8f ", outErr.At(kk,i,j)); printf("\n");
-       } dprintf("\n");
-
-       dprintf("outPar %d\n", kk);
-       for (int i = 0; i < 6; ++i) {
-           dprintf("%8f ", outPar.At(kk,i,0)); printf("\n");
-       } dprintf("\n");
-     }
-   }
-#endif
 
    /*
+     // To be used with: MPT_DIM = 1
      if (fabs(sqrt(outPar[0]*outPar[0]+outPar[1]*outPar[1])-r)>0.0001) {
      std::cout << "DID NOT GET TO R, dR=" << fabs(sqrt(outPar[0]*outPar[0]+outPar[1]*outPar[1])-r)
      << " r=" << r << " r0in=" << r0in << " rout=" << sqrt(outPar[0]*outPar[0]+outPar[1]*outPar[1]) << std::endl;
@@ -671,23 +483,20 @@ void propagateHelixToRMPlex(const MPlexLS& inErr,  const MPlexLV& inPar,
    */
 }
 
+
+//==============================================================================
+
 void propagateHelixToZMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
-                            const MPlexQI &inChg,  const MPlexHV& msPar,
+                            const MPlexQI &inChg,  const MPlexQF& msZ,
 			          MPlexLS &outErr,       MPlexLV& outPar,
-                            const int      N_proc, const bool useParamBfield)
+                            const int      N_proc, const PropagationFlags pflags)
 {
    outErr = inErr;
    outPar = inPar;
 
    MPlexLL errorProp;
 
-   MPlexQF msZ;
-#pragma simd
-   for (int n = 0; n < NN; ++n) {
-     msZ.At(n, 0, 0) = msPar.ConstAt(n, 2, 0);
-   }
-
-   helixAtZ(inPar, inChg, outPar, msZ, errorProp, N_proc, useParamBfield);
+   helixAtZ(inPar, inChg, msZ, outPar, errorProp, N_proc, pflags);
 
 #ifdef DEBUG
    {
@@ -707,7 +516,7 @@ void propagateHelixToZMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
    }
 #endif
 
-   if (Config::useCMSGeom && useParamBfield) // param bfield only used in fitting
+   if (pflags.apply_material)
    {
      MPlexQF hitsRl;
      MPlexQF hitsXi;
@@ -715,13 +524,15 @@ void propagateHelixToZMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
      for (int n = 0; n < NN; ++n) 
      {
        const int zbin = getZbinME(msZ(n, 0, 0));
-       const int rbin = getRbinME(hipo(msPar(n, 0, 0), msPar(n, 1, 0)));
-       
-       hitsRl(n, 0, 0) = (rbin>=0 && rbin<Config::nBinsRME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
-       hitsXi(n, 0, 0) = (rbin>=0 && rbin<Config::nBinsRME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
+       const int rbin = getRbinME(std::hypot(outPar(n, 0, 0), outPar(n, 1, 0)));
+
+       hitsRl(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME && rbin>=0 && rbin<Config::nBinsRME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
+       hitsXi(n, 0, 0) = (zbin>=0 && zbin<Config::nBinsZME && rbin>=0 && rbin<Config::nBinsRME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
      }
      applyMaterialEffects(hitsRl, hitsXi, outErr, outPar, N_proc);
    }
+
+   squashPhiMPlex(outPar,N_proc); // ensure phi is between |pi|
 
    // Matriplex version of:
    // result.errors = ROOT::Math::Similarity(errorProp, outErr);
@@ -754,92 +565,9 @@ void propagateHelixToZMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
 }
 
 
-void propagateHelixToZMPlex(const MPlexLS &inErr,  const MPlexLV& inPar,
-                            const MPlexQI &inChg,  const float z,
-			          MPlexLS &outErr,       MPlexLV& outPar,
-                            const int      N_proc)
-{
-   outErr = inErr;
-   outPar = inPar;
-
-   MPlexLL errorProp;
-
-   MPlexQF msZ;
-#pragma simd
-   for (int n = 0; n < NN; ++n) {
-     msZ.At(n, 0, 0) = (inPar.ConstAt(n, 2, 0) > 0) ? z : -z;
-   }
-
-   helixAtZ(inPar, inChg, outPar, msZ, errorProp, N_proc);
-
-#ifdef DEBUG
-   {
-     for (int kk = 0; kk < N_proc; ++kk)
-     {
-       dprintf("inErr %d\n", kk);
-       for (int i = 0; i < 6; ++i) { for (int j = 0; j < 6; ++j)
-           dprintf("%8f ", inErr.ConstAt(kk,i,j)); printf("\n");
-       } dprintf("\n");
-
-       dprintf("errorProp %d\n", kk);
-       for (int i = 0; i < 6; ++i) { for (int j = 0; j < 6; ++j)
-           dprintf("%8f ", errorProp.At(kk,i,j)); printf("\n");
-       } dprintf("\n");
-
-     }
-   }
-#endif
-
-   if (Config::useCMSGeom) 
-   {
-     MPlexQF hitsRl;
-     MPlexQF hitsXi;
-#pragma simd
-     for (int n = 0; n < N_proc; ++n) 
-     {
-       const int zbin = getZbinME(z);
-       const int rbin = getRbinME(hipo(outPar(n, 0, 0), outPar(n, 1, 0)));
-
-       hitsRl(n, 0, 0) = (rbin>=0 && rbin<Config::nBinsRME) ? getRlVal(zbin,rbin) : 0.f; // protect against crazy propagations
-       hitsXi(n, 0, 0) = (rbin>=0 && rbin<Config::nBinsRME) ? getXiVal(zbin,rbin) : 0.f; // protect against crazy propagations
-     }
-     applyMaterialEffects(hitsRl, hitsXi, outErr, outPar, N_proc);
-   }
-
-   // Matriplex version of:
-   // result.errors = ROOT::Math::Similarity(errorProp, outErr);
-   MPlexLL temp;
-   MultHelixPropEndcap      (errorProp, outErr, temp);
-   MultHelixPropTranspEndcap(errorProp, temp,   outErr);
-
-   // This dump is now out of its place as similarity is done with matriplex ops.
-#ifdef DEBUG
-   {
-     for (int kk = 0; kk < N_proc; ++kk)
-     {
-       dprintf("outErr %d\n", kk);
-       for (int i = 0; i < 6; ++i) { for (int j = 0; j < 6; ++j)
-           dprintf("%8f ", outErr.At(kk,i,j)); printf("\n");
-       } dprintf("\n");
-
-       dprintf("outPar %d\n", kk);
-       for (int i = 0; i < 6; ++i) {
-           dprintf("%8f ", outPar.At(kk,i,0)); printf("\n");
-       } dprintf("\n");
-       if (std::abs(outPar.At(kk,2,0)-inPar.ConstAt(kk, 2, 0))>0.0001) {
-	 dprint_np(kk, "DID NOT GET TO Z, dZ=" << std::abs(outPar.At(kk,2,0)-inPar.ConstAt(kk, 2, 0))
-		   << " z=" << msZ.ConstAt(kk, 2, 0) << " zin=" << inPar.ConstAt(kk,2,0) << " zout=" << outPar.At(kk,2,0) << std::endl
-		   << "pt=" << hipo(inPar.ConstAt(kk,3,0), inPar.ConstAt(kk,4,0)) << " pz=" << inPar.ConstAt(kk,5,0));
-       }
-     }
-   }
-#endif
-}
-
-
-void helixAtZ(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
-	      const MPlexQF &msZ, MPlexLL& errorProp,
-	      const int      N_proc, const bool useParamBfield)
+void helixAtZ(const MPlexLV& inPar,  const MPlexQI& inChg, const MPlexQF &msZ,
+                    MPlexLV& outPar,       MPlexLL& errorProp,
+	      const int      N_proc, const PropagationFlags pflags)
 {
   errorProp.SetVal(0.f);
 
@@ -860,7 +588,7 @@ void helixAtZ(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
       const float phiin = inPar.ConstAt(n, 4, 0);
       const float theta = inPar.ConstAt(n, 5, 0);
 
-      const float k = inChg.ConstAt(n, 0, 0) * 100.f / (-Config::sol*(useParamBfield?Config::BfieldFromZR(zin,hipo(inPar.ConstAt(n,0,0),inPar.ConstAt(n,1,0))):Config::Bfield));
+      const float k = inChg.ConstAt(n, 0, 0) * 100.f / (-Config::sol*(pflags.use_param_b_field?Config::BfieldFromZR(zin,hipo(inPar.ConstAt(n,0,0),inPar.ConstAt(n,1,0))):Config::Bfield));
 
       dprint_np(n, std::endl << "input parameters"
             << " inPar.ConstAt(n, 0, 0)=" << std::setprecision(9) << inPar.ConstAt(n, 0, 0)
@@ -904,15 +632,15 @@ void helixAtZ(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
       dprint_np(n, std::endl << "outPar.At(n, 0, 0)=" << outPar.At(n, 0, 0) << " outPar.At(n, 1, 0)=" << outPar.At(n, 1, 0)
 		<< " pxin=" << pxin << " pyin=" << pyin);
 
-      errorProp(n,0,2) = cosP*sinT*(sinP*cosa*sin(cosP*sina) - cosa)/cosT;
-      errorProp(n,0,3) = cosP*sinT*deltaZ*cosa*( 1.f - sinP*sin(cosP*sina) )/(cosT*ipt) - k*(cosP*sina - sinP*(1.f-cos(cosP*sina)))/(ipt*ipt);
-      errorProp(n,0,4) = (k/ipt)*( -sinP*sina + sinP*sinP*sina*sin(cosP*sina) - cosP*(1.f - cos(cosP*sina) ) );
-      errorProp(n,0,5) = cosP*deltaZ*cosa*( 1.f - sinP*sin(cosP*sina) )/(cosT*cosT);
+      errorProp(n,0,2) = cosP*sinT*(sinP*cosa*std::sin(cosP*sina) - cosa)/cosT;
+      errorProp(n,0,3) = cosP*sinT*deltaZ*cosa*( 1.f - sinP*std::sin(cosP*sina) )/(cosT*ipt) - k*(cosP*sina - sinP*(1.f-std::cos(cosP*sina)))/(ipt*ipt);
+      errorProp(n,0,4) = (k/ipt)*( -sinP*sina + sinP*sinP*sina*std::sin(cosP*sina) - cosP*(1.f - std::cos(cosP*sina) ) );
+      errorProp(n,0,5) = cosP*deltaZ*cosa*( 1.f - sinP*std::sin(cosP*sina) )/(cosT*cosT);
 
-      errorProp(n,1,2) = cosa*sinT*(cosP*cosP*sin(cosP*sina) - sinP)/cosT;
-      errorProp(n,1,3) = sinT*deltaZ*cosa*( cosP*cosP*sin(cosP*sina) + sinP )/(cosT*ipt) - k*(sinP*sina + cosP*(1.f-cos(cosP*sina)))/(ipt*ipt);
-      errorProp(n,1,4) = (k/ipt)*( -sinP*(1.f - cos(cosP*sina)) - sinP*cosP*sina*sin(cosP*sina) + cosP*sina );
-      errorProp(n,1,5) = deltaZ*cosa*( cosP*cosP*sin(cosP*sina) + sinP )/(cosT*cosT);
+      errorProp(n,1,2) = cosa*sinT*(cosP*cosP*std::sin(cosP*sina) - sinP)/cosT;
+      errorProp(n,1,3) = sinT*deltaZ*cosa*( cosP*cosP*std::sin(cosP*sina) + sinP )/(cosT*ipt) - k*(sinP*sina + cosP*(1.f-std::cos(cosP*sina)))/(ipt*ipt);
+      errorProp(n,1,4) = (k/ipt)*( -sinP*(1.f - std::cos(cosP*sina)) - sinP*cosP*sina*std::sin(cosP*sina) + cosP*sina );
+      errorProp(n,1,5) = deltaZ*cosa*( cosP*cosP*std::sin(cosP*sina) + sinP )/(cosT*cosT);
 
       errorProp(n,4,2) = -ipt*sinT/(cosT*k);
       errorProp(n,4,3) = sinT*deltaZ/(cosT*k);
@@ -935,5 +663,52 @@ void helixAtZ(const MPlexLV& inPar, const MPlexQI& inChg, MPlexLV& outPar,
 	printf("%5f %5f %5f %5f %5f %5f\n", errorProp(n,5,0),errorProp(n,5,1),errorProp(n,5,2),errorProp(n,5,3),errorProp(n,5,4),errorProp(n,5,5));
       }
 #endif
+    }
+}
+
+//==============================================================================
+
+void applyMaterialEffects(const MPlexQF &hitsRl, const MPlexQF& hitsXi,
+                                MPlexLS &outErr,       MPlexLV& outPar,
+                          const int      N_proc)
+{
+#pragma simd
+  for (int n = 0; n < NN; ++n)
+    {
+      float radL = hitsRl.ConstAt(n,0,0);
+      if (radL<0.0000000000001f) continue;//ugly, please fixme
+      const float theta = outPar.ConstAt(n,0,5);
+      const float pt = 1.f/outPar.ConstAt(n,0,3);
+      const float p = pt/std::sin(theta);
+      const float p2 = p*p;
+      constexpr float mpi = 0.140; // m=140 MeV, pion
+      constexpr float mpi2 = mpi*mpi; // m=140 MeV, pion
+      const float beta2 = p2/(p2+mpi2);
+      const float beta = std::sqrt(beta2);
+      //radiation lenght, corrected for the crossing angle (cos alpha from dot product of radius vector and momentum)
+      const float invCos = p/pt;
+      radL = radL * invCos; //fixme works only for barrel geom
+      // multiple scattering
+      //vary independently phi and theta by the rms of the planar multiple scattering angle
+      const float thetaMSC = 0.0136f*std::sqrt(radL)*(1.f+0.038f*std::log(radL))/(beta*p);// eq 32.15
+      const float thetaMSC2 = thetaMSC*thetaMSC;
+      outErr.At(n, 4, 4) += thetaMSC2;
+      outErr.At(n, 5, 5) += thetaMSC2;
+      //std::cout << "beta=" << beta << " p=" << p << std::endl;
+      //std::cout << "multiple scattering thetaMSC=" << thetaMSC << " thetaMSC2=" << thetaMSC2 << " radL=" << radL << std::endl;
+      // energy loss
+      const float gamma = 1.f/std::sqrt(1.f - beta2);
+      const float gamma2 = gamma*gamma;
+      constexpr float me = 0.0005; // m=0.5 MeV, electron
+      const float wmax = 2.f*me*beta2*gamma2 / ( 1.f + 2.f*gamma*me/mpi + me*me/(mpi*mpi) );
+      constexpr float I = 16.0e-9 * 10.75;
+      const float deltahalf = std::log(28.816e-9f * std::sqrt(2.33f*0.498f)/I) + std::log(beta*gamma) - 0.5f;
+      const float dEdx = beta<1.f ? (2.f*(hitsXi.ConstAt(n,0,0) * invCos * (0.5f*std::log(2.f*me*beta2*gamma2*wmax/(I*I)) - beta2 - deltahalf) / beta2)) : 0.f;//protect against infs and nans
+      // dEdx = dEdx*2.;//xi in cmssw is defined with an extra factor 0.5 with respect to formula 27.1 in pdg
+      //std::cout << "dEdx=" << dEdx << " delta=" << deltahalf << " wmax=" << wmax << " Xi=" << hitsXi.ConstAt(n,0,0) << std::endl;
+      const float dP = dEdx/beta;
+      outPar.At(n, 0, 3) = p/((p+dP)*pt);
+      //assume 100% uncertainty
+      outErr.At(n, 3, 3) += dP*dP/(p2*pt*pt);
     }
 }

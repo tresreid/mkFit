@@ -18,7 +18,6 @@ void fitTrack(const Track & trk, const TrackExtra& trkextra, int itrack, Event& 
   bool debug(false);
 #endif
   auto& evt_lay_hits = ev.layerHits_;
-  auto seedID = trkextra.seedID();
 
   auto trkLayers = trk.foundLayers(); // need the exact layers to make sure we are accessing the right hits for conformal fit!
 #ifdef INWARDFIT
@@ -44,7 +43,6 @@ void fitTrack(const Track & trk, const TrackExtra& trkextra, int itrack, Event& 
   conformalFit(hit1,hit2,hit3,cfitStateHit0,fiterrs); // last bool denotes use cf derived errors for fitting
   TrackState updatedState = cfitStateHit0;
   updatedState.charge = trk.charge();
-  ev.validation_.collectFitTkCFMapInfo(seedID,cfitStateHit0); // pass along all info and map it to a given seed
 #else 
   TrackState updatedState = trk.state();
 #endif 
@@ -95,7 +93,6 @@ void fitTrack(const Track & trk, const TrackExtra& trkextra, int itrack, Event& 
   } // end loop over hits
 
   dcall(print("Fit Track", updatedState));
-  ev.validation_.collectFitTkTSLayerPairVecMapInfo(seedID,updatedStates); // for position pulls
 
   Track FitTrack(trk);
   FitTrack.setState(updatedState); // eventually will want to include chi2 of fitTrack --> chi2 for now just copied from build tracks

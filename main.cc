@@ -11,8 +11,7 @@
 #include "Matrix.h"
 #include "Event.h"
 #include "Validation.h"
-
-#include "fittestEndcap.h"
+#include "BinInfoUtils.h"
 
 #ifdef TBB
 #include "tbb/task_scheduler_init.h"
@@ -75,7 +74,7 @@ void initGeom(Geometry& geom)
   for (int l = 0; l < Config::nLayers; l++) {
     float r = (l+1)*Config::fRadialSpacing;
     float z = r / std::tan(2.0*std::atan(std::exp(-Config::fEtaDet))); // calculate z extent based on eta, r
-    VUSolid* utub = new VUSolid(r, r+Config::fRadialExtent);
+    VUSolid* utub = new VUSolid(r, r+Config::fRadialExtent, -z, z, true, l + 1 == Config::nLayers);
     geom.AddLayer(utub, r, z);
   }
 }
@@ -100,36 +99,8 @@ static tick delta(timepoint& t0)
 // from mkFit
 namespace
 {
-  FILE *s_file = 0;
-  int   s_file_num_ev = 0;
-  int   s_file_cur_ev = 0;
-
   std::string s_operation = "empty";
   std::string s_file_name = "simtracks.bin";
-}
-
-// from mkFit
-int open_simtrack_file()
-{
-  s_file = fopen(s_file_name.c_str(), "r");
-
-  assert (s_file != 0);
-
-  fread(&s_file_num_ev, sizeof(int), 1, s_file);
-  s_file_cur_ev = 0;
-
-  printf("\nReading simulated tracks from \"%s\", %d events on file.\n\n",
-         s_file_name.c_str(), s_file_num_ev);
-
-  return s_file_num_ev;
-}
-
-void close_simtrack_file()
-{
-  fclose(s_file);
-  s_file = 0;
-  s_file_num_ev = 0;
-  s_file_cur_ev = 0;
 }
 
 // also from mkfit
@@ -177,26 +148,22 @@ int main(int argc, const char* argv[])
         "  --num-events    <num>    number of events to run over (def: %d)\n"
         "  --num-tracks    <num>    number of tracks to generate for each event (def: %d)\n"
 	"  --num-thr       <num>    number of threads used for TBB  (def: %d)\n"
-	"  --super-debug            bool to enable super debug mode (def: %s)\n"
-	"  --normal-val             bool to enable normal validation (eff, FR, DR) (def: %s)\n"
-	"  --full-val               bool to enable more validation in SMatrix (def: %s)\n"
+	"  --root-val               bool to enable normal validation (eff, FR, DR) (def: %s)\n"
+	"  --inc-shorts             include short reco tracks into FR (def: %s)\n"
 	"  --cf-seeding             bool to enable CF in MC seeding (def: %s)\n"
 	"  --read                   read input simtracks file (def: false)\n"
 	"  --file-name              file name for write/read (def: %s)\n"
-	"  --cmssw-seeds            take seeds from CMSSW (def: %i)\n"
-	"  --endcap-test            test endcap tracking (def: %i)\n"
+	"  --cmssw-seeds            take seeds from CMSSW (def: %s)\n"
         ,
         argv[0],
         Config::nEvents,
         Config::nTracks,
         nThread, 
-	(Config::super_debug ? "true" : "false"),
-	(Config::normal_val  ? "true" : "false"),
-	(Config::full_val    ? "true" : "false"),
-	(Config::cf_seeding  ? "true" : "false"),
+	(Config::root_val ? "true" : "false"),
+      	(Config::inclusiveShorts ? "true" : "false"),
+	(Config::cf_seeding ? "true" : "false"),
 	s_file_name.c_str(),
-	Config::readCmsswSeeds,
-	Config::endcapTest
+	(Config::seedInput == cmsswSeeds ? "true" : "false")
       );
       exit(0);
     }
@@ -215,26 +182,13 @@ int main(int argc, const char* argv[])
       next_arg_or_die(mArgs, i);
       nThread = atoi(i->c_str());
     }
-    else if (*i == "--super-debug")
+    else if (*i == "--root-val")
     {
-      Config::super_debug = true;
-      Config::nTracks     = 1;
-      Config::nEvents     = 100000;
-
-      Config::normal_val = false;
-      Config::full_val   = false;
+      Config::root_val = true; Config::fit_val = false;
     }
-    else if (*i == "--normal-val")
+    else if (*i == "--inc-shorts")
     {
-      Config::super_debug = false;
-      Config::normal_val  = true;
-      Config::full_val    = false;
-    }
-    else if (*i == "--full-val")
-    {
-      Config::super_debug = false;
-      Config::normal_val  = true;
-      Config::full_val    = true;
+      Config::inclusiveShorts = true;
     }
     else if (*i == "--cf-seeding")
     {
@@ -251,11 +205,7 @@ int main(int argc, const char* argv[])
     }
     else if(*i == "--cmssw-seeds")
     {
-      Config::readCmsswSeeds = true;
-    }
-    else if (*i == "--endcap-test")
-    {
-      Config::endcapTest = true;
+      Config::seedInput = cmsswSeeds;
     }
     else
     {
@@ -280,9 +230,10 @@ int main(int argc, const char* argv[])
   tbb::task_scheduler_init tasks(nThread);
 #endif
 
+  DataFile data_file;
   if (s_operation == "read")
   {
-    Config::nEvents = open_simtrack_file();
+    Config::nEvents = data_file.OpenRead(s_file_name);
   }
 
   for (int evt=0; evt<Config::nEvents; ++evt) {
@@ -292,48 +243,38 @@ int main(int argc, const char* argv[])
     timepoint t0(now());
     if (s_operation != "read")
     {
-      if (!Config::endcapTest) ev.Simulate();
+      ev.Simulate();
     }
     else {
-      ev.read_in(s_file);
+      ev.read_in(data_file);
     }
+    
+    // phi-eta partitioning map: vector of vector of vectors of std::pairs. 
+    // vec[nLayers][nEtaBins][nPhiBins]
+    BinInfoMap segmentMap;
+    
+    /*simulate time*/        ticks[0] += delta(t0);
+    ev.Segment(segmentMap);  ticks[1] += delta(t0);
+    ev.Seed(segmentMap);     ticks[2] += delta(t0);
+    ev.Find(segmentMap);     ticks[3] += delta(t0);
+    ev.Fit();                ticks[4] += delta(t0);
+    ev.Validate();           ticks[5] += delta(t0);
 
-    if (Config::endcapTest) {
-      //make it standalone for now
-      MCHitInfo::reset();
-      ev.simHitsInfo_.resize(Config::nTotHit * Config::nTracks);
-      fittestEndcap(ev);
-      continue;
-    }
-
- /*simulate time*/ ticks[0] += delta(t0);
-    ev.Segment();  ticks[1] += delta(t0);
-    ev.Seed();     ticks[2] += delta(t0);
-    ev.Find();     ticks[3] += delta(t0);
-
-    if (!Config::super_debug) 
-    {
-      ev.Fit();    ticks[4] += delta(t0);
-    }
-    ev.Validate(); ticks[5] += delta(t0);
-
-    if (!Config::super_debug) {
-      std::cout << "sim: " << ev.simTracks_.size() << " seed: " << ev.seedTracks_.size() << " found: " 
-		<< ev.candidateTracks_.size() << " fit: " << ev.fitTracks_.size() << std::endl;
-      tracks[0] += ev.simTracks_.size();
-      tracks[1] += ev.seedTracks_.size();
-      tracks[2] += ev.candidateTracks_.size();
-      tracks[3] += ev.fitTracks_.size();
-      std::cout << "Built tracks" << std::endl;
-      ev.PrintStats(ev.candidateTracks_, ev.candidateTracksExtra_);
-      std::cout << "Fit tracks" << std::endl;
-      ev.PrintStats(ev.fitTracks_, ev.fitTracksExtra_);
-    }
+    std::cout << "sim: " << ev.simTracks_.size() << " seed: " << ev.seedTracks_.size() << " found: " 
+	      << ev.candidateTracks_.size() << " fit: " << ev.fitTracks_.size() << std::endl;
+    tracks[0] += ev.simTracks_.size();
+    tracks[1] += ev.seedTracks_.size();
+    tracks[2] += ev.candidateTracks_.size();
+    tracks[3] += ev.fitTracks_.size();
+    std::cout << "Built tracks" << std::endl;
+    ev.PrintStats(ev.candidateTracks_, ev.candidateTracksExtra_);
+    std::cout << "Fit tracks" << std::endl;
+    ev.PrintStats(ev.fitTracks_, ev.fitTracksExtra_);
   }
 
   if (s_operation == "read")
   {
-    close_simtrack_file();
+    data_file.Close();
   }
 
   std::vector<double> time(ticks.size());
@@ -342,7 +283,6 @@ int main(int argc, const char* argv[])
   }
 
   val->fillConfigTree();
-  if (Config::full_val) val->fillTimeTree(time);
   val->saveTTrees(); 
 
   std::cout << "Ticks ";

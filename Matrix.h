@@ -34,10 +34,31 @@ void dumpMatrix(Matrix m)
   }
 }
 
+template <typename Matrix>
+inline void diagonalOnly(Matrix& m)
+{
+  for (int r=0; r<m.kRows; r++) {
+    for (int c=0; c<m.kCols; c++) {
+      if (r!=c) m[r][c] = 0.f;
+    }
+  }
+}
 
 //==============================================================================
 
 // This should go elsewhere, eventually.
+
+template<class T, class Compare> inline
+constexpr const T clamp( const T v, const T lo, const T hi, Compare comp )
+{
+  return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+}
+
+template<class T> inline
+constexpr const T clamp( const T v, const T lo, const T hi )
+{
+  return clamp( v, lo, hi, std::less<T>() );
+}
 
 #include <sys/time.h>
 
@@ -66,6 +87,7 @@ inline void sincos4(const float x, float& sin, float& cos)
    cos  = 1.f - 0.5f*x2 + 0.04166667f*x2*x2;
    sin  = x - 0.16666667f*x*x2;
 }
+
 //==============================================================================
 
 // This ifdef needs to be changed to something like "use matriplex" and/or
