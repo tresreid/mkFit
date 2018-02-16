@@ -1,0 +1,36 @@
+#Tell tau to not profile these functions
+#BEGIN_EXCLUDE_LIST
+
+#void quicksort(int *, int, int)
+# The next line excludes all functions beginning with "sort_" and having
+# arguments "int *"
+#void sort_#(int *)
+#void interchange(int *, int *)
+
+#END_EXCLUDE_LIST
+
+#Exclude these files from profiling
+BEGIN_FILE_EXCLUDE_LIST
+
+*.so
+
+END_FILE_EXCLUDE_LIST
+
+BEGIN_INSTRUMENT_SECTION
+
+# A dynamic phase will break up the profile into phase where
+# each events is recorded according to what phase of the application
+# in which it occured.
+dynamic phase name="timed" file="fittestMPlex.cc" line=143 to line=175
+
+# instrument all the outer loops in this routine
+#loops file="loop_test.cpp" routine="multiply"
+
+# tracks memory allocations/deallocations as well as potential leaks
+memory file="fittestMPlex.cc" line=144 to line=187
+
+# tracks the size of read, write and print statements in this routine
+#io file="foo.f90" routine="RINB"
+
+END_INSTRUMENT_SECTION
+

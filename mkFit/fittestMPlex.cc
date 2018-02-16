@@ -89,8 +89,8 @@ void make_validation_tree(const char         *fname,
        std::accumulate(diff_vec.begin(), diff_vec.end(), 0.0)
        / diff_vec.size());
 
-   std::cerr << goodtrk << " good tracks, mean pt pull: " << mean
-             << " standard dev: " << stdev << std::endl;
+   //std::cerr << goodtrk << " good tracks, mean pt pull: " << mean
+   //          << " standard dev: " << stdev << std::endl;
 
 #ifndef NO_ROOT
    file->Write();
@@ -135,6 +135,7 @@ double runFittingTestPlex(Event& ev, std::vector<Track>& rectracks)
    int theEnd = ( (Config::endcapTest && Config::readCmsswSeeds) ? ev.seedTracks_.size() : simtracks.size());
    int count = (theEnd + NN - 1)/NN;
 
+
 #ifdef USE_VTUNE_PAUSE
    __itt_resume();
 #endif
@@ -174,6 +175,7 @@ double runFittingTestPlex(Event& ev, std::vector<Track>& rectracks)
    });
 
    time = dtime() - time;
+
 
 #ifdef USE_VTUNE_PAUSE
    __itt_pause();
