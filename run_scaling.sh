@@ -2,57 +2,56 @@
 
 #./mkFit/mkFit --num-tracks 5000 --num-events 10000 --write --file-name simtracks_barrel_large.bin
 
-NT=10
 
-EXP=scaling
 
-tau experiment select $EXP
+# parameters for mkFit
+NT=10 # number of threads
+NE=100 # number of simulated events
+FILE=TTbar35PU-memoryFile.fv3.clean.writeAll.recT.072617.bin # input file name
 
-#CMDp1=tau_exec\ -T\ papi,icpc,pdt,tbb,serial\ -ebs\ -ebs_period=10039
-CMDp2=./mkFit/mkFit\ --read\ --file-name\ simtracks_barrel_5k_tracks_1k_events.bin\ --num-thr\ $NT\ --fit-std-only\ --silent
+# parameters for TAU
+EXP=TTbar35_scaling_cache  # experiment name - must be created before running this script
+tau experiment select $EXP # switch tau to this experiment
 
-function run_stuff {
+# command to execute the mkFit program
+#    note the '\' before each space
+#    also this must be redefined inside the loop to overwrite the variable as they vary
+CMD=./mkFit/mkFit\ --cmssw-n2seeds\ --input-file\ $FILE\ --build-ce\ --num-thr\ $NT\ --num-events\ $NE
 
-	tau experiment edit $EXP --measurement scalar_simd
-	tau trial create $CMDp2
 
-	tau experiment edit $EXP --measurement packed_simd
-	tau trial create $CMDp2
+measure_list=(tlb_dm br_ins br_cn br_ucn br_msp scalar_simd packed_simd tot_cyc tot_ins tcm2 res_stl tca2 lst tcm1 llc_ref llc_miss)
 
-	tau experiment edit $EXP --measurement tot_cyc
-	tau trial create $CMDp2
+function run_trials {
 
-	tau experiment edit $EXP --measurement tot_ins
-	tau trial create $CMDp2
+	for i in ${measure_list[@]}; do
+		tau experiment edit $EXP --measurement $i
+		tau trial create $CMD
+	done
 
-	tau experiment edit $EXP --measurement tcm2
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement res_stl
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement tca2
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement lst
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement tcm1
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement llc_ref
-	tau trial create $CMDp2
-
-	tau experiment edit $EXP --measurement llc_miss
-	tau trial create $CMDp2
 }
 
-for i in {10..250..10}
-do
+nthreads=(2 4 8 16 32)
+
+for i in ${nthreads[@]};do
 NT=$i
-CMDp2=./mkFit/mkFit\ --read\ --file-name\ simtracks_barrel_5k_tracks_1k_events.bin\ --num-thr\ $NT\ --fit-std-only\ --silent
-run_stuff
+CMD=./mkFit/mkFit\ --cmssw-n2seeds\ --input-file\ $FILE\ --build-ce\ --num-thr\ $NT\ --num-events\ $NE
+for j in {0..2}; do
+run_trials
+done
 done
 
 
+FILE=TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin
+EXP=TTbar70_scaling_cache
+CMD=./mkFit/mkFit\ --cmssw-n2seeds\ --input-file\ $FILE\ --build-ce\ --num-thr\ $NT\ --num-events\ $NE
+tau experiment select $EXP
+
+for i in ${nthreads[@]}
+do
+NT=$i
+CMD=./mkFit/mkFit\ --cmssw-n2seeds\ --input-file\ $FILE\ --build-ce\ --num-thr\ $NT\ --num-events\ $NE
+for j in {0..2}; do
+run_trials
+done
+done
 
