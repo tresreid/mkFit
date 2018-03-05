@@ -16,15 +16,16 @@ PATH=('PATH', TAU_DIR + '/x86_64/bin')
 
 
 DIR  = '.tau/mictest_sampling/'
-FILE = 'TTbar35PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
-CMD  = './mkFit/mkFit --cmssw-n2seeds --input-file {:s} --build-ce --num-thr {:d} --num-events {:d}'
+#FILE = 'TTbar35PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
+FILE = 'memoryFile.fv3.clean.writeAll.recT.072617.bin'
+CMD  = './mkFit/mkFit --cmssw-n2seeds --input-file {:s} --build-ce --num-thr {:d} --num-events {:d} --silent'
 
 TAU = 'tau_exec -T 93948b87,tbb,papi,serial,icpc -ebs {:s}'
 
-NUM_RUNS = 1
-THREAD_LIST = [2, 4, 8, 16, 32, 48, 64, 80, 96]
+NUM_RUNS = 3
+THREAD_LIST = [2, 8, 16, 32, 64, 128, 192, 256]
 #THREAD_LIST = [2, 4, 8]
-NUM_EVENTS=100
+NUM_EVENTS=4550
 
 env = dict(os.environ)
 for var,val in ENV:
@@ -74,10 +75,10 @@ def run_trial(exp_name):
 
 		print("\n\n")
 
-run_trial(EXP_LIST[0])
-run_trial(EXP_LIST[1])
-#run_trial('test')
+#run_trial(EXP_LIST[0])
+#run_trial(EXP_LIST[1])
+run_trial('manual_scaling_large_cache')
 
-#print TAU.format(CMD.format(FILE, 10, NUM_EVENTS))
-#sp.Popen(TAU.format(CMD.format(FILE, 10, NUM_EVENTS)), shell=True, env=env)
+#print TAU.format(CMD.format(FILE, 256, NUM_EVENTS))
+#sp.Popen(TAU.format(CMD.format(FILE, 256, NUM_EVENTS)), shell=True, env=env).wait()
 
