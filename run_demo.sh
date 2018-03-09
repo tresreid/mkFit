@@ -17,12 +17,17 @@ tau experiment select $EXP # switch tau to this experiment
 #    also this must be redefined inside the loop to overwrite the variable as they vary
 CMD=./mkFit/mkFit\ --cmssw-n2seeds\ --input-file\ $FILE\ --build-ce\ --num-thr\ $NT\ --num-events\ $NE
 
-measure_list=(tlb_dm br_ins br_cn br_ucn br_msp scalar_simd packed_simd tot_cyc tot_ins tcm2 res_stl tca2 lst tcm1 llc_ref llc_miss)
+# Grover
+#measure_list=(tlb_dm br_ins br_cn br_ucn br_msp scalar_simd packed_simd tot_cyc tot_ins tcm2 res_stl tca2 lst tcm1 llc_ref llc_miss)
+# Talapas
+measure_list=(br_ins br_cn br_msp sp_ops dp_ops vec_sp vec_dp tot_cyc tot_ins res_stl l1_tcm l1_tca l2_tcm l2_tca l3_tcm l3_tca lst_ins)
+
 
 function run_trials {
 #	for i in ${measure_list[@]}; do
 #		tau experiment edit $EXP --measurement $i
-		tau trial create $CMD
+		#tau trial create $CMD
+		echo $CMD
 #	done
 
 }
