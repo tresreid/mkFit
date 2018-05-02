@@ -11,10 +11,12 @@ or ...TTbar70_cache
 import os
 import subprocess as sp
 
+
+# This is where you set what machine is running
 machine = 'Cori'
 
 # define where the data will go
-DIR  = '.tau/mictest_sampling/'
+DIR  = '.tau/mictest_sampling/'  # I recommend changing this to something more descriptive i.e. "cori_scaling"
 
 # define which simulation file to use
 FILE35 = 'TTbar35PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
@@ -22,14 +24,17 @@ FILE70 = 'TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
 FILELarge = 'memoryFile.fv3.clean.writeAll.recT.072617.bin'
 
 
-NUM_RUNS = 1
-NUM_EVENTS=100
+NUM_RUNS = 1   # default values - how many time each thread count metric combo is run
+NUM_EVENTS=100 # number of events (100 for TTbar files 4550 for the big one)
 
 FILE35 = 'TTbar35PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
 FILE70 = 'TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin'
 FILELarge = 'memoryFile.fv3.clean.writeAll.recT.072617.bin'
 
 
+
+# parameters for each machine
+# these must all be defined
 if machine == 'Grover':
 	TAU_DIR = '/home/users/gravelle/taucmdr-enterprise-2/system/tau/tau-2.27'
 	TAU_MAKE = 'Makefile.tau-93948b87-icpc-papi-tbb'
@@ -37,7 +42,7 @@ if machine == 'Grover':
 	CMD  = './mkFit/mkFit --cmssw-n2seeds --input-file {:s} --build-ce --num-thr {:d} --num-events {:d} --silent'
 	SLURM = False
 	EXP_LIST = ['manual_scaling_TTbar35', 'manual_scaling_TTbar70', 'manual_scaling_Large']
-	THREAD_LIST = [1, 8, 16, 32, 64, 128, 256]
+	THREAD_LIST = [1, 8, 16, 32, 64, 128, 256] # thread counts to try
 
 
 if machine == 'Sansa':
@@ -58,32 +63,34 @@ if machine == 'Talapas':
 	EXP_LIST = ['manual_scaling_TTbar35_talapas', 'manual_scaling_TTbar70_talapas', 'manual_scaling_Large_talapas', \
 		'manual_scaling_TTbar35_talapas_fullnode', 'manual_scaling_TTbar70_talapas_fullnode', 'manual_scaling_Large_talapas_fullnode']
 	THREAD_LIST = [1, 8, 16, 32, 48, 56]
-	FILE_DIR = '/projects/hpcl/bgravell/mictest_sampling/'
+	FILE_DIR = '/projects/hpcl/bgravell/mictest_sampling/'  # very important if SLRUM is true, determines where everything is
 	PART = "short"
 	SBATCH = "srun --partition={:s} --job-name=mkFit_{:d} --nodes=1 --ntasks-per-node=1 --cpus-per-task={:d} --time=1-00:00:00 "
 
 
+# some of these (NUM_RUNS and RUN_CNT for sure) are redefined in run_cori.py
+# sorry I will try to make that not true eventually
 if machine == 'Cori':
 	TAU_DIR = '/global/homes/g/gravelle/tau2'
 	TAU_MAKE = 'Makefile.tau-icpc-papi-tbb'
 	TAU = 'tau_exec -T tbb,papi,serial,icpc -ebs {:s}'
-	# CMD  = 'mkFit --cmssw-n2seeds --input-file {:s} --build-ce --num-thr {:d} --num-events {:d} --silent'
-	CMD  = 'python run_cori.py {:d} {:d} {:s} {:s} {:s}' # num threads num events exp name file name dir
+	CMD  = 'python run_cori.py {:d} {:d} {:s} {:s} {:s}' # num threads, num events, exp name, file name, dir
 	SLURM = True
 	EXP_LIST = ['manual_scaling_TTbar35', 'manual_scaling_TTbar70', 'manual_scaling_Large',\
 	            'mixed_thr_scaling_TTbar35', 'mixed_thr_scaling_TTbar70', 'mixed_thr_scaling_Large']
 	# THREAD_LIST = [1, 8, 16, 32, 64, 128, 256]
 	# THREAD_LIST = [48, 80, 96, 112, 144, 160, 176, 192, 208, 224, 240]
-	THREAD_LIST = [4, 8, 16, 32, 48, 64, 80, 96]
-	# THREAD_LIST = [4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256]
+	# THREAD_LIST = [4, 8, 16, 32, 48, 64, 80, 96]
+	THREAD_LIST = [4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256]
 	PART = "regular"
 	SBATCH = "srun --qos={:s} --job-name=mkFit_{:d} --nodes=1 --ntasks-per-node=1 --cpus-per-task={:d} --time=2-00:00:00 --constraint=knl  "
-	FILE_DIR = '/project/projectdirs/m2956/gravelle/mictest_sampling/'
+	FILE_DIR = '/project/projectdirs/m2956/gravelle/mictest_sampling/' # very important if SLRUM is true, determines where everything is
 	NUM_RUNS = 3
 	DIR  = '.tau/cori_scaling/'
 	RUN_CNT = 5
 
 
+# set environment variables
 ENV  = [('TAU_MAKEFILE', TAU_DIR + '/x86_64/lib/' + TAU_MAKE), \
 ('TAU_ROOT', TAU_DIR),\
 ('TAU_CALLPATH','1'),\
@@ -103,6 +110,8 @@ if SLURM:
 	env[LD_PATH[0]] = LD_PATH[1] + ':' + LD_PATH[2] + ':' + LD_PATH[3] + ':' + env[LD_PATH[0]] 
 
 
+
+# define metrics to run for each machine
 if machine == 'Grover' or machine == 'Cori':
 	METRIC_LIST = ['PAPI_TLB_DM', \
 	'PAPI_BR_INS', 'PAPI_BR_CN', 'PAPI_BR_UCN', 'PAPI_BR_MSP',\
@@ -113,9 +122,6 @@ if machine == 'Grover' or machine == 'Cori':
 	'PAPI_LST_INS', 'PAPI_L1_TCM',\
 	'PAPI_NATIVE_LLC_REFERENCES','PAPI_NATIVE_LLC_MISSES',\
 	'PAPI_NATIVE_FETCH_STALL', 'PAPI_NATIVE_RS_FULL_STALL']
-
-	# METRIC_LIST = ['PAPI_NATIVE_FETCH_STALL', 'PAPI_NATIVE_RS_FULL_STALL']
-	
 
 
 if machine == 'Talapas':
@@ -141,13 +147,19 @@ if machine == 'Sansa':
 	'PAPI_VEC_SP','PAPI_VEC_DP']
 
 
+# this is the main bit
+# loops over metrics, threads, then num runs
+# note that cori no longer uses this since it wraps more runs up into one slurm command
 def run_trial(exp_name, in_file, slurm=True, full_node=False):
 	'''
 	exp_name is the name of the mimiced taucmdr experiment
-	it will be used as the subdirectory under DIR
-	it will be sompletely overwritten so don't leave important things there
+		it will be used as the subdirectory under DIR
+		it will be sompletely overwritten so don't leave important things there
+	in_file is the input file
+	full node is only for talapas
 	'''
 
+	# remove old data and recreate folders
 	if machine != 'Cori':
 		sp.Popen('rm -rf ' + DIR + exp_name, shell=True, env=env).wait()
 		sp.Popen('mkdir ' + DIR + exp_name, shell=True, env=env).wait()
@@ -187,7 +199,9 @@ def run_trial(exp_name, in_file, slurm=True, full_node=False):
 
 				cmd = build_cmd(cmd_li)
 
-				
+				# this is where the magic happens
+				# basically run everything
+				# I highly recommend printing the command before launching to double check file paths
 				if(slurm):
 					# print cmd
 					sub_procs[trial_count] = sp.Popen(cmd, shell=True, env=env)
@@ -204,7 +218,8 @@ def run_trial(exp_name, in_file, slurm=True, full_node=False):
 		if proc is not None:
 			proc.wait()
 
-
+# launches one job per thread count for cori
+# each one runs all the metrics and runs from the run_cori.py script
 def run_cori_trial(exp_name, in_file):
 
 	sub_procs = [None for x in range(len(THREAD_LIST))]
@@ -221,7 +236,7 @@ def run_cori_trial(exp_name, in_file):
 		if proc is not None:
 			proc.wait()
 
-
+# strings bash together with ;
 def build_cmd(cmd_li):
 	s = cmd_li[0]
 	for c in range(len(cmd_li)-1):
@@ -230,6 +245,9 @@ def build_cmd(cmd_li):
 	return s
 
 
+# decide which experiments to run
+# if the data files are not with the full program you can add that info in front
+#    DO NOT set FILE_DIR to anything other than the mictest directory especially if you use SLURM
 if machine == 'Talapas':
 	run_trial(EXP_LIST[0],FILE_DIR+FILE35,SLURM)
 	run_trial(EXP_LIST[1],FILE_DIR+FILE70,SLURM)

@@ -64,14 +64,8 @@ METRIC_LIST = ['PAPI_TLB_DM', \
 
 # METRIC_LIST = ['PAPI_NATIVE_FETCH_STALL', 'PAPI_NATIVE_RS_FULL_STALL']
 	
-
-'''
-basically here is the plan; we write a pytohn file that can take command line input
-and have it run a series of trials hell it could just make a stupid log semicolin string
-
-or do seperate runs isnprobably easy and coop the sequential code
-'''
-
+# this is probably what to change to do rooflines on cori
+# make the cmd run the benchmark and adjust the METRIC file appropriately
 def run_trial(exp_name, in_file, slurm=True, full_node=False, ev_thread=False):
 	'''
 	exp_name is the name of the mimiced taucmdr experiment
