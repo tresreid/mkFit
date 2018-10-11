@@ -416,6 +416,8 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
 {
   // debug = true;
 
+  MatriplexHitPacker mhp;
+
   float minChi2[NN];
   int   bestHit[NN];
   // MT: fill_n gave me crap on MIC, NN=8,16, doing in maxSize search below.
@@ -424,11 +426,6 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
   // std::fill_n(bestHit, NN, -1);
 
   const char *varr      = (char*) layer_of_hits.m_hits;
-
-  const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
-  const int   off_param = (char*) layer_of_hits.m_hits[0].posArray() - varr;
-
-  int idx[NN]      __attribute__((aligned(64)));
 
   int maxSize = 0;
 
@@ -451,7 +448,6 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
       }
     }
 
-    idx[it]     = 0;
     bestHit[it] = -1;
     minChi2[it] = Config::chi2Cut;
   }
@@ -462,17 +458,16 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
   {
     //fixme what if size is zero???
 
+    mhp.Reset();
+
 #pragma omp simd
     for (int itrack = 0; itrack < N_proc; ++itrack)
     {
       if (hit_cnt < XHitSize[itrack])
       {
-        idx[itrack] = XHitArr.At(itrack, hit_cnt, 0) * sizeof(Hit);
+         mhp.AddInputAt(itrack, layer_of_hits.m_hits[ XHitArr.At(itrack, hit_cnt, 0) ]);
       }
     }
-#if defined(GATHER_INTRINSICS)
-    GATHER_IDX_LOAD(vi, idx);
-#endif
 
 #ifndef NO_PREFETCH
     // Prefetch to L2 the hits we'll process after two loops iterations.
@@ -501,13 +496,8 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
 
 #else //NO_GATHER
 
-#if defined(GATHER_INTRINSICS)
-    msErr.SlurpIn(varr + off_error, vi);
-    msPar.SlurpIn(varr + off_param, vi);
-#else
-    msErr.SlurpIn(varr + off_error, idx);
-    msPar.SlurpIn(varr + off_param, idx);
-#endif
+    mhp.Pack(msErr, msPar);
+
 #endif //NO_GATHER
 
     //now compute the chi2 of track state vs hit
@@ -631,12 +621,9 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
 {
   // bool debug = true;
 
-  const char *varr      = (char*) layer_of_hits.m_hits;
+  MatriplexHitPacker mhp;
 
-  const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
-  const int   off_param = (char*) layer_of_hits.m_hits[0].posArray() - varr;
-
-  int idx[NN]      __attribute__((aligned(64)));
+  const char *varr = (char*) layer_of_hits.m_hits;
 
   int maxSize = 0;
 
@@ -656,8 +643,6 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
 	maxSize = std::max(maxSize, XHitSize[it]);
       }
     }
-
-    idx[it] = 0;
   }
 
   dprintf("FindCandidates max hits to process=%d\n", maxSize);
@@ -666,17 +651,16 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
   //#pragma noprefetch
   for (int hit_cnt = 0; hit_cnt < maxSize; ++hit_cnt)
   {
+    mhp.Reset();
+
 #pragma omp simd
     for (int itrack = 0; itrack < N_proc; ++itrack)
     {
       if (hit_cnt < XHitSize[itrack])
       {
-	idx[itrack] = XHitArr.At(itrack, hit_cnt, 0) * sizeof(Hit);
+        mhp.AddInputAt(itrack, layer_of_hits.m_hits[ XHitArr.At(itrack, hit_cnt, 0) ]);
       }
     }
-#if defined(GATHER_INTRINSICS)
-    GATHER_IDX_LOAD(vi, idx);
-#endif
 
     // Prefetch to L2 the hits we'll (probably) process after two loops iterations.
     // Ideally this would be initiated before coming here, for whole bunch_of_hits.m_hits vector.
@@ -688,13 +672,7 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
       }
     }
 
-#if defined(GATHER_INTRINSICS)
-    msErr.SlurpIn(varr + off_error, vi);
-    msPar.SlurpIn(varr + off_param, vi);
-#else
-    msErr.SlurpIn(varr + off_error, idx);
-    msPar.SlurpIn(varr + off_param, idx);
-#endif
+    mhp.Pack(msErr, msPar);
 
     //now compute the chi2 of track state vs hit
     MPlexQF outChi2;
@@ -808,12 +786,9 @@ void MkFinder::FindCandidatesCloneEngine(const LayerOfHits &layer_of_hits, CandC
 {
   // bool debug = true;
 
+  MatriplexHitPacker mhp;
+
   const char *varr      = (char*) layer_of_hits.m_hits;
-
-  const int   off_error = (char*) layer_of_hits.m_hits[0].errArray() - varr;
-  const int   off_param = (char*) layer_of_hits.m_hits[0].posArray() - varr;
-
-  int idx[NN]      __attribute__((aligned(64)));
 
   int maxSize = 0;
 
@@ -834,8 +809,6 @@ void MkFinder::FindCandidatesCloneEngine(const LayerOfHits &layer_of_hits, CandC
         maxSize = std::max(maxSize, XHitSize[it]);
       }
     }
-
-    idx[it] = 0;
   }
   // XXXX MT FIXME: use masks to filter out SlurpIns
 
@@ -845,17 +818,16 @@ void MkFinder::FindCandidatesCloneEngine(const LayerOfHits &layer_of_hits, CandC
 //#pragma noprefetch
   for (int hit_cnt = 0; hit_cnt < maxSize; ++hit_cnt)
   {
+    mhp.Reset();
+
 #pragma omp simd
     for (int itrack = 0; itrack < N_proc; ++itrack)
     {
       if (hit_cnt < XHitSize[itrack])
       {
-        idx[itrack] = XHitArr.At(itrack, hit_cnt, 0) * sizeof(Hit);
+        mhp.AddInputAt(itrack, layer_of_hits.m_hits[ XHitArr.At(itrack, hit_cnt, 0) ]);
       }
     }
-#if defined(GATHER_INTRINSICS)
-    GATHER_IDX_LOAD(vi, idx);
-#endif
 
     // Prefetch to L2 the hits we'll (probably) process after two loops iterations.
     // Ideally this would be initiated before coming here, for whole bunch_of_hits.m_hits vector.
@@ -867,13 +839,7 @@ void MkFinder::FindCandidatesCloneEngine(const LayerOfHits &layer_of_hits, CandC
       }
     }
 
-#if defined(GATHER_INTRINSICS)
-    msErr.SlurpIn(varr + off_error, vi);
-    msPar.SlurpIn(varr + off_param, vi);
-#else
-    msErr.SlurpIn(varr + off_error, idx);
-    msPar.SlurpIn(varr + off_param, idx);
-#endif
+    mhp.Pack(msErr, msPar);
 
     //now compute the chi2 of track state vs hit
     MPlexQF outChi2;
