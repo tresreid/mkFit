@@ -416,7 +416,7 @@ void MkFinder::AddBestHit(const LayerOfHits &layer_of_hits, const int N_proc,
 {
   // debug = true;
 
-  MatriplexHitPacker mhp;
+  MatriplexHitPacker mhp(layer_of_hits.m_hits[0]);
 
   float minChi2[NN];
   int   bestHit[NN];
@@ -621,7 +621,7 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
 {
   // bool debug = true;
 
-  MatriplexHitPacker mhp;
+  MatriplexHitPacker mhp(layer_of_hits.m_hits[0]);
 
   const char *varr = (char*) layer_of_hits.m_hits;
 
@@ -786,7 +786,7 @@ void MkFinder::FindCandidatesCloneEngine(const LayerOfHits &layer_of_hits, CandC
 {
   // bool debug = true;
 
-  MatriplexHitPacker mhp;
+  MatriplexHitPacker mhp(layer_of_hits.m_hits[0]);
 
   const char *varr      = (char*) layer_of_hits.m_hits;
 
@@ -1003,7 +1003,7 @@ void MkFinder::BkFitInputTracks(TrackVec& cands, int beg, int end)
   // SlurpIn based on XHit array - so Nhits is irrelevant.
   // Could as well use HotArrays from tracks directly + a local cursor array to last hit.
 
-  MatriplexTrackPacker mtp;
+  MatriplexTrackPacker mtp(cands[beg]);
 
   int itrack = 0;
 
@@ -1029,10 +1029,12 @@ void MkFinder::BkFitInputTracks(TrackVec& cands, int beg, int end)
 
 void MkFinder::BkFitInputTracks(EventOfCombCandidates& eocss, int beg, int end)
 {
+  // XXXX Can cause trouble if per-seed vectors get scattered beyond 2GB (or maybe 8).
+
   // SlurpIn based on XHit array - so Nhits is irrelevant.
   // Could as well use HotArrays from tracks directly + a local cursor array to last hit.
 
-  MatriplexTrackPacker mtp;
+  MatriplexTrackPacker mtp(eocss[beg][0]);
 
   int itrack = 0;
 
