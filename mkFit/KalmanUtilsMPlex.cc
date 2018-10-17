@@ -49,12 +49,12 @@ void MultResidualsAdd(const MPlexL2& A,
    for (idx_t n = 0; n < N; ++n)
    {
       // generate loop (can also write it manually this time, it's not much)
-      d[0 * N + n] = b[0 * N + n] + a[ 0 * N + n] * c[0 * N + n] + a[ 1 * N + n] * c[1 * N + n];
-      d[1 * N + n] = b[1 * N + n] + a[ 2 * N + n] * c[0 * N + n] + a[ 3 * N + n] * c[1 * N + n];
-      d[2 * N + n] = b[2 * N + n] + a[ 4 * N + n] * c[0 * N + n] + a[ 5 * N + n] * c[1 * N + n];
-      d[3 * N + n] = b[3 * N + n] + a[ 6 * N + n] * c[0 * N + n] + a[ 7 * N + n] * c[1 * N + n];
-      d[4 * N + n] = b[4 * N + n] + a[ 8 * N + n] * c[0 * N + n] + a[ 9 * N + n] * c[1 * N + n];
-      d[5 * N + n] = b[5 * N + n] + a[10 * N + n] * c[0 * N + n] + a[11 * N + n] * c[1 * N + n];
+      d[h0 * N + n] = b[h0 * N + n] + a[ h0 * N + n] * c[h0 * N + n] + a[ h1 * N + n] * c[h1 * N + n];
+      d[h1 * N + n] = b[h1 * N + n] + a[ h2 * N + n] * c[h0 * N + n] + a[ h3 * N + n] * c[h1 * N + n];
+      d[h2 * N + n] = b[h2 * N + n] + a[ h4 * N + n] * c[h0 * N + n] + a[ h5 * N + n] * c[h1 * N + n];
+      d[h3 * N + n] = b[h3 * N + n] + a[ h6 * N + n] * c[h0 * N + n] + a[ h7 * N + n] * c[h1 * N + n];
+      d[h4 * N + n] = b[h4 * N + n] + a[ h8 * N + n] * c[h0 * N + n] + a[ h9 * N + n] * c[h1 * N + n];
+      d[h5 * N + n] = b[h5 * N + n] + a[h10 * N + n] * c[h0 * N + n] + a[h11 * N + n] * c[h1 * N + n];
    }
 }
 
@@ -80,9 +80,9 @@ void Chi2Similarity(const MPlex2V& A,//resPar
    for (idx_t n = 0; n < N; ++n)
    {
       // generate loop (can also write it manually this time, it's not much)
-      d[0 * N + n] = c[0 * N + n]*a[0 * N + n]*a[0 * N + n]
-                   + c[2 * N + n]*a[1 * N + n]*a[1 * N + n] 
-               + 2*( c[1 * N + n]*a[1 * N + n]*a[0 * N + n]);
+      d[h0 * N + n] = c[h0 * N + n]*a[h0 * N + n]*a[h0 * N + n]
+                   + c[h2 * N + n]*a[h1 * N + n]*a[h1 * N + n] 
+               + 2*( c[h1 * N + n]*a[h1 * N + n]*a[h0 * N + n]);
    }
 }
 
@@ -127,9 +127,9 @@ void AddIntoUpperLeft2x2(const MPlexLS& A, const MPlexHS& B, MPlex2S& C)
 #pragma omp simd
    for (idx_t n = 0; n < N; ++n)
    {
-      c[0*N+n] = a[0*N+n] + b[0*N+n];
-      c[1*N+n] = a[1*N+n] + b[1*N+n];
-      c[2*N+n] = a[2*N+n] + b[2*N+n];
+      c[h0*N+n] = a[h0*N+n] + b[h0*N+n];
+      c[h1*N+n] = a[h1*N+n] + b[h1*N+n];
+      c[h2*N+n] = a[h2*N+n] + b[h2*N+n];
    }
 }
 
@@ -171,8 +171,8 @@ void SubtractFirst2(const MPlexHV& A, const MPlexLV& B, MPlex2V& C)
 #pragma omp simd
    for (idx_t n = 0; n < N; ++n)
    {
-      c[0*N+n] = a[0*N+n] - b[0*N+n];
-      c[1*N+n] = a[1*N+n] - b[1*N+n];
+      c[h0*N+n] = a[h0*N+n] - b[h0*N+n];
+      c[h1*N+n] = a[h1*N+n] - b[h1*N+n];
    }
 }
 
@@ -378,27 +378,27 @@ void KHC(const MPlexLL& A, const MPlexLS& B, MPlexLS& C)
 #pragma simd
    for (int n = 0; n < N; ++n)
    {
-      c[ 0*N+n] = a[ 0*N+n]*b[ 0*N+n] + a[ 1*N+n]*b[ 1*N+n] + a[ 2*N+n]*b[ 3*N+n];
-      c[ 1*N+n] = a[ 6*N+n]*b[ 0*N+n] + a[ 7*N+n]*b[ 1*N+n] + a[ 8*N+n]*b[ 3*N+n];
-      c[ 2*N+n] = a[ 6*N+n]*b[ 1*N+n] + a[ 7*N+n]*b[ 2*N+n] + a[ 8*N+n]*b[ 4*N+n];
-      c[ 3*N+n] = a[12*N+n]*b[ 0*N+n] + a[13*N+n]*b[ 1*N+n] + a[14*N+n]*b[ 3*N+n];
-      c[ 4*N+n] = a[12*N+n]*b[ 1*N+n] + a[13*N+n]*b[ 2*N+n] + a[14*N+n]*b[ 4*N+n];
-      c[ 5*N+n] = a[12*N+n]*b[ 3*N+n] + a[13*N+n]*b[ 4*N+n] + a[14*N+n]*b[ 5*N+n];
-      c[ 6*N+n] = a[18*N+n]*b[ 0*N+n] + a[19*N+n]*b[ 1*N+n] + a[20*N+n]*b[ 3*N+n];
-      c[ 7*N+n] = a[18*N+n]*b[ 1*N+n] + a[19*N+n]*b[ 2*N+n] + a[20*N+n]*b[ 4*N+n];
-      c[ 8*N+n] = a[18*N+n]*b[ 3*N+n] + a[19*N+n]*b[ 4*N+n] + a[20*N+n]*b[ 5*N+n];
-      c[ 9*N+n] = a[18*N+n]*b[ 6*N+n] + a[19*N+n]*b[ 7*N+n] + a[20*N+n]*b[ 8*N+n];
-      c[10*N+n] = a[24*N+n]*b[ 0*N+n] + a[25*N+n]*b[ 1*N+n] + a[26*N+n]*b[ 3*N+n];
-      c[11*N+n] = a[24*N+n]*b[ 1*N+n] + a[25*N+n]*b[ 2*N+n] + a[26*N+n]*b[ 4*N+n];
-      c[12*N+n] = a[24*N+n]*b[ 3*N+n] + a[25*N+n]*b[ 4*N+n] + a[26*N+n]*b[ 5*N+n];
-      c[13*N+n] = a[24*N+n]*b[ 6*N+n] + a[25*N+n]*b[ 7*N+n] + a[26*N+n]*b[ 8*N+n];
-      c[14*N+n] = a[24*N+n]*b[10*N+n] + a[25*N+n]*b[11*N+n] + a[26*N+n]*b[12*N+n];
-      c[15*N+n] = a[30*N+n]*b[ 0*N+n] + a[31*N+n]*b[ 1*N+n] + a[32*N+n]*b[ 3*N+n];
-      c[16*N+n] = a[30*N+n]*b[ 1*N+n] + a[31*N+n]*b[ 2*N+n] + a[32*N+n]*b[ 4*N+n];
-      c[17*N+n] = a[30*N+n]*b[ 3*N+n] + a[31*N+n]*b[ 4*N+n] + a[32*N+n]*b[ 5*N+n];
-      c[18*N+n] = a[30*N+n]*b[ 6*N+n] + a[31*N+n]*b[ 7*N+n] + a[32*N+n]*b[ 8*N+n];
-      c[19*N+n] = a[30*N+n]*b[10*N+n] + a[31*N+n]*b[11*N+n] + a[32*N+n]*b[12*N+n];
-      c[20*N+n] = a[30*N+n]*b[15*N+n] + a[31*N+n]*b[16*N+n] + a[32*N+n]*b[17*N+n];
+      c[ h0*N+n] = a[ h0*N+n]*b[ h0*N+n] + a[ h1*N+n]*b[ h1*N+n] + a[ h2*N+n]*b[ h3*N+n];
+      c[ h1*N+n] = a[ h6*N+n]*b[ h0*N+n] + a[ h7*N+n]*b[ h1*N+n] + a[ h8*N+n]*b[ h3*N+n];
+      c[ h2*N+n] = a[ h6*N+n]*b[ h1*N+n] + a[ h7*N+n]*b[ h2*N+n] + a[ h8*N+n]*b[ h4*N+n];
+      c[ h3*N+n] = a[h12*N+n]*b[ h0*N+n] + a[h13*N+n]*b[ h1*N+n] + a[h14*N+n]*b[ h3*N+n];
+      c[ h4*N+n] = a[h12*N+n]*b[ h1*N+n] + a[h13*N+n]*b[ h2*N+n] + a[h14*N+n]*b[ h4*N+n];
+      c[ h5*N+n] = a[h12*N+n]*b[ h3*N+n] + a[h13*N+n]*b[ h4*N+n] + a[h14*N+n]*b[ h5*N+n];
+      c[ h6*N+n] = a[h18*N+n]*b[ h0*N+n] + a[h19*N+n]*b[ h1*N+n] + a[h20*N+n]*b[ h3*N+n];
+      c[ h7*N+n] = a[h18*N+n]*b[ h1*N+n] + a[h19*N+n]*b[ h2*N+n] + a[h20*N+n]*b[ h4*N+n];
+      c[ h8*N+n] = a[h18*N+n]*b[ h3*N+n] + a[h19*N+n]*b[ h4*N+n] + a[h20*N+n]*b[ h5*N+n];
+      c[ h9*N+n] = a[h18*N+n]*b[ h6*N+n] + a[h19*N+n]*b[ h7*N+n] + a[h20*N+n]*b[ h8*N+n];
+      c[h10*N+n] = a[h24*N+n]*b[ h0*N+n] + a[h25*N+n]*b[ h1*N+n] + a[h26*N+n]*b[ h3*N+n];
+      c[h11*N+n] = a[h24*N+n]*b[ h1*N+n] + a[h25*N+n]*b[ h2*N+n] + a[h26*N+n]*b[ h4*N+n];
+      c[h12*N+n] = a[h24*N+n]*b[ h3*N+n] + a[h25*N+n]*b[ h4*N+n] + a[h26*N+n]*b[ h5*N+n];
+      c[h13*N+n] = a[h24*N+n]*b[ h6*N+n] + a[h25*N+n]*b[ h7*N+n] + a[h26*N+n]*b[ h8*N+n];
+      c[h14*N+n] = a[h24*N+n]*b[h10*N+n] + a[h25*N+n]*b[h11*N+n] + a[h26*N+n]*b[h12*N+n];
+      c[h15*N+n] = a[h30*N+n]*b[ h0*N+n] + a[h31*N+n]*b[ h1*N+n] + a[h32*N+n]*b[ h3*N+n];
+      c[h16*N+n] = a[h30*N+n]*b[ h1*N+n] + a[h31*N+n]*b[ h2*N+n] + a[h32*N+n]*b[ h4*N+n];
+      c[h17*N+n] = a[h30*N+n]*b[ h3*N+n] + a[h31*N+n]*b[ h4*N+n] + a[h32*N+n]*b[ h5*N+n];
+      c[h18*N+n] = a[h30*N+n]*b[ h6*N+n] + a[h31*N+n]*b[ h7*N+n] + a[h32*N+n]*b[ h8*N+n];
+      c[h19*N+n] = a[h30*N+n]*b[h10*N+n] + a[h31*N+n]*b[h11*N+n] + a[h32*N+n]*b[h12*N+n];
+      c[h20*N+n] = a[h30*N+n]*b[h15*N+n] + a[h31*N+n]*b[h16*N+n] + a[h32*N+n]*b[h17*N+n];
    }
 }
 
