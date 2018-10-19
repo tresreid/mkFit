@@ -98,42 +98,42 @@ void MultHelixProp(const MPlexLL& A, const MPlexLS& B, MPlexLL& C)
 #pragma simd
    for (int n = 0; n < N; ++n)
    {
-      c[ h0*N+n] = a[ h0*N+n]*b[ h0*N+n] + a[ h1*N+n]*b[ h1*N+n] + a[ h3*N+n]*b[ h6*N+n] + a[ h4*N+n]*b[h10*N+n];
-      c[ h1*N+n] = a[ h0*N+n]*b[ h1*N+n] + a[ h1*N+n]*b[ h2*N+n] + a[ h3*N+n]*b[ h7*N+n] + a[ h4*N+n]*b[h11*N+n];
-      c[ h2*N+n] = a[ h0*N+n]*b[ h3*N+n] + a[ h1*N+n]*b[ h4*N+n] + a[ h3*N+n]*b[ h8*N+n] + a[ h4*N+n]*b[h12*N+n];
-      c[ h3*N+n] = a[ h0*N+n]*b[ h6*N+n] + a[ h1*N+n]*b[ h7*N+n] + a[ h3*N+n]*b[ h9*N+n] + a[ h4*N+n]*b[h13*N+n];
-      c[ h4*N+n] = a[ h0*N+n]*b[h10*N+n] + a[ h1*N+n]*b[h11*N+n] + a[ h3*N+n]*b[h13*N+n] + a[ h4*N+n]*b[h14*N+n];
-      c[ h5*N+n] = a[ h0*N+n]*b[h15*N+n] + a[ h1*N+n]*b[h16*N+n] + a[ h3*N+n]*b[h18*N+n] + a[ h4*N+n]*b[h19*N+n];
-      c[ h6*N+n] = a[ h6*N+n]*b[ h0*N+n] + a[ h7*N+n]*b[ h1*N+n] + a[ h9*N+n]*b[ h6*N+n] + a[h10*N+n]*b[h10*N+n];
-      c[ h7*N+n] = a[ h6*N+n]*b[ h1*N+n] + a[ h7*N+n]*b[ h2*N+n] + a[ h9*N+n]*b[ h7*N+n] + a[h10*N+n]*b[h11*N+n];
-      c[ h8*N+n] = a[ h6*N+n]*b[ h3*N+n] + a[ h7*N+n]*b[ h4*N+n] + a[ h9*N+n]*b[ h8*N+n] + a[h10*N+n]*b[h12*N+n];
-      c[ h9*N+n] = a[ h6*N+n]*b[ h6*N+n] + a[ h7*N+n]*b[ h7*N+n] + a[ h9*N+n]*b[ h9*N+n] + a[h10*N+n]*b[h13*N+n];
-      c[h10*N+n] = a[ h6*N+n]*b[h10*N+n] + a[ h7*N+n]*b[h11*N+n] + a[ h9*N+n]*b[h13*N+n] + a[h10*N+n]*b[h14*N+n];
-      c[h11*N+n] = a[ h6*N+n]*b[h15*N+n] + a[ h7*N+n]*b[h16*N+n] + a[ h9*N+n]*b[h18*N+n] + a[h10*N+n]*b[h19*N+n];
-      c[h12*N+n] = a[h12*N+n]*b[ h0*N+n] + a[h13*N+n]*b[ h1*N+n] + b[ h3*N+n] + a[h15*N+n]*b[ h6*N+n] + a[h16*N+n]*b[h10*N+n] + a[h17*N+n]*b[h15*N+n];
-      c[h13*N+n] = a[h12*N+n]*b[ h1*N+n] + a[h13*N+n]*b[ h2*N+n] + b[ h4*N+n] + a[h15*N+n]*b[ h7*N+n] + a[h16*N+n]*b[h11*N+n] + a[h17*N+n]*b[h16*N+n];
-      c[h14*N+n] = a[h12*N+n]*b[ h3*N+n] + a[h13*N+n]*b[ h4*N+n] + b[ h5*N+n] + a[h15*N+n]*b[ h8*N+n] + a[h16*N+n]*b[h12*N+n] + a[h17*N+n]*b[h17*N+n];
-      c[h15*N+n] = a[h12*N+n]*b[ h6*N+n] + a[h13*N+n]*b[ h7*N+n] + b[ h8*N+n] + a[h15*N+n]*b[ h9*N+n] + a[h16*N+n]*b[h13*N+n] + a[h17*N+n]*b[h18*N+n];
-      c[h16*N+n] = a[h12*N+n]*b[h10*N+n] + a[h13*N+n]*b[h11*N+n] + b[h12*N+n] + a[h15*N+n]*b[h13*N+n] + a[h16*N+n]*b[h14*N+n] + a[h17*N+n]*b[h19*N+n];
-      c[h17*N+n] = a[h12*N+n]*b[h15*N+n] + a[h13*N+n]*b[h16*N+n] + b[h17*N+n] + a[h15*N+n]*b[h18*N+n] + a[h16*N+n]*b[h19*N+n] + a[h17*N+n]*b[h20*N+n];
-      c[h18*N+n] = a[h18*N+n]*b[ h0*N+n] + a[h19*N+n]*b[ h1*N+n] + a[h21*N+n]*b[ h6*N+n] + a[h22*N+n]*b[h10*N+n];
-      c[h19*N+n] = a[h18*N+n]*b[ h1*N+n] + a[h19*N+n]*b[ h2*N+n] + a[h21*N+n]*b[ h7*N+n] + a[h22*N+n]*b[h11*N+n];
-      c[h20*N+n] = a[h18*N+n]*b[ h3*N+n] + a[h19*N+n]*b[ h4*N+n] + a[h21*N+n]*b[ h8*N+n] + a[h22*N+n]*b[h12*N+n];
-      c[h21*N+n] = a[h18*N+n]*b[ h6*N+n] + a[h19*N+n]*b[ h7*N+n] + a[h21*N+n]*b[ h9*N+n] + a[h22*N+n]*b[h13*N+n];
-      c[h22*N+n] = a[h18*N+n]*b[h10*N+n] + a[h19*N+n]*b[h11*N+n] + a[h21*N+n]*b[h13*N+n] + a[h22*N+n]*b[h14*N+n];
-      c[h23*N+n] = a[h18*N+n]*b[h15*N+n] + a[h19*N+n]*b[h16*N+n] + a[h21*N+n]*b[h18*N+n] + a[h22*N+n]*b[h19*N+n];
-      c[h24*N+n] = a[h24*N+n]*b[ h0*N+n] + a[h25*N+n]*b[ h1*N+n] + a[h27*N+n]*b[ h6*N+n] + a[h28*N+n]*b[h10*N+n];
-      c[h25*N+n] = a[h24*N+n]*b[ h1*N+n] + a[h25*N+n]*b[ h2*N+n] + a[h27*N+n]*b[ h7*N+n] + a[h28*N+n]*b[h11*N+n];
-      c[h26*N+n] = a[h24*N+n]*b[ h3*N+n] + a[h25*N+n]*b[ h4*N+n] + a[h27*N+n]*b[ h8*N+n] + a[h28*N+n]*b[h12*N+n];
-      c[h27*N+n] = a[h24*N+n]*b[ h6*N+n] + a[h25*N+n]*b[ h7*N+n] + a[h27*N+n]*b[ h9*N+n] + a[h28*N+n]*b[h13*N+n];
-      c[h28*N+n] = a[h24*N+n]*b[h10*N+n] + a[h25*N+n]*b[h11*N+n] + a[h27*N+n]*b[h13*N+n] + a[h28*N+n]*b[h14*N+n];
-      c[h29*N+n] = a[h24*N+n]*b[h15*N+n] + a[h25*N+n]*b[h16*N+n] + a[h27*N+n]*b[h18*N+n] + a[h28*N+n]*b[h19*N+n];
-      c[h30*N+n] = b[h15*N+n];
-      c[h31*N+n] = b[h16*N+n];
-      c[h32*N+n] = b[h17*N+n];
-      c[h33*N+n] = b[h18*N+n];
-      c[h34*N+n] = b[h19*N+n];
-      c[h35*N+n] = b[h20*N+n];
+      c[ h0*N+n] += a[ h0*N+n]*b[ h0*N+n] + a[ h1*N+n]*b[ h1*N+n] + a[ h3*N+n]*b[ h6*N+n] + a[ h4*N+n]*b[h10*N+n];
+      c[ h1*N+n] += a[ h0*N+n]*b[ h1*N+n] + a[ h1*N+n]*b[ h2*N+n] + a[ h3*N+n]*b[ h7*N+n] + a[ h4*N+n]*b[h11*N+n];
+      c[ h2*N+n] += a[ h0*N+n]*b[ h3*N+n] + a[ h1*N+n]*b[ h4*N+n] + a[ h3*N+n]*b[ h8*N+n] + a[ h4*N+n]*b[h12*N+n];
+      c[ h3*N+n] += a[ h0*N+n]*b[ h6*N+n] + a[ h1*N+n]*b[ h7*N+n] + a[ h3*N+n]*b[ h9*N+n] + a[ h4*N+n]*b[h13*N+n];
+      c[ h4*N+n] += a[ h0*N+n]*b[h10*N+n] + a[ h1*N+n]*b[h11*N+n] + a[ h3*N+n]*b[h13*N+n] + a[ h4*N+n]*b[h14*N+n];
+      c[ h5*N+n] += a[ h0*N+n]*b[h15*N+n] + a[ h1*N+n]*b[h16*N+n] + a[ h3*N+n]*b[h18*N+n] + a[ h4*N+n]*b[h19*N+n];
+      c[ h6*N+n] += a[ h6*N+n]*b[ h0*N+n] + a[ h7*N+n]*b[ h1*N+n] + a[ h9*N+n]*b[ h6*N+n] + a[h10*N+n]*b[h10*N+n];
+      c[ h7*N+n] += a[ h6*N+n]*b[ h1*N+n] + a[ h7*N+n]*b[ h2*N+n] + a[ h9*N+n]*b[ h7*N+n] + a[h10*N+n]*b[h11*N+n];
+      c[ h8*N+n] += a[ h6*N+n]*b[ h3*N+n] + a[ h7*N+n]*b[ h4*N+n] + a[ h9*N+n]*b[ h8*N+n] + a[h10*N+n]*b[h12*N+n];
+      c[ h9*N+n] += a[ h6*N+n]*b[ h6*N+n] + a[ h7*N+n]*b[ h7*N+n] + a[ h9*N+n]*b[ h9*N+n] + a[h10*N+n]*b[h13*N+n];
+      c[h10*N+n] += a[ h6*N+n]*b[h10*N+n] + a[ h7*N+n]*b[h11*N+n] + a[ h9*N+n]*b[h13*N+n] + a[h10*N+n]*b[h14*N+n];
+      c[h11*N+n] += a[ h6*N+n]*b[h15*N+n] + a[ h7*N+n]*b[h16*N+n] + a[ h9*N+n]*b[h18*N+n] + a[h10*N+n]*b[h19*N+n];
+      c[h12*N+n] += a[h12*N+n]*b[ h0*N+n] + a[h13*N+n]*b[ h1*N+n] + b[ h3*N+n] + a[h15*N+n]*b[ h6*N+n] + a[h16*N+n]*b[h10*N+n] + a[h17*N+n]*b[h15*N+n];
+      c[h13*N+n] += a[h12*N+n]*b[ h1*N+n] + a[h13*N+n]*b[ h2*N+n] + b[ h4*N+n] + a[h15*N+n]*b[ h7*N+n] + a[h16*N+n]*b[h11*N+n] + a[h17*N+n]*b[h16*N+n];
+      c[h14*N+n] += a[h12*N+n]*b[ h3*N+n] + a[h13*N+n]*b[ h4*N+n] + b[ h5*N+n] + a[h15*N+n]*b[ h8*N+n] + a[h16*N+n]*b[h12*N+n] + a[h17*N+n]*b[h17*N+n];
+      c[h15*N+n] += a[h12*N+n]*b[ h6*N+n] + a[h13*N+n]*b[ h7*N+n] + b[ h8*N+n] + a[h15*N+n]*b[ h9*N+n] + a[h16*N+n]*b[h13*N+n] + a[h17*N+n]*b[h18*N+n];
+      c[h16*N+n] += a[h12*N+n]*b[h10*N+n] + a[h13*N+n]*b[h11*N+n] + b[h12*N+n] + a[h15*N+n]*b[h13*N+n] + a[h16*N+n]*b[h14*N+n] + a[h17*N+n]*b[h19*N+n];
+      c[h17*N+n] += a[h12*N+n]*b[h15*N+n] + a[h13*N+n]*b[h16*N+n] + b[h17*N+n] + a[h15*N+n]*b[h18*N+n] + a[h16*N+n]*b[h19*N+n] + a[h17*N+n]*b[h20*N+n];
+      c[h18*N+n] += a[h18*N+n]*b[ h0*N+n] + a[h19*N+n]*b[ h1*N+n] + a[h21*N+n]*b[ h6*N+n] + a[h22*N+n]*b[h10*N+n];
+      c[h19*N+n] += a[h18*N+n]*b[ h1*N+n] + a[h19*N+n]*b[ h2*N+n] + a[h21*N+n]*b[ h7*N+n] + a[h22*N+n]*b[h11*N+n];
+      c[h20*N+n] += a[h18*N+n]*b[ h3*N+n] + a[h19*N+n]*b[ h4*N+n] + a[h21*N+n]*b[ h8*N+n] + a[h22*N+n]*b[h12*N+n];
+      c[h21*N+n] += a[h18*N+n]*b[ h6*N+n] + a[h19*N+n]*b[ h7*N+n] + a[h21*N+n]*b[ h9*N+n] + a[h22*N+n]*b[h13*N+n];
+      c[h22*N+n] += a[h18*N+n]*b[h10*N+n] + a[h19*N+n]*b[h11*N+n] + a[h21*N+n]*b[h13*N+n] + a[h22*N+n]*b[h14*N+n];
+      c[h23*N+n] += a[h18*N+n]*b[h15*N+n] + a[h19*N+n]*b[h16*N+n] + a[h21*N+n]*b[h18*N+n] + a[h22*N+n]*b[h19*N+n];
+      c[h24*N+n] += a[h24*N+n]*b[ h0*N+n] + a[h25*N+n]*b[ h1*N+n] + a[h27*N+n]*b[ h6*N+n] + a[h28*N+n]*b[h10*N+n];
+      c[h25*N+n] += a[h24*N+n]*b[ h1*N+n] + a[h25*N+n]*b[ h2*N+n] + a[h27*N+n]*b[ h7*N+n] + a[h28*N+n]*b[h11*N+n];
+      c[h26*N+n] += a[h24*N+n]*b[ h3*N+n] + a[h25*N+n]*b[ h4*N+n] + a[h27*N+n]*b[ h8*N+n] + a[h28*N+n]*b[h12*N+n];
+      c[h27*N+n] += a[h24*N+n]*b[ h6*N+n] + a[h25*N+n]*b[ h7*N+n] + a[h27*N+n]*b[ h9*N+n] + a[h28*N+n]*b[h13*N+n];
+      c[h28*N+n] += a[h24*N+n]*b[h10*N+n] + a[h25*N+n]*b[h11*N+n] + a[h27*N+n]*b[h13*N+n] + a[h28*N+n]*b[h14*N+n];
+      c[h29*N+n] += a[h24*N+n]*b[h15*N+n] + a[h25*N+n]*b[h16*N+n] + a[h27*N+n]*b[h18*N+n] + a[h28*N+n]*b[h19*N+n];
+      c[h30*N+n] += b[h15*N+n];
+      c[h31*N+n] += b[h16*N+n];
+      c[h32*N+n] += b[h17*N+n];
+      c[h33*N+n] += b[h18*N+n];
+      c[h34*N+n] += b[h19*N+n];
+      c[h35*N+n] += b[h20*N+n];
    }
 }
 
@@ -152,27 +152,27 @@ void MultHelixPropTransp(const MPlexLL& A, const MPlexLL& B, MPlexLS& C)
 #pragma simd
    for (int n = 0; n < N; ++n)
    {
-      c[ h0*N+n] = b[ h0*N+n]*a[ h0*N+n] + b[ h1*N+n]*a[ h1*N+n] + b[ h3*N+n]*a[ h3*N+n] + b[ h4*N+n]*a[ h4*N+n];
-      c[ h1*N+n] = b[ h6*N+n]*a[ h0*N+n] + b[ h7*N+n]*a[ h1*N+n] + b[ h9*N+n]*a[ h3*N+n] + b[h10*N+n]*a[ h4*N+n];
-      c[ h2*N+n] = b[ h6*N+n]*a[ h6*N+n] + b[ h7*N+n]*a[ h7*N+n] + b[ h9*N+n]*a[ h9*N+n] + b[h10*N+n]*a[h10*N+n];
-      c[ h3*N+n] = b[h12*N+n]*a[ h0*N+n] + b[h13*N+n]*a[ h1*N+n] + b[h15*N+n]*a[ h3*N+n] + b[h16*N+n]*a[ h4*N+n];
-      c[ h4*N+n] = b[h12*N+n]*a[ h6*N+n] + b[h13*N+n]*a[ h7*N+n] + b[h15*N+n]*a[ h9*N+n] + b[h16*N+n]*a[h10*N+n];
-      c[ h5*N+n] = b[h12*N+n]*a[h12*N+n] + b[h13*N+n]*a[h13*N+n] + b[h14*N+n] + b[h15*N+n]*a[h15*N+n] + b[h16*N+n]*a[h16*N+n] + b[h17*N+n]*a[h17*N+n];
-      c[ h6*N+n] = b[h18*N+n]*a[ h0*N+n] + b[h19*N+n]*a[ h1*N+n] + b[h21*N+n]*a[ h3*N+n] + b[h22*N+n]*a[ h4*N+n];
-      c[ h7*N+n] = b[h18*N+n]*a[ h6*N+n] + b[h19*N+n]*a[ h7*N+n] + b[h21*N+n]*a[ h9*N+n] + b[h22*N+n]*a[h10*N+n];
-      c[ h8*N+n] = b[h18*N+n]*a[h12*N+n] + b[h19*N+n]*a[h13*N+n] + b[h20*N+n] + b[h21*N+n]*a[h15*N+n] + b[h22*N+n]*a[h16*N+n] + b[h23*N+n]*a[h17*N+n];
-      c[ h9*N+n] = b[h18*N+n]*a[h18*N+n] + b[h19*N+n]*a[h19*N+n] + b[h21*N+n]*a[h21*N+n] + b[h22*N+n]*a[h22*N+n];
-      c[h10*N+n] = b[h24*N+n]*a[ h0*N+n] + b[h25*N+n]*a[ h1*N+n] + b[h27*N+n]*a[ h3*N+n] + b[h28*N+n]*a[ h4*N+n];
-      c[h11*N+n] = b[h24*N+n]*a[ h6*N+n] + b[h25*N+n]*a[ h7*N+n] + b[h27*N+n]*a[ h9*N+n] + b[h28*N+n]*a[h10*N+n];
-      c[h12*N+n] = b[h24*N+n]*a[h12*N+n] + b[h25*N+n]*a[h13*N+n] + b[h26*N+n] + b[h27*N+n]*a[h15*N+n] + b[h28*N+n]*a[h16*N+n] + b[h29*N+n]*a[h17*N+n];
-      c[h13*N+n] = b[h24*N+n]*a[h18*N+n] + b[h25*N+n]*a[h19*N+n] + b[h27*N+n]*a[h21*N+n] + b[h28*N+n]*a[h22*N+n];
-      c[h14*N+n] = b[h24*N+n]*a[h24*N+n] + b[h25*N+n]*a[h25*N+n] + b[h27*N+n]*a[h27*N+n] + b[h28*N+n]*a[h28*N+n];
-      c[h15*N+n] = b[h30*N+n]*a[ h0*N+n] + b[h31*N+n]*a[ h1*N+n] + b[h33*N+n]*a[ h3*N+n] + b[h34*N+n]*a[ h4*N+n];
-      c[h16*N+n] = b[h30*N+n]*a[ h6*N+n] + b[h31*N+n]*a[ h7*N+n] + b[h33*N+n]*a[ h9*N+n] + b[h34*N+n]*a[h10*N+n];
-      c[h17*N+n] = b[h30*N+n]*a[h12*N+n] + b[h31*N+n]*a[h13*N+n] + b[h32*N+n] + b[h33*N+n]*a[h15*N+n] + b[h34*N+n]*a[h16*N+n] + b[h35*N+n]*a[h17*N+n];
-      c[h18*N+n] = b[h30*N+n]*a[h18*N+n] + b[h31*N+n]*a[h19*N+n] + b[h33*N+n]*a[h21*N+n] + b[h34*N+n]*a[h22*N+n];
-      c[h19*N+n] = b[h30*N+n]*a[h24*N+n] + b[h31*N+n]*a[h25*N+n] + b[h33*N+n]*a[h27*N+n] + b[h34*N+n]*a[h28*N+n];
-      c[h20*N+n] = b[h35*N+n];
+      c[ h0*N+n] += b[ h0*N+n]*a[ h0*N+n] + b[ h1*N+n]*a[ h1*N+n] + b[ h3*N+n]*a[ h3*N+n] + b[ h4*N+n]*a[ h4*N+n];
+      c[ h1*N+n] += b[ h6*N+n]*a[ h0*N+n] + b[ h7*N+n]*a[ h1*N+n] + b[ h9*N+n]*a[ h3*N+n] + b[h10*N+n]*a[ h4*N+n];
+      c[ h2*N+n] += b[ h6*N+n]*a[ h6*N+n] + b[ h7*N+n]*a[ h7*N+n] + b[ h9*N+n]*a[ h9*N+n] + b[h10*N+n]*a[h10*N+n];
+      c[ h3*N+n] += b[h12*N+n]*a[ h0*N+n] + b[h13*N+n]*a[ h1*N+n] + b[h15*N+n]*a[ h3*N+n] + b[h16*N+n]*a[ h4*N+n];
+      c[ h4*N+n] += b[h12*N+n]*a[ h6*N+n] + b[h13*N+n]*a[ h7*N+n] + b[h15*N+n]*a[ h9*N+n] + b[h16*N+n]*a[h10*N+n];
+      c[ h5*N+n] += b[h12*N+n]*a[h12*N+n] + b[h13*N+n]*a[h13*N+n] + b[h14*N+n] + b[h15*N+n]*a[h15*N+n] + b[h16*N+n]*a[h16*N+n] + b[h17*N+n]*a[h17*N+n];
+      c[ h6*N+n] += b[h18*N+n]*a[ h0*N+n] + b[h19*N+n]*a[ h1*N+n] + b[h21*N+n]*a[ h3*N+n] + b[h22*N+n]*a[ h4*N+n];
+      c[ h7*N+n] += b[h18*N+n]*a[ h6*N+n] + b[h19*N+n]*a[ h7*N+n] + b[h21*N+n]*a[ h9*N+n] + b[h22*N+n]*a[h10*N+n];
+      c[ h8*N+n] += b[h18*N+n]*a[h12*N+n] + b[h19*N+n]*a[h13*N+n] + b[h20*N+n] + b[h21*N+n]*a[h15*N+n] + b[h22*N+n]*a[h16*N+n] + b[h23*N+n]*a[h17*N+n];
+      c[ h9*N+n] += b[h18*N+n]*a[h18*N+n] + b[h19*N+n]*a[h19*N+n] + b[h21*N+n]*a[h21*N+n] + b[h22*N+n]*a[h22*N+n];
+      c[h10*N+n] += b[h24*N+n]*a[ h0*N+n] + b[h25*N+n]*a[ h1*N+n] + b[h27*N+n]*a[ h3*N+n] + b[h28*N+n]*a[ h4*N+n];
+      c[h11*N+n] += b[h24*N+n]*a[ h6*N+n] + b[h25*N+n]*a[ h7*N+n] + b[h27*N+n]*a[ h9*N+n] + b[h28*N+n]*a[h10*N+n];
+      c[h12*N+n] += b[h24*N+n]*a[h12*N+n] + b[h25*N+n]*a[h13*N+n] + b[h26*N+n] + b[h27*N+n]*a[h15*N+n] + b[h28*N+n]*a[h16*N+n] + b[h29*N+n]*a[h17*N+n];
+      c[h13*N+n] += b[h24*N+n]*a[h18*N+n] + b[h25*N+n]*a[h19*N+n] + b[h27*N+n]*a[h21*N+n] + b[h28*N+n]*a[h22*N+n];
+      c[h14*N+n] += b[h24*N+n]*a[h24*N+n] + b[h25*N+n]*a[h25*N+n] + b[h27*N+n]*a[h27*N+n] + b[h28*N+n]*a[h28*N+n];
+      c[h15*N+n] += b[h30*N+n]*a[ h0*N+n] + b[h31*N+n]*a[ h1*N+n] + b[h33*N+n]*a[ h3*N+n] + b[h34*N+n]*a[ h4*N+n];
+      c[h16*N+n] += b[h30*N+n]*a[ h6*N+n] + b[h31*N+n]*a[ h7*N+n] + b[h33*N+n]*a[ h9*N+n] + b[h34*N+n]*a[h10*N+n];
+      c[h17*N+n] += b[h30*N+n]*a[h12*N+n] + b[h31*N+n]*a[h13*N+n] + b[h32*N+n] + b[h33*N+n]*a[h15*N+n] + b[h34*N+n]*a[h16*N+n] + b[h35*N+n]*a[h17*N+n];
+      c[h18*N+n] += b[h30*N+n]*a[h18*N+n] + b[h31*N+n]*a[h19*N+n] + b[h33*N+n]*a[h21*N+n] + b[h34*N+n]*a[h22*N+n];
+      c[h19*N+n] += b[h30*N+n]*a[h24*N+n] + b[h31*N+n]*a[h25*N+n] + b[h33*N+n]*a[h27*N+n] + b[h34*N+n]*a[h28*N+n];
+      c[h20*N+n] += b[h35*N+n];
    }
 }
 
