@@ -343,8 +343,8 @@ void TrackExtra::setMCTrackIDInfo(const Track& trk, const std::vector<HitVec>& l
     // ensure layer exists
     if (lyr < 0) continue;
 
-    // skip seed layers (unless, of course, we are validating the seed tracks themselves)
-    if (!isSeed && isSeedHit(lyr,idx)) continue;
+    // // skip seed layers (unless, of course, we are validating the seed tracks themselves)
+    // if (!isSeed && isSeedHit(lyr,idx)) continue;
 
     // make sure it is a real hit
     if ((idx >= 0) && (static_cast<size_t>(idx) < layerHits[lyr].size()))
@@ -388,10 +388,11 @@ void TrackExtra::setMCTrackIDInfo(const Track& trk, const std::vector<HitVec>& l
     }
   
     // total found hits in hit index array, excluding seed if necessary
-    const int nCandHits = (isSeed ? trk.nStoredFoundHits() : trk.nStoredFoundHits() - nSeedHits);
+    // const int nCandHits = (isSeed ? trk.nStoredFoundHits() : trk.nStoredFoundHits() - nSeedHits);
+    const int nCandHits = trk.nStoredFoundHits();
 
-    // 50% matching criterion 
-    if (2*mccount >= nCandHits) 
+    // 75% matching criterion 
+    if (4*mccount >= 3*nCandHits) 
     {
       // require that most matched is the mcTrackID!
       if (isPure)
@@ -437,7 +438,8 @@ void TrackExtra::setMCTrackIDInfo(const Track& trk, const std::vector<HitVec>& l
   // Modify mcTrackID based on length of track (excluding seed tracks, of course) and findability
   if (!isSeed)
   {
-    mcTrackID_ = modifyRefTrackID(trk.nFoundHits()-nSeedHits,Config::nMinFoundHits-nSeedHits,simtracks,(isPure?seedID_:-1),mcTrackID_);
+    // mcTrackID_ = modifyRefTrackID(trk.nFoundHits()-nSeedHits,Config::nMinFoundHits-nSeedHits,simtracks,(isPure?seedID_:-1),mcTrackID_);
+    mcTrackID_ = modifyRefTrackID(trk.nFoundHits(),Config::nMinFoundHits,simtracks,(isPure?seedID_:-1),mcTrackID_);
   }
 
   dprint("Track " << trk.label() << " best mc track " << mcTrackID_ << " count " << mccount << "/" << trk.nFoundHits());
