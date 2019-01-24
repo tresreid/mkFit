@@ -872,9 +872,9 @@ CALI_CXX_MARK_FUNCTION;
 
 
 
-#ifdef USE_CALI
-CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
-#endif
+// #ifdef USE_CALI
+// CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
+// #endif
   // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
   //   [&](const tbb::blocked_range<int>& range)
   // {
@@ -953,17 +953,22 @@ CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
       if(std::abs(Eta1)<etamax_brl){
-	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-	  writetrack[tss]=false;	
+      	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+      	  writetrack[tss]=false;	
       }
       else if(Pt1>ptmin_hpt){
-	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-	  writetrack[tss]=false;
+      	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+      	  writetrack[tss]=false;
       }
       else {
-	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-	  writetrack[tss]=false;
+      	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+      	  writetrack[tss]=false;
       }
+
+      writetrack[tss] = ((std::abs(Eta1)<etamax_brl)  && (dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)) || 
+                        (!(std::abs(Eta1)<etamax_brl) && (Pt1>ptmin_hpt)  && !(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)) ||
+                        (!(std::abs(Eta1)<etamax_brl) && !(Pt1>ptmin_hpt) && !(dz2/dzmax2_els+dr2/drmax2_els<1.0f));
+
 
     }
    
@@ -974,9 +979,9 @@ CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
   // }, tbb::simple_partitioner());
 
 
-#ifdef USE_CALI
-CALI_MARK_END("clean_cms_seedtracks_loop2");
-#endif
+// #ifdef USE_CALI
+// CALI_MARK_END("clean_cms_seedtracks_loop2");
+// #endif
 
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
