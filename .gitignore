@@ -26,6 +26,9 @@ benchmark_*_dump.txt
 slurm-[0-9]*.out
 /.ptp-sync/
 
+
+cali_*
+sky_*
 CALI*
 log*
 input_files/
