@@ -17,6 +17,10 @@
 
 #include "align_alloc.h"
 
+#ifdef USE_CALI
+#include <caliper/cali.h>
+#endif
+
 #include "Pool.h"
 //#define DEBUG
 #include "Debug.h"

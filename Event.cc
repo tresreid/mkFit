@@ -724,11 +724,13 @@ int Event::clean_cms_simtracks()
   // Returns number of passed simtracks.
 
   dprintf("Event::clean_cms_simtracks processing %d simtracks.\n", simTracks_.size());
-
+  
   int n_acc = 0;
   int i = -1;//wrap in ifdef DEBUG?
+
   for (Track & t : simTracks_)
   {
+
     i++;
 
     t.sortHitsByLayer();
@@ -784,8 +786,14 @@ void Event::print_tracks(const TrackVec& tracks, bool print_hits) const
   }
 }
 
+// called from MkBuilder PrepareSeeds which is called from the various buildtest functions 
+// is with the main tbb thing 
 int Event::clean_cms_seedtracks()
 {
+
+#ifdef USE_CALI
+CALI_CXX_MARK_FUNCTION;
+#endif
 
   const int minNHits     = Config::minNHits_seedclean;
   const float etamax_brl = Config::c_etamax_brl;
@@ -812,7 +820,7 @@ int Event::clean_cms_seedtracks()
   const float dzmax2_els = dzmax_els*dzmax_els;
   const float drmax2_els = drmax_els*drmax_els;
 
-  const int ns = seedTracks_.size();
+  const int ns = seedTracks_.size(); // order 1000 for TTbar70
 
   TrackVec cleanSeedTracks;
   cleanSeedTracks.reserve(ns);
@@ -832,6 +840,15 @@ int Event::clean_cms_seedtracks()
   std::vector<float>  y(ns);
   std::vector<float>  z(ns);
 
+
+#ifdef USE_CALI
+CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
+#endif
+
+  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  //   [&](const tbb::blocked_range<int>& range)
+  // {
+  // for(int ts = range.begin(); ts < range.end(); ts++){
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
     nHits[ts] = tk.nFoundHits();
@@ -846,7 +863,22 @@ int Event::clean_cms_seedtracks()
     y[ts] = tk.y();
     z[ts] = tk.z();
   }
+  // }, tbb::simple_partitioner());
 
+
+#ifdef USE_CALI
+CALI_MARK_END("clean_cms_seedtracks_loop1");
+#endif
+
+
+
+#ifdef USE_CALI
+CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
+#endif
+  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  //   [&](const tbb::blocked_range<int>& range)
+  // {
+  // for(int ts = range.begin(); ts < range.end(); ts++){
   for(int ts=0; ts<ns; ts++){
 
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
@@ -935,8 +967,14 @@ int Event::clean_cms_seedtracks()
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
 
-  }
-  
+  } //big loop
+  // }, tbb::simple_partitioner());
+
+
+#ifdef USE_CALI
+CALI_MARK_END("clean_cms_seedtracks_loop2");
+#endif
+
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 #endif
@@ -944,7 +982,7 @@ int Event::clean_cms_seedtracks()
   seedTracks_.swap(cleanSeedTracks);
 
   return seedTracks_.size();
-}
+} // clean_cms_seedtracks 
 
 int Event::clean_cms_seedtracks_badlabel()
 {

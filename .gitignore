@@ -25,3 +25,8 @@ benchmark_*_dump.txt
 .*swo
 slurm-[0-9]*.out
 /.ptp-sync/
+
+CALI*
+log*
+input_files/
+

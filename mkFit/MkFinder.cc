@@ -229,6 +229,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
   if (L.is_barrel())
   {
+
   // Pull out the part of the loop that vectorizes
   //#pragma ivdep
     #pragma omp simd
@@ -279,9 +280,11 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
       XWsrResult[itrack] = L.is_within_z_sensitive_region(z, dz);
       assignbins(itrack, z, dz, phi, dphi);
     }
+
   }
   else // endcap
   {
+
     // Pull out the part of the loop that vectorizes
     //#pragma ivdep
 #pragma omp simd

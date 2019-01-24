@@ -1323,6 +1323,10 @@ void MkBuilder::PrepareSeeds()
   //   }
   // }
 
+// #ifdef USE_CALI
+// CALI_CXX_MARK_FUNCTION;
+// #endif
+
   if (Config::seedInput == simSeeds)
   {
     if (Config::useCMSGeom)

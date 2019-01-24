@@ -29,6 +29,10 @@
 #include "gpu_utils.h"
 #endif
 
+#ifdef USE_CALI
+#include <caliper/cali.h>
+#endif
+
 #include <cstdlib>
 //#define DEBUG
 #include "Debug.h"
@@ -251,6 +255,10 @@ void generate_and_save_tracks()
 
 void test_standard()
 {
+#ifdef USE_CALI
+CALI_CXX_MARK_FUNCTION;
+#endif
+  
   printf("Running test_standard(), operation=\"%s\"\n", g_operation.c_str());
   printf("  vusize=%d, num_th_sim=%d, num_th_finder=%d\n",
          MPT_SIZE, Config::numThreadsSimulation, Config::numThreadsFinder);
@@ -259,6 +267,7 @@ void test_standard()
 
   if (Config::useCMSGeom)              printf ("- using CMS-like geometry\n");
   if (Config::seedInput == cmsswSeeds) printf ("- reading seeds from file\n");
+  if (Config::seedCleaning == cleanSeedsN2) printf ("- it should be doing the thing\n");
 
   if (g_operation == "write") {
     generate_and_save_tracks();
@@ -392,6 +401,10 @@ void test_standard()
 
   time = dtime();
 
+// #ifdef USE_CALI
+// CALI_MARK_BEGIN("mkFit_tbb_loop");
+// #endif
+
   int events_per_thread = (Config::nEvents+Config::numThreadsEvents-1)/Config::numThreadsEvents;
   tbb::parallel_for(tbb::blocked_range<int>(0, Config::numThreadsEvents, 1),
     [&](const tbb::blocked_range<int>& threads)
@@ -501,6 +514,11 @@ void test_standard()
       if (evt > 0) for (int i = 0; i < NT; ++i) t_skip[i] += t_best[i];
     }
   }, tbb::simple_partitioner());
+
+// #ifdef USE_CALI
+// CALI_MARK_END("mkFit_tbb_loop");
+// #endif
+
 
 #endif
   time = dtime() - time;

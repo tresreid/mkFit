@@ -7,6 +7,10 @@
 #include "BinInfoUtils.h"
 #include "Config.h"
 
+#ifdef USE_CALI
+#include <caliper/cali.h>
+#endif
+
 #include <mutex>
 
 namespace mkfit {
