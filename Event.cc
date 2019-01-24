@@ -828,47 +828,47 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  std::vector<int>    nHits(ns);
-  std::vector<int>    charge(ns);
-  std::vector<float>  oldPhi(ns);
-  std::vector<float>  pos2(ns);
-  std::vector<float>  eta(ns);
-  std::vector<float>  theta(ns);
-  std::vector<float>  invptq(ns);
-  std::vector<float>  pt(ns);
-  std::vector<float>  x(ns);
-  std::vector<float>  y(ns);
-  std::vector<float>  z(ns);
+  // std::vector<int>    nHits(ns);
+  // std::vector<int>    charge(ns);
+  // std::vector<float>  oldPhi(ns);
+  // std::vector<float>  pos2(ns);
+  // std::vector<float>  eta(ns);
+  // std::vector<float>  theta(ns);
+  // std::vector<float>  invptq(ns);
+  // std::vector<float>  pt(ns);
+  // std::vector<float>  x(ns);
+  // std::vector<float>  y(ns);
+  // std::vector<float>  z(ns);
 
 
-#ifdef USE_CALI
-CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
-#endif
+// #ifdef USE_CALI
+// CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
+// #endif
 
-  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
-  //   [&](const tbb::blocked_range<int>& range)
-  // {
-  // for(int ts = range.begin(); ts < range.end(); ts++){
-  for(int ts=0; ts<ns; ts++){
-    const Track & tk = seedTracks_[ts];
-    nHits[ts] = tk.nFoundHits();
-    charge[ts] = tk.charge();
-    oldPhi[ts] = tk.momPhi();
-    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-    eta[ts] = tk.momEta();
-    theta[ts] = std::atan2(tk.pT(),tk.pz());
-    invptq[ts] = tk.charge()*tk.invpT();
-    pt[ts] = tk.pT();
-    x[ts] = tk.x();
-    y[ts] = tk.y();
-    z[ts] = tk.z();
-  }
-  // }, tbb::simple_partitioner());
+//   // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+//   //   [&](const tbb::blocked_range<int>& range)
+//   // {
+//   // for(int ts = range.begin(); ts < range.end(); ts++){
+//   for(int ts=0; ts<ns; ts++){
+//     const Track & tk = seedTracks_[ts];
+//     nHits[ts] = tk.nFoundHits();
+//     charge[ts] = tk.charge();
+//     oldPhi[ts] = tk.momPhi();
+//     pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+//     eta[ts] = tk.momEta();
+//     theta[ts] = std::atan2(tk.pT(),tk.pz());
+//     invptq[ts] = tk.charge()*tk.invpT();
+//     pt[ts] = tk.pT();
+//     x[ts] = tk.x();
+//     y[ts] = tk.y();
+//     z[ts] = tk.z();
+//   }
+//   // }, tbb::simple_partitioner());
 
 
-#ifdef USE_CALI
-CALI_MARK_END("clean_cms_seedtracks_loop1");
-#endif
+// #ifdef USE_CALI
+// CALI_MARK_END("clean_cms_seedtracks_loop1");
+// #endif
 
 
 
@@ -880,25 +880,28 @@ CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
   // {
   // for(int ts = range.begin(); ts < range.end(); ts++){
   for(int ts=0; ts<ns; ts++){
+    const Track & tk = seedTracks_[ts];
 
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
-    if (nHits[ts] < minNHits) continue;
+    if (tk.nFoundHits() < minNHits) continue;
 
-    const float oldPhi1 = oldPhi[ts];
-    const float pos2_first = pos2[ts];
-    const float Eta1 = eta[ts];
-    const float Pt1 = pt[ts];
-    const float invptq_first = invptq[ts]; 
+    const float oldPhi1 = tk.momPhi();
+    const float pos2_first = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+    const float Eta1 = tk.momEta();
+    const float Pt1 = tk.pT();
+    const float invptq_first = tk.charge()*tk.invpT(); 
+    const float theta = std::atan2(tk.pT(),tk.pz());
 
     //#pragma simd /* Vectorization via simd had issues with icc */
     for (int tss= ts+1; tss<ns; tss++){
+      const Track & tkk = seedTracks_[tss];
 
-      if (nHits[tss] < minNHits) continue;
+      if (tkk.nFoundHits() < minNHits) continue;
 
-      const float Pt2 = pt[tss];
+      const float Pt2 = tkk.pT();
 
       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-      if(charge[tss] != charge[ts])
+      if(tkk.charge() != tk.charge())
         continue;
       
       const float thisDPt = std::abs(Pt2-Pt1);
@@ -925,17 +928,17 @@ CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
 	continue;
 
 
-      const float Eta2 = eta[tss];
+      const float Eta2 = tkk.momEta();
       const float deta2 = std::pow(Eta1-Eta2, 2);
 
-      const float oldPhi2 = oldPhi[tss];
+      const float oldPhi2 = tkk.momPhi();
 
-      const float pos2_second = pos2[tss];
+      const float pos2_second = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
       const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
 
-      const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
+      const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-tkk.x(), 2) + std::pow(tk.y()-tkk.y(), 2) );
       
-      const float invptq_second = invptq[tss];
+      const float invptq_second = tkk.charge()*tkk.invpT();
 
       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
@@ -944,7 +947,7 @@ CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
 
       const float dr2 = deta2+dphi*dphi;
       
-      const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+      const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/std::tan(theta)+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
       const float dz2 = thisDZ*thisDZ;
 
       ////// Reject tracks within dR-dz elliptical window.
