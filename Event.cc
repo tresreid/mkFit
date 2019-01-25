@@ -960,9 +960,10 @@ CALI_CXX_MARK_FUNCTION;
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
 
-      writetrack[tss] = ((std::abs(Eta1)<etamax_brl)  && !(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)) || 
-                        (!(std::abs(Eta1)<etamax_brl) && (Pt1>ptmin_hpt)  && !(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)) ||
-                        (!(std::abs(Eta1)<etamax_brl) && !(Pt1>ptmin_hpt) && !(dz2/dzmax2_els+dr2/drmax2_els<1.0f));
+      bool w = ((std::abs(Eta1)<etamax_brl)  && !(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)) || 
+               (!(std::abs(Eta1)<etamax_brl) && (Pt1>ptmin_hpt)  && !(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)) ||
+               (!(std::abs(Eta1)<etamax_brl) && !(Pt1>ptmin_hpt) && !(dz2/dzmax2_els+dr2/drmax2_els<1.0f));
+      writetrack[tss] = writetrack[tss] && w;
 
 
     }
