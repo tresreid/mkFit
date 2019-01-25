@@ -912,20 +912,27 @@ CALI_CXX_MARK_FUNCTION;
       ////// - 10% if track w/ 2<pT<5 GeV
       ////// - 20% if track w/ 5<pT<10 GeV
       ////// - 25% if track w/ pT>10 GeV
-      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
-	continue;
 
-      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
-	continue;
+      bool c = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
+      c = c || (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
+      c = c || (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
+      c = c || (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
+      c = c || (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
+      if(c) continue;
+ //      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
+	// continue;
 
-      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
-	continue;
+ //      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
+	// continue;
 
-      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
-	continue;
+ //      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
+	// continue;
 
-      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
-	continue;
+ //      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
+	// continue;
+
+ //      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
+	// continue;
 
 
       const float Eta2 = tkk.momEta();
@@ -952,18 +959,6 @@ CALI_CXX_MARK_FUNCTION;
 
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-      // if(std::abs(Eta1)<etamax_brl){
-      // 	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-      // 	  writetrack[tss]=false;	
-      // }
-      // else if(Pt1>ptmin_hpt){
-      // 	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-      // 	  writetrack[tss]=false;
-      // }
-      // else {
-      // 	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-      // 	  writetrack[tss]=false; 
-      // }
 
       writetrack[tss] = ((std::abs(Eta1)<etamax_brl)  && !(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)) || 
                         (!(std::abs(Eta1)<etamax_brl) && (Pt1>ptmin_hpt)  && !(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)) ||
