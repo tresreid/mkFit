@@ -891,12 +891,14 @@ CALI_CXX_MARK_FUNCTION;
     const float Pt1 = tk.pT();
     const float invptq_first = tk.charge()*tk.invpT(); 
     const float theta = std::atan2(tk.pT(),tk.pz());
+    const float tan_theta = std::tan(theta);
 
     //#pragma simd /* Vectorization via simd had issues with icc */
     for (int tss= ts+1; tss<ns; tss++){
       const Track & tkk = seedTracks_[tss];
 
       if (tkk.nFoundHits() < minNHits) continue;
+      if (not writetrack[tss]) continue;
 
       const float Pt2 = tkk.pT();
 
@@ -913,26 +915,26 @@ CALI_CXX_MARK_FUNCTION;
       ////// - 20% if track w/ 5<pT<10 GeV
       ////// - 25% if track w/ pT>10 GeV
 
-      bool c = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
-      c = c || (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
-      c = c || (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
-      c = c || (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
-      c = c || (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
-      if(c) continue;
- //      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
-	// continue;
+      // bool c = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
+      // c = c || (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
+      // c = c || (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
+      // c = c || (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
+      // c = c || (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
+      // if(c) continue;
+      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
+	continue;
 
- //      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
-	// continue;
+      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
+	continue;
 
- //      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
-	// continue;
+      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
+	continue;
 
- //      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
-	// continue;
+      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
+	continue;
 
- //      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
-	// continue;
+      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
+	continue;
 
 
       const float Eta2 = tkk.momEta();
@@ -954,7 +956,7 @@ CALI_CXX_MARK_FUNCTION;
 
       const float dr2 = deta2+dphi*dphi;
       
-      const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/std::tan(theta)+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
+      const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/tan_theta+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
       const float dz2 = thisDZ*thisDZ;
 
       ////// Reject tracks within dR-dz elliptical window.
