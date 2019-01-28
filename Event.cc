@@ -828,48 +828,43 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  // std::vector<int>    nHits(ns);
-  // std::vector<int>    charge(ns);
-  // std::vector<float>  oldPhi(ns);
-  // std::vector<float>  pos2(ns);
-  // std::vector<float>  eta(ns);
-  // std::vector<float>  theta(ns);
-  // std::vector<float>  invptq(ns);
-  // std::vector<float>  pt(ns);
-  // std::vector<float>  x(ns);
-  // std::vector<float>  y(ns);
-  // std::vector<float>  z(ns);
+  std::vector<int>    nHits(ns);
+  std::vector<int>    charge(ns);
+  std::vector<float>  oldPhi(ns);
+  std::vector<float>  pos2(ns);
+  std::vector<float>  eta(ns);
+  std::vector<float>  theta(ns);
+  std::vector<float>  invptq(ns);
+  std::vector<float>  pt(ns);
+  std::vector<float>  x(ns);
+  std::vector<float>  y(ns);
+  std::vector<float>  z(ns);
 
 
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
 // #endif
 
-//   // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
-//   //   [&](const tbb::blocked_range<int>& range)
-//   // {
-//   // for(int ts = range.begin(); ts < range.end(); ts++){
-//   for(int ts=0; ts<ns; ts++){
-//     const Track & tk = seedTracks_[ts];
-//     nHits[ts] = tk.nFoundHits();
-//     charge[ts] = tk.charge();
-//     oldPhi[ts] = tk.momPhi();
-//     pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-//     eta[ts] = tk.momEta();
-//     theta[ts] = std::atan2(tk.pT(),tk.pz());
-//     invptq[ts] = tk.charge()*tk.invpT();
-//     pt[ts] = tk.pT();
-//     x[ts] = tk.x();
-//     y[ts] = tk.y();
-//     z[ts] = tk.z();
-//   }
-//   // }, tbb::simple_partitioner());
-
+  for(int ts=0; ts<ns; ts++){
+    const Track & tk = seedTracks_[ts];
+    nHits[ts] = tk.nFoundHits();
+    charge[ts] = tk.charge();
+    oldPhi[ts] = tk.momPhi();
+    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+    eta[ts] = tk.momEta();
+    theta[ts] = std::atan2(tk.pT(),tk.pz());
+    invptq[ts] = tk.charge()*tk.invpT();
+    pt[ts] = tk.pT();
+    x[ts] = tk.x();
+    y[ts] = tk.y();
+    z[ts] = tk.z();
+  }
 
 // #ifdef USE_CALI
 // CALI_MARK_END("clean_cms_seedtracks_loop1");
 // #endif
 
+    // tbb::task_scheduler_init tbb_cleaner(100);
 
 
 // #ifdef USE_CALI
@@ -880,32 +875,35 @@ CALI_CXX_MARK_FUNCTION;
   // {
   // for(int ts = range.begin(); ts < range.end(); ts++){
   for(int ts=0; ts<ns; ts++){
-    const Track & tk = seedTracks_[ts];
 
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
-    if (tk.nFoundHits() < minNHits) continue;
+    if (nHits[ts] < minNHits) continue;
 
-    const float oldPhi1 = tk.momPhi();
-    const float pos2_first = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-    const float Eta1 = tk.momEta();
-    const float Pt1 = tk.pT();
-    const float invptq_first = tk.charge()*tk.invpT(); 
-    const float theta = std::atan2(tk.pT(),tk.pz());
-    const float tan_theta = std::tan(theta);
+    const float oldPhi1 = oldPhi[ts];
+    const float pos2_first = pos2[ts];
+    const float Eta1 = eta[ts];
+    const float Pt1 = pt[ts];
+    const float invptq_first = invptq[ts]; 
 
+
+    // tbb::parallel_for(tbb::blocked_range<int>(ts+1, ns),
+    // [&](const tbb::blocked_range<int>& range)
+    // {
+    // for(int tss = range.begin(); tss < range.end(); tss++){
+    // tbb::parallel_for ( int(ts+1), ns, [&](int tss) {
     //#pragma simd /* Vectorization via simd had issues with icc */
     for (int tss= ts+1; tss<ns; tss++){
-      const Track & tkk = seedTracks_[tss];
 
-      if (tkk.nFoundHits() < minNHits) continue;
-      if (not writetrack[tss]) continue;
+      bool cont = false;
 
-      const float Pt2 = tkk.pT();
+      cont = cont || (nHits[tss] < minNHits);
+
 
       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-      if(tkk.charge() != tk.charge())
-        continue;
+      cont = cont || (charge[tss] != charge[ts]);
       
+      if(!cont) {
+      const float Pt2 = pt[tss];
       const float thisDPt = std::abs(Pt2-Pt1);
       ////// Require pT consistency between seeds. If dpT is large, do not remove seed-track.
       ////// Adaptive thresholds, based on pT of reference seed-track (choice is a compromise between efficiency and duplicate rate):
@@ -914,61 +912,59 @@ CALI_CXX_MARK_FUNCTION;
       ////// - 10% if track w/ 2<pT<5 GeV
       ////// - 20% if track w/ 5<pT<10 GeV
       ////// - 25% if track w/ pT>10 GeV
+      cont = cont || (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
 
-      // bool c = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
-      // c = c || (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
-      // c = c || (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
-      // c = c || (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
-      // c = c || (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
-      // if(c) continue;
-      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
-	continue;
+      cont = cont || (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
 
-      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
-	continue;
+      cont = cont || (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
 
-      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
-	continue;
+      cont = cont || (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
 
-      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
-	continue;
+      cont = cont || (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
 
-      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
-	continue;
+      if(!cont) {
 
+        const float Eta2 = eta[tss];
+        const float deta2 = std::pow(Eta1-Eta2, 2);
 
-      const float Eta2 = tkk.momEta();
-      const float deta2 = std::pow(Eta1-Eta2, 2);
+        const float oldPhi2 = oldPhi[tss];
 
-      const float oldPhi2 = tkk.momPhi();
+        const float pos2_second = pos2[tss];
+        const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
 
-      const float pos2_second = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
-      const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
+        const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
+        
+        const float invptq_second = invptq[tss];
 
-      const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-tkk.x(), 2) + std::pow(tk.y()-tkk.y(), 2) );
-      
-      const float invptq_second = tkk.charge()*tkk.invpT();
+        const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+        const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
 
-      const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
-      const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
+        const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
-      const float dphi = cdist(std::abs(newPhi1-newPhi2));
+        const float dr2 = deta2+dphi*dphi;
+        
+        const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+        const float dz2 = thisDZ*thisDZ;
 
-      const float dr2 = deta2+dphi*dphi;
-      
-      const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/tan_theta+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
-      const float dz2 = thisDZ*thisDZ;
+        ////// Reject tracks within dR-dz elliptical window.
+        ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
+        if(std::abs(Eta1)<etamax_brl){
+  	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+  	  writetrack[tss]=false;	
+        }
+        else if(Pt1>ptmin_hpt){
+  	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+  	  writetrack[tss]=false;
+        }
+        else {
+  	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+  	  writetrack[tss]=false;
+        }
 
-      ////// Reject tracks within dR-dz elliptical window.
-      ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-
-      bool w = ((std::abs(Eta1)<etamax_brl)  && !(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)) || 
-               (!(std::abs(Eta1)<etamax_brl) && (Pt1>ptmin_hpt)  && !(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)) ||
-               (!(std::abs(Eta1)<etamax_brl) && !(Pt1>ptmin_hpt) && !(dz2/dzmax2_els+dr2/drmax2_els<1.0f));
-      writetrack[tss] = writetrack[tss] && w;
-
+    }} //cont
 
     }
+    // });
    
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
@@ -976,6 +972,7 @@ CALI_CXX_MARK_FUNCTION;
   } //big loop
   // }, tbb::simple_partitioner());
 
+  // tbb_cleaner.terminate();
 
 // #ifdef USE_CALI
 // CALI_MARK_END("clean_cms_seedtracks_loop2");

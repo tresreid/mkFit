@@ -43,7 +43,7 @@ then
     # mOpt="-j 32 AVX2:=1 USE_CALI:=1"
     mOpt="-j 32 AVX_512:=1 USE_CALI:=1"
     dir=/data2/slava77/samples
-    out_dir=cali_clean_seeds_improvement_v2
+    out_dir=cali_clean_seeds_parallel_inner
     maxth=64
     maxvu=16
     declare -a nths=("1" "2" "10")
