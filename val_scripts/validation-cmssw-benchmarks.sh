@@ -21,7 +21,7 @@ dir=/home/users/gravelle/mictest
 subdir=input_files
 file=TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin
 
-nevents=500
+nevents=100
 
 ## Common executable setup
 maxth=64
