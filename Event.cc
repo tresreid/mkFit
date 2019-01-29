@@ -864,9 +864,11 @@ CALI_CXX_MARK_FUNCTION;
 // CALI_MARK_END("clean_cms_seedtracks_loop1");
 // #endif
 
-    // tbb::task_scheduler_init tbb_cleaner(100);
 
+tbb::task_arena nested;
+nested.execute( [&]{
 
+  tbb::task_scheduler_init tbb_init(10);
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
 // #endif
@@ -885,14 +887,13 @@ CALI_CXX_MARK_FUNCTION;
     const float Pt1 = pt[ts];
     const float invptq_first = invptq[ts]; 
 
-
     // tbb::parallel_for(tbb::blocked_range<int>(ts+1, ns),
     // [&](const tbb::blocked_range<int>& range)
     // {
     // for(int tss = range.begin(); tss < range.end(); tss++){
-    // tbb::parallel_for ( int(ts+1), ns, [&](int tss) {
+    tbb::parallel_for ( int(ts+1), ns, [&](int tss) {
     //#pragma simd /* Vectorization via simd had issues with icc */
-    for (int tss= ts+1; tss<ns; tss++){
+    // for (int tss= ts+1; tss<ns; tss++){
 
       bool cont = false;
 
@@ -963,16 +964,15 @@ CALI_CXX_MARK_FUNCTION;
 
     }} //cont
 
-    }
-    // });
+    // }
+    }); // tbb loop
    
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
 
   } //big loop
   // }, tbb::simple_partitioner());
-
-  // tbb_cleaner.terminate();
+});// tbb isolate
 
 // #ifdef USE_CALI
 // CALI_MARK_END("clean_cms_seedtracks_loop2");

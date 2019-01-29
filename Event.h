@@ -11,6 +11,10 @@
 #include <caliper/cali.h>
 #endif
 
+#include "tbb/task_arena.h"
+#include "tbb/parallel_for.h"
+#include "tbb/enumerable_thread_specific.h"
+
 #include <mutex>
 
 namespace mkfit {
