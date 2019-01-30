@@ -26,7 +26,7 @@ nevents=100
 ## Common executable setup
 maxth=64
 maxvu=16
-maxev=32
+maxev=1
 seeds="--cmssw-n2seeds"
 exe="./mkFit/mkFit --silent ${seeds} --num-thr ${maxth} --num-thr-ev ${maxev} --input-file ${dir}/${subdir}/${file} --num-events ${nevents}"
 

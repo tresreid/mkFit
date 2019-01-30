@@ -43,15 +43,28 @@ then
     declare -a nths=("1" "2" "4" "8" "16" "32" "48" "64")
     declare -a nvus=("1" "2" "4" "8" "16")
     declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
+elif [[ "${ben_arch}" == "SKL-UO" ]]
+then
+    mOpt="-j 32 AVX_512:=1"
+    dir=/home/users/gravelle/mictest
+    maxth=64
+    maxvu=16
+    declare -a nths=("1" "2" "4" "8" "16" "32" "48" "64")
+    declare -a nvus=("1" "2" "4" "8" "16")
+    declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
 else 
     echo ${ben_arch} "is not a valid architecture! Exiting..."
     exit
 fi
 
 ## Common file setup
-subdir=2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU
-file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
-nevents=20
+# subdir=2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU
+# file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
+# nevents=20
+
+subdir=input_files
+file=TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin
+nevents=100
 
 ## Common executable setup
 minth=1

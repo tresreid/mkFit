@@ -828,52 +828,54 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  float Eta1[ns];
+  std::vector<float> Eta1(ns);
   float dz2[ns][ns];
   float dr2[ns][ns];
 
-  float oldPhi[ns];
-  float pos2[ns];
-  float eta[ns];
-  float theta[ns];
-  float invptq[ns];
+  std::vector<float> oldPhi(ns);
+  std::vector<float> pos2(ns);
+  std::vector<float> eta(ns);
+  std::vector<float> theta(ns);
+  std::vector<float> invptq(ns);
 
-  float x[ns];
-  float y[ns];
-  float z[ns];
+  std::vector<float> x(ns);
+  std::vector<float> y(ns);
+  std::vector<float> z(ns);
 
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
     oldPhi[ts] = tk.momPhi();
     eta[ts] = tk.momEta();
-    theta[ts] = std::atan2(tk.pT(),tk.pz());
-    invptq[ts] = tk.charge()*tk.invpT();
+    theta[ts] = 1.f/std::tan(std::atan2(tk.pT(),tk.pz()));
+    invptq[ts] = invR1GeV * tk.charge()*tk.invpT();
     x[ts] = tk.x();
     y[ts] = tk.y();
     z[ts] = tk.z();
   }
 
-  #pragma simd
+  #pragma vector
   for(int ts=0; ts<ns; ts++)
     pos2[ts] = std::pow(x[ts], 2) + std::pow(y[ts], 2);
 
-  #pragma simd
+  #pragma vector
   for(int ts = 0; ts < ns; ts++) {
+    #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
       // TODO make this happen with booleans and chars
       const float thisDXYSign05 = pos2[tss] > pos2[ts] ? -0.5f : 0.5f;
+      // const float thisDXYSign05 = 0.5f - (float)(pos2[tss] > pos2[ts]);
 
       const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
 
-      const float newPhi1 = oldPhi[ts]  - thisDXY * invR1GeV * invptq[ts];
-      const float newPhi2 = oldPhi[tss] + thisDXY * invR1GeV * invptq[tss];
+      const float newPhi1 = oldPhi[ts]  - thisDXY * invptq[ts];
+      const float newPhi2 = oldPhi[tss] + thisDXY * invptq[tss];
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
       dr2[ts][tss] = deta2+dphi*dphi;
       
-      const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+      const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
       dz2[ts][tss] = thisDZ*thisDZ;
     }
   }
