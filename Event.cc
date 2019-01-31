@@ -815,10 +815,15 @@ CALI_CXX_MARK_FUNCTION;
 
   const float dzmax2_brl = dzmax_brl*dzmax_brl;
   const float drmax2_brl = drmax_brl*drmax_brl;
+  const float   max2_brl = drmax2_brl*dzmax2_brl;
+
   const float dzmax2_hpt = dzmax_hpt*dzmax_hpt;
   const float drmax2_hpt = drmax_hpt*drmax_hpt;
+  const float   max2_hpt = drmax2_hpt*dzmax2_hpt;
+
   const float dzmax2_els = dzmax_els*dzmax_els;
   const float drmax2_els = drmax_els*drmax_els;
+  const float   max2_els = drmax2_els*dzmax2_els;
 
   const int ns = seedTracks_.size(); // order 1000 for TTbar70
 
@@ -829,8 +834,10 @@ CALI_CXX_MARK_FUNCTION;
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
   std::vector<float> Eta1(ns);
-  float dz2[ns][ns];
-  float dr2[ns][ns];
+  // float dz2[ns][ns];
+  // float dr2[ns][ns];
+  float dz2[ns*ns] __attribute__( (aligned(64)) );
+  float dr2[ns*ns] __attribute__( (aligned(64)) );
 
   std::vector<float> oldPhi(ns);
   std::vector<float> pos2(ns);
@@ -857,8 +864,12 @@ CALI_CXX_MARK_FUNCTION;
   for(int ts=0; ts<ns; ts++)
     pos2[ts] = std::pow(x[ts], 2) + std::pow(y[ts], 2);
 
-  #pragma vector
-  for(int ts = 0; ts < ns; ts++) {
+  tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  [&](const tbb::blocked_range<int>& range)
+  {
+  for(int ts = range.begin(); ts < range.end(); ts++){
+
+  // for(int ts = 0; ts < ns; ts++) {
     #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
@@ -873,12 +884,13 @@ CALI_CXX_MARK_FUNCTION;
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
-      dr2[ts][tss] = deta2+dphi*dphi;
+      dr2[ts*ns+tss] = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
-      dz2[ts][tss] = thisDZ*thisDZ;
+      dz2[ts*ns+tss] = thisDZ*thisDZ;
     }
   }
+  });
 
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
@@ -925,15 +937,15 @@ CALI_CXX_MARK_FUNCTION;
         ////// Reject tracks within dR-dz elliptical window.
         ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
         if(std::abs(Eta1)<etamax_brl){
-        	if(dz2[ts][tss]/dzmax2_brl+dr2[ts][tss]/drmax2_brl<1.0f)
+        	if(dz2[ts*ns+tss]*drmax2_brl+dr2[ts*ns+tss]*dzmax2_brl<max2_brl)
         	  writetrack[tss]=false;	
         }
         else if(Pt1>ptmin_hpt){
-        	if(dz2[ts][tss]/dzmax2_hpt+dr2[ts][tss]/drmax2_hpt<1.0f)
+        	if(dz2[ts*ns+tss]*drmax2_hpt+dr2[ts*ns+tss]*dzmax2_hpt<max2_hpt)
         	  writetrack[tss]=false;
         }
         else {
-        	if(dz2[ts][tss]/dzmax2_els+dr2[ts][tss]/drmax2_els<1.0f)
+        	if(dz2[ts*ns+tss]*drmax2_els+dr2[ts*ns+tss]*dzmax2_els<max2_els)
         	  writetrack[tss]=false;
         }
 
