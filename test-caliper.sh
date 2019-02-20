@@ -41,16 +41,18 @@ then
     # build_type="build-ce"
     # tag="avx2"
     # mOpt="-j 32 AVX2:=1 USE_CALI:=1"
-    mOpt="-j 32 AVX_512:=1 USE_CALI:=1"
+    mOpt="-j 32 AVX_512:=1"
+    # mOpt="-j 32 AVX_512:=1 USE_CALI:=1"
     dir=/data2/slava77/samples
-    out_dir=cali_clean_seeds_parallel_inner
+    out_dir=cali_clean_seeds_scaling
     maxth=64
     maxvu=16
-    declare -a nths=("1" "2" "10")
+    declare -a nths=("1" "2" "10" "20" "40" "60" "64")
     declare -a nvus=("16")
     # declare -a nvus=("1" "2" "4" "8" "16")
     declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
-    declare -a metrics=("PAPI_TOT_CYC" "PAPI_L2_TCM" "PAPI_L2_TCA")
+    # declare -a metrics=("PAPI_TOT_CYC" "PAPI_L2_TCM" "PAPI_L2_TCA" "FP_ARITH:512B_PACKED_SINGLE" "FP_ARITH:256B_PACKED_SINGLE" "FP_ARITH:128B_PACKED_SINGLE")
+    declare -a metrics=("PAPI_TOT_CYC")
     # declare -a metrics=("PAPI_LST_INS" "PAPI_L1_TCM" "PAPI_L2_TCA" "PAPI_L2_TCM" "PAPI_L3_TCA" "PAPI_L3_TCM" "PAPI_VEC_SP" "PAPI_SP_OPS" "PAPI_NATIVE_FP_ARITH:512B_PACKED_SINGLE")
 else 
     echo ${ben_arch} "is not a valid architecture! Exiting..."
@@ -109,7 +111,7 @@ do
             export CALI_PAPI_COUNTERS=${metric}
             ## Building-only benchmark
             echo "${oBase}: Benchmark [nTH:${minth}, nVU:${nvu}]"
-            ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
+            ${bExe} #> log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
         done
     done
 done
