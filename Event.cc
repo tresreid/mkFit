@@ -833,11 +833,8 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
+// printf("\nns = %d\n", ns);
   std::vector<float> Eta1(ns);
-  // float dz2[ns][ns];
-  // float dr2[ns][ns];
-  float dz2[ns*ns] __attribute__( (aligned(64)) );
-  float dr2[ns*ns] __attribute__( (aligned(64)) );
 
   std::vector<float> oldPhi(ns);
   std::vector<float> pos2(ns);
@@ -848,6 +845,17 @@ CALI_CXX_MARK_FUNCTION;
   std::vector<float> x(ns);
   std::vector<float> y(ns);
   std::vector<float> z(ns);
+
+  std::vector<std::vector<float> > dz2(ns);
+  std::vector<std::vector<float> > dr2(ns);
+  for(int ts=0; ts<ns; ts++) {
+    dz2[ts] = std::vector<float>(ns);
+    dr2[ts] = std::vector<float>(ns);
+  }
+  // float dz2[ns][ns];
+  // float dr2[ns][ns];
+  // float dz2[ns*ns] __attribute__( (aligned(64)) );
+  // float dr2[ns*ns] __attribute__( (aligned(64)) );
 
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
@@ -870,7 +878,7 @@ CALI_CXX_MARK_FUNCTION;
   for(int ts = range.begin(); ts < range.end(); ts++){
 
   // for(int ts = 0; ts < ns; ts++) {
-    #pragma ivdep
+    // #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
       // TODO make this happen with booleans and chars
@@ -884,13 +892,13 @@ CALI_CXX_MARK_FUNCTION;
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
-      dr2[ts*ns+tss] = deta2+dphi*dphi;
+      dr2[ts][tss] = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
-      dz2[ts*ns+tss] = thisDZ*thisDZ;
+      dz2[ts][tss] = thisDZ*thisDZ;
     }
   }
-  });
+  }); 
 
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
@@ -937,15 +945,15 @@ CALI_CXX_MARK_FUNCTION;
         ////// Reject tracks within dR-dz elliptical window.
         ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
         if(std::abs(Eta1)<etamax_brl){
-        	if(dz2[ts*ns+tss]*drmax2_brl+dr2[ts*ns+tss]*dzmax2_brl<max2_brl)
+        	if(dz2[ts][tss]*drmax2_brl+dr2[ts][tss]*dzmax2_brl<max2_brl)
         	  writetrack[tss]=false;	
         }
         else if(Pt1>ptmin_hpt){
-        	if(dz2[ts*ns+tss]*drmax2_hpt+dr2[ts*ns+tss]*dzmax2_hpt<max2_hpt)
+        	if(dz2[ts][tss]*drmax2_hpt+dr2[ts][tss]*dzmax2_hpt<max2_hpt)
         	  writetrack[tss]=false;
         }
         else {
-        	if(dz2[ts*ns+tss]*drmax2_els+dr2[ts*ns+tss]*dzmax2_els<max2_els)
+        	if(dz2[ts][tss]*drmax2_els+dr2[ts][tss]*dzmax2_els<max2_els)
         	  writetrack[tss]=false;
         }
 

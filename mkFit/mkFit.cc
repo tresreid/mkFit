@@ -404,7 +404,7 @@ CALI_CXX_MARK_FUNCTION;
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("mkFit_tbb_loop");
 // #endif
-
+  
   int events_per_thread = (Config::nEvents+Config::numThreadsEvents-1)/Config::numThreadsEvents;
   tbb::parallel_for(tbb::blocked_range<int>(0, Config::numThreadsEvents, 1),
     [&](const tbb::blocked_range<int>& threads)
