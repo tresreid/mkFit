@@ -847,14 +847,13 @@ CALI_CXX_MARK_FUNCTION;
 
   float** dz2 = (float**)malloc(ns*sizeof(float*));
   float** dr2 = (float**)malloc(ns*sizeof(float*));
+  // bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
   for(int ts=0; ts<ns; ts++) {
     dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
     dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
+    // _wiretrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
   }
-  // float dz2[ns][ns];
-  // float dr2[ns][ns];
-  // float dz2[ns*ns] __attribute__( (aligned(64)) );
-  // float dr2[ns*ns] __attribute__( (aligned(64)) );
+
 
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
@@ -893,10 +892,12 @@ CALI_CXX_MARK_FUNCTION;
       // const float dphi = Config::PI - std::abs( std::abs(newPhi1-newPhi2) - Config::PI);
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
-      dr2[ts][tss] = deta2+dphi*dphi;
+      dr2[ts][tss-ts] = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
-      dz2[ts][tss] = thisDZ*thisDZ;
+      dz2[ts][tss-ts] = thisDZ*thisDZ;
+
+
 
     }
   }
@@ -944,15 +945,15 @@ CALI_CXX_MARK_FUNCTION;
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
       if(std::abs(Eta1)<etamax_brl){
-        if(dz2[ts][tss]*drmax2_brl+dr2[ts][tss]*dzmax2_brl<max2_brl)
+        if(dz2[ts][tss-ts]*drmax2_brl+dr2[ts][tss-ts]*dzmax2_brl<max2_brl)
           writetrack[tss]=false;  
       }
       else if(Pt1>ptmin_hpt){
-        if(dz2[ts][tss]*drmax2_hpt+dr2[ts][tss]*dzmax2_hpt<max2_hpt)
+        if(dz2[ts][tss-ts]*drmax2_hpt+dr2[ts][tss-ts]*dzmax2_hpt<max2_hpt)
           writetrack[tss]=false;
       }
       else {
-        if(dz2[ts][tss]*drmax2_els+dr2[ts][tss]*dzmax2_els<max2_els)
+        if(dz2[ts][tss-ts]*drmax2_els+dr2[ts][tss-ts]*dzmax2_els<max2_els)
           writetrack[tss]=false;
       }
 
