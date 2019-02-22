@@ -1,0 +1,250 @@
+--------Track Reconstruction Summary--------
+nEvents: 100 nCMSSWTracks/evt: 826.39 nRecoTracks/evt: 510.72
+++++++++++++++++++++++++++++++++++++++++++++
+
+xxxxxxxxxx Track pT > 0.0 Cut xxxxxxxxxx
+
+Build Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Build Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 14.9059 +/- 0.0204039
+Mean Shared Hits / Track = 0.47077 +/- 0.00128424
+Mean Track Score = -434.457 +/- 2.67908
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 13.9283 +/- 0.0237478
+Mean Shared Hits / Track = 0.17713 +/- 0.00139519
+Mean Track Score = -944.468 +/- 3.8601
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.5722 +/- 0.0170972
+Mean Shared Hits / Track = 0.702138 +/- 0.000501662
+Mean Track Score = -152.137 +/- 3.32751
+------------------------------------------
+
+Rates for Build Tracks
+==========================================
+CMSSW Tracks Matched: 24345
+Eligible CMSSW Tracks: 50810
+------------------------------------------
+Efficiency: 0.479138, -0.00222565, +0.00222647
+------------------------------------------
+Unmatched Reco Tracks: 14183
+Eligible Reco Tracks: 40851
+------------------------------------------
+Fake Rate: 0.347189, -0.00236391, +0.00237143
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 2229
+Eligible CMSSW Tracks: 24345
+------------------------------------------
+Duplicate Rate: 0.0915588, -0.00185198, +0.0018859
+------------------------------------------
+
+
+Fit Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Fit Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 14.9059 +/- 0.0204039
+Mean Shared Hits / Track = 0.565542 +/- 0.00189133
+Mean Track Score = -1263.99 +/- 10.2378
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 15.1971 +/- 0.0388811
+Mean Shared Hits / Track = 0 +/- 0
+Mean Track Score = -2919.71 +/- 37.2572
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.2961 +/- 0.017605
+Mean Shared Hits / Track = 0.872051 +/- 0.00126152
+Mean Track Score = -737.608 +/- 11.8845
+------------------------------------------
+
+Rates for Fit Tracks
+==========================================
+CMSSW Tracks Matched: 24738
+Eligible CMSSW Tracks: 50810
+------------------------------------------
+Efficiency: 0.486873, -0.00222697, +0.00222749
+------------------------------------------
+Unmatched Reco Tracks: 6621
+Eligible Reco Tracks: 33469
+------------------------------------------
+Fake Rate: 0.197825, -0.00218331, +0.00220149
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 2040
+Eligible CMSSW Tracks: 24738
+------------------------------------------
+Duplicate Rate: 0.0824642, -0.00175204, +0.00178619
+------------------------------------------
+
+
+xxxxxxxxxx Track pT > 0.9 Cut xxxxxxxxxx
+
+Build Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Build Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 15.1149 +/- 0.0310517
+Mean Shared Hits / Track = 0.549459 +/- 0.00191
+Mean Track Score = -158.619 +/- 5.18107
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 12.7198 +/- 0.0386442
+Mean Shared Hits / Track = 0.192122 +/- 0.00284426
+Mean Track Score = -1084.48 +/- 9.97686
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.2347 +/- 0.023194
+Mean Shared Hits / Track = 0.712734 +/- 0.000656554
+Mean Track Score = 180.583 +/- 4.40105
+------------------------------------------
+
+Rates for Build Tracks
+==========================================
+CMSSW Tracks Matched: 11893
+Eligible CMSSW Tracks: 23812
+------------------------------------------
+Efficiency: 0.499454, -0.00326111, +0.00326115
+------------------------------------------
+Unmatched Reco Tracks: 3472
+Eligible Reco Tracks: 16628
+------------------------------------------
+Fake Rate: 0.208804, -0.00316437, +0.00319972
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 861
+Eligible CMSSW Tracks: 11893
+------------------------------------------
+Duplicate Rate: 0.0723955, -0.00238178, +0.00245496
+------------------------------------------
+
+
+Fit Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Fit Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 15.1532 +/- 0.0313456
+Mean Shared Hits / Track = 0.688863 +/- 0.00294825
+Mean Track Score = -337.63 +/- 7.49281
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 14.8188 +/- 0.0666162
+Mean Shared Hits / Track = 0 +/- 0
+Mean Track Score = -1374.45 +/- 29.4914
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.0477 +/- 0.0241513
+Mean Shared Hits / Track = 0.931442 +/- 0.00113037
+Mean Track Score = 87.2617 +/- 5.26902
+------------------------------------------
+
+Rates for Fit Tracks
+==========================================
+CMSSW Tracks Matched: 12083
+Eligible CMSSW Tracks: 23812
+------------------------------------------
+Efficiency: 0.507433, -0.00326109, +0.00326046
+------------------------------------------
+Unmatched Reco Tracks: 1655
+Eligible Reco Tracks: 14073
+------------------------------------------
+Fake Rate: 0.117601, -0.00272346, +0.00277852
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 776
+Eligible CMSSW Tracks: 12083
+------------------------------------------
+Duplicate Rate: 0.0642225, -0.00223494, +0.00230841
+------------------------------------------
+
+
+xxxxxxxxxx Track pT > 2.0 Cut xxxxxxxxxx
+
+Build Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Build Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 15.1044 +/- 0.0701729
+Mean Shared Hits / Track = 0.581896 +/- 0.00402119
+Mean Track Score = 88.7196 +/- 14.8061
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 11.685 +/- 0.0800294
+Mean Shared Hits / Track = 0.204868 +/- 0.00818955
+Mean Track Score = -1360.06 +/- 35.748
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.1234 +/- 0.0472893
+Mean Shared Hits / Track = 0.715661 +/- 0.00130843
+Mean Track Score = 514.448 +/- 12.1149
+------------------------------------------
+
+Rates for Build Tracks
+==========================================
+CMSSW Tracks Matched: 2605
+Eligible CMSSW Tracks: 5133
+------------------------------------------
+Efficiency: 0.5075, -0.00707626, +0.0070733
+------------------------------------------
+Unmatched Reco Tracks: 419
+Eligible Reco Tracks: 3342
+------------------------------------------
+Fake Rate: 0.125374, -0.00576255, +0.00599256
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 225
+Eligible CMSSW Tracks: 2605
+------------------------------------------
+Duplicate Rate: 0.0863724, -0.00553191, +0.00586049
+------------------------------------------
+
+
+Fit Tracks
+++++++++++++++++++++++++++++++++++++++++++
+
+Quality Info for Fit Track Collections
+==========================================
+All Reco Tracks
+Mean nHits / Track = 15.2355 +/- 0.0592944
+Mean Shared Hits / Track = 0.582173 +/- 0.00651253
+Mean Track Score = -306.118 +/- 18.3945
+------------------------------------------
+Fake Tracks
+Mean nHits / Track = 15.3765 +/- 0.0887178
+Mean Shared Hits / Track = 0 +/- 0
+Mean Track Score = -1220.22 +/- 36.6033
+------------------------------------------
+Best Match Tracks
+Mean nHits / Track = 17.0294 +/- 0.04873
+Mean Shared Hits / Track = 0.954495 +/- 0.0016619
+Mean Track Score = 455.369 +/- 13.2125
+------------------------------------------
+
+Rates for Fit Tracks
+==========================================
+CMSSW Tracks Matched: 2589
+Eligible CMSSW Tracks: 5133
+------------------------------------------
+Efficiency: 0.504383, -0.00707617, +0.00707443
+------------------------------------------
+Unmatched Reco Tracks: 355
+Eligible Reco Tracks: 3119
+------------------------------------------
+Fake Rate: 0.113819, -0.00571966, +0.00597422
+------------------------------------------
+CMSSW Tracks Matched (nTimes>1): 202
+Eligible CMSSW Tracks: 2589
+------------------------------------------
+Duplicate Rate: 0.0780224, -0.00529591, +0.00563377
+------------------------------------------
+
+
