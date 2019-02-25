@@ -845,13 +845,13 @@ CALI_CXX_MARK_FUNCTION;
   float* y = (float*)malloc(ns*sizeof(float));
   float* z = (float*)malloc(ns*sizeof(float));
 
-  float** dz2 = (float**)malloc(ns*sizeof(float*));
-  float** dr2 = (float**)malloc(ns*sizeof(float*));
-  // bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
+  // float** dz2 = (float**)malloc(ns*sizeof(float*));
+  // float** dr2 = (float**)malloc(ns*sizeof(float*));
+  bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
   for(int ts=0; ts<ns; ts++) {
-    dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
-    dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
-    // _wiretrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
+    // dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
+    // dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
+    _writetrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
   }
 
 
@@ -892,12 +892,33 @@ CALI_CXX_MARK_FUNCTION;
       // const float dphi = Config::PI - std::abs( std::abs(newPhi1-newPhi2) - Config::PI);
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
-      dr2[ts][tss-ts] = deta2+dphi*dphi;
+      const float dr2 = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
-      dz2[ts][tss-ts] = thisDZ*thisDZ;
+      const float dz2 = thisDZ*thisDZ;
 
+      const bool _a = (std::abs(eta[ts])<etamax_brl);
+      const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<max2_brl);
+      const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
+      const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<max2_hpt);
+      const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<max2_els);
+      
+      _writetrack[ts][tss-ts] =  !(( _a &&  _b)        \
+                              ||   (!_a &&  _c && _d)  \
+                              ||   (!_a && !_c && _e));
 
+      // if a {
+      //   if b
+      //     writetrack[tss]=false;  
+      // }
+      // else if c {
+      //   if d 
+      //     writetrack[tss]=false;
+      // }
+      // else {
+      //   if e
+      //     writetrack[tss]=false;
+      // }
 
     }
   }
@@ -944,18 +965,20 @@ CALI_CXX_MARK_FUNCTION;
 
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-      if(std::abs(Eta1)<etamax_brl){
-        if(dz2[ts][tss-ts]*drmax2_brl+dr2[ts][tss-ts]*dzmax2_brl<max2_brl)
-          writetrack[tss]=false;  
-      }
-      else if(Pt1>ptmin_hpt){
-        if(dz2[ts][tss-ts]*drmax2_hpt+dr2[ts][tss-ts]*dzmax2_hpt<max2_hpt)
-          writetrack[tss]=false;
-      }
-      else {
-        if(dz2[ts][tss-ts]*drmax2_els+dr2[ts][tss-ts]*dzmax2_els<max2_els)
-          writetrack[tss]=false;
-      }
+      // if(std::abs(Eta1)<etamax_brl){
+      //   if(dz2[ts][tss-ts]*drmax2_brl+dr2[ts][tss-ts]*dzmax2_brl<max2_brl)
+      //     writetrack[tss]=false;  
+      // }
+      // else if(Pt1>ptmin_hpt){
+      //   if(dz2[ts][tss-ts]*drmax2_hpt+dr2[ts][tss-ts]*dzmax2_hpt<max2_hpt)
+      //     writetrack[tss]=false;
+      // }
+      // else {
+      //   if(dz2[ts][tss-ts]*drmax2_els+dr2[ts][tss-ts]*dzmax2_els<max2_els)
+      //     writetrack[tss]=false;
+      // }
+
+      writetrack[tss] = writetrack[tss] && _writetrack[ts][tss-ts];
 
     }
    
@@ -965,11 +988,13 @@ CALI_CXX_MARK_FUNCTION;
   } //big loop
 
   for(int ts=0; ts<ns; ts++) {
-      free(dz2[ts]);
-      free(dr2[ts]);
+      // free(dz2[ts]);
+      // free(dr2[ts]);
+      free(_writetrack[ts]);
   }
-  free(dz2);
-  free(dr2);
+  // free(dz2);
+  // free(dr2);
+  free(_writetrack);
 
   free(oldPhi);
   free(pos2);
