@@ -109,7 +109,7 @@ do
             export CALI_PAPI_COUNTERS=${metric}
             ## Building-only benchmark
             echo "${oBase}: Benchmark [nTH:${minth}, nVU:${nvu}]"
-            echo ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
+            ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
         done
     done
 done
