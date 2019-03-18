@@ -15,6 +15,10 @@
 #include "tbb/parallel_for.h"
 #include "tbb/enumerable_thread_specific.h"
 
+// for pipeline
+#include "tbb/compat/thread"
+#include "tbb/pipeline.h"
+
 #include <mutex>
 
 namespace mkfit {

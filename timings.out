@@ -1,0 +1,1052 @@
+
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:1, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.04224  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.95986  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 6.57223 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:2, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.95575  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.87449  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 6.45018 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:4, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.14387  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.06003  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 6.69175 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:8, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.00453  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.92285  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 6.56063 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:16, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.25003  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.17039  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 8.08879 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:32, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.91355  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.83218  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 6.61353 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:1, nEVTH:64, nVU:16]
+Running with n_threads=1, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=1
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.39104  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.31506  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 7.37587 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:1, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 3.28764  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 3.24212  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 4.72669 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:2, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.15094  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.06720  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 3.42491 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:4, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.38709  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.30310  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 3.75318 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:8, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.26116  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.17787  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 3.66266 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:16, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.96305  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.88292  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 3.42438 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:32, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.13951  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.05514  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 4.18393 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:2, nEVTH:64, nVU:16]
+Running with n_threads=2, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=2
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.49462  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 5.41037  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 3.88176 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:1, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.30109  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.28442  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 2.59923 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:2, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.69378  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.67734  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.57492 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:4, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 2.79534  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 2.74321  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.30467 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:8, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.98889  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.92395  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.20635 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:16, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.80475  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.68676  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.26786 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:32, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 8.32556  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 8.23629  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.32628 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:10, nEVTH:64, nVU:16]
+Running with n_threads=10, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=10
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 9.30554  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 9.22375  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.44687 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:1, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.74902  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.73862  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 2.02848 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:2, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.09814  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.07995  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.34066 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:4, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.39551  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.37268  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.93511 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:8, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 2.10243  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 2.08617  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.80180 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:16, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.28390  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.21439  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.06452 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:32, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.14623  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.07475  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.22367 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:20, nEVTH:64, nVU:16]
+Running with n_threads=20, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=20
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 8.02958  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.93935  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.68984 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:1, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.59488  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.58572  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.95137 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:2, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.86291  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.84249  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.29673 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:4, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.92141  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.90298  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.81636 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:8, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.11856  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.09600  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.70403 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:16, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.60219  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.57138  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.09047 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:32, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 3.87092  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 3.84413  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.59013 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:40, nEVTH:64, nVU:16]
+Running with n_threads=40, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=40
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.66634  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 7.57022  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 2.25966 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:1, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.54445  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.53210  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.91474 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:2, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.85659  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.82900  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.35658 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:4, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.83006  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.81241  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.81571 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:8, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.06964  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.05431  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.76009 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:16, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.50695  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.47124  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.10617 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:32, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.67729  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.61278  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.74008 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:60, nEVTH:64, nVU:16]
+Running with n_threads=60, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=60
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.86091  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 6.39474  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 4.46787 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:1, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.50375  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.49287  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.89778 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:2, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.87735  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.85116  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.42446 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:4, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.94405  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.92724  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.84973 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:8, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.99901  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 0.97474  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 0.75965 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:16, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.24628  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.21471  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.09851 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:32, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.70939  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 1.68027  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 1.53808 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+mkdir: cannot create directory ‘cali_clean_seeds_scaling/CALI_PAPI_TOT_CYC’: File exists
+SKL-SP_CMSSW_TTbar_PU70: Benchmark [nTH:64, nEVTH:64, nVU:16]
+Running with n_threads=64, best_out_of=1
+Running test_standard(), operation="read"
+  vusize=16, num_th_sim=60, num_th_finder=64
+  sizeof(Track)=256, sizeof(Hit)=40, sizeof(SVector3)=12, sizeof(SMatrixSym33)=24, sizeof(MCHitInfo)=16
+- reading seeds from file
+- it should be doing the thing
+Constructing SimpleGeometry Cylinder geometry
+TrackerInfo::ExecTrackerInfoCreatorPlugin processing 'Geoms/CMS-2017.so'
+CMS-2017 -- Create_TrackerInfo finished
+Opened file 'input_files/TTbar70PU-memoryFile.fv3.clean.writeAll.recT.072617.bin', format version 3, n_max_trk_hits 32, n_layers 72, n_events 100
+  Extra sections: Seeds CmsswTracks
+Requested number of events 100000, only 100 available.
+
+================================================================
+=== TOTAL for 100 events
+================================================================
+Total Matriplex fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.18957  CEMX = 0.00000  FVMX = 0.00000
+Total event > 1 fit = 0.00000  --- Build  BHMX = 0.00000  STDMX = 4.08050  CEMX = 0.00000  FVMX = 0.00000
+Total event loop time 4.44597 simtracks 987333 seedtracks 201309 builtcands 0 maxhits 0 on lay 0
+rm -f lib/libMicCore.so main *.d *.o *.om *.so
+rm -rf main.dSYM
+rm -rf USolids-{host,mic}
+rm -rf plotting/*.so plotting/*.d plotting/*.pcm
+rm -f  auto-matriplex
+rm -f *.optrpt
+rm -rf lib
+cd Geoms     && make distclean
+make[1]: Entering directory '/home/users/gravelle/mictest/Geoms'
+rm -f *.so *.o *.om *.d *.optrpt
+make[1]: Leaving directory '/home/users/gravelle/mictest/Geoms'
+cd Matriplex && make distclean
+make[1]: Entering directory '/home/users/gravelle/mictest/Matriplex'
+rm -f *.ah
+make[1]: Leaving directory '/home/users/gravelle/mictest/Matriplex'
+cd mkFit     && make distclean
+make[1]: Entering directory '/home/users/gravelle/mictest/mkFit'
+rm -f mkFit ../lib/libMkFit.so *.d *.o *.om Ice/*.d Ice/*.o Ice/*.om
+rm -rf mkFit.dSYM
+rm -f *.optrpt Ice/*.optrpt
+rm -f auto-genmplex *.ah
+make[1]: Leaving directory '/home/users/gravelle/mictest/mkFit'
