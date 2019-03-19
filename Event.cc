@@ -786,6 +786,8 @@ void Event::print_tracks(const TrackVec& tracks, bool print_hits) const
   }
 }
 
+#include "Filter.h"
+
 // called from MkBuilder PrepareSeeds which is called from the various buildtest functions 
 // is with the main tbb thing 
 int Event::clean_cms_seedtracks()
@@ -842,66 +844,85 @@ CALI_CXX_MARK_FUNCTION;
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
     if (tk.nFoundHits() < minNHits) continue;
    
-    for (int tss= ts+1; tss<ns; tss++){
+//     for (int tss= ts+1; tss<ns; tss++){
 
-      const Track & tkk = seedTracks_[tss];
+//       const Track & tkk = seedTracks_[tss];
 
-      if (tkk.nFoundHits() < minNHits) continue;
+//       if (tkk.nFoundHits() < minNHits) continue;
 
-      ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-      if (tkk.charge() != tk.charge()) continue;
+//       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
+//       if (tkk.charge() != tk.charge()) continue;
       
 
-/////////// make each a filter
-      if (std::abs(tkk.pT()-tk.pT())>dpt_brl_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())<etamax_brl) continue;
+// /////////// make each a filter
+//       if (std::abs(tkk.pT()-tk.pT())>dpt_brl_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())<etamax_brl) continue;
 
-      if (std::abs(tkk.pT()-tk.pT())>dpt_ec_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())>etamax_brl) continue;
+//       if (std::abs(tkk.pT()-tk.pT())>dpt_ec_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())>etamax_brl) continue;
 
-      if (std::abs(tkk.pT()-tk.pT())>dpt_1*(tk.pT()) && tk.pT()>ptmax_0 && tk.pT()<ptmax_1) continue;
+//       if (std::abs(tkk.pT()-tk.pT())>dpt_1*(tk.pT()) && tk.pT()>ptmax_0 && tk.pT()<ptmax_1) continue;
 
-      if (std::abs(tkk.pT()-tk.pT())>dpt_2*(tk.pT()) && tk.pT()>ptmax_1 && tk.pT()<ptmax_2) continue;
+//       if (std::abs(tkk.pT()-tk.pT())>dpt_2*(tk.pT()) && tk.pT()>ptmax_1 && tk.pT()<ptmax_2) continue;
 
-      if (std::abs(tkk.pT()-tk.pT())>dpt_3*(tk.pT()) && tk.pT()>ptmax_2) continue;
+//       if (std::abs(tkk.pT()-tk.pT())>dpt_3*(tk.pT()) && tk.pT()>ptmax_2) continue;
 
-//////////// filter  
-      const float Eta2 = tkk.momEta();
-      const float deta2 = std::pow(tk.momEta()-tkk.momEta(), 2);
+// //////////// filter  
+//       const float Eta2 = tkk.momEta();
+//       const float deta2 = std::pow(tk.momEta()-tkk.momEta(), 2);
 
-      const float oldPhi2 = tkk.momPhi();
+//       const float oldPhi2 = tkk.momPhi();
 
-      const float pos2_second = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
-      const float thisDXYSign05 = pos2_second > (std::pow(tk.x(), 2) + std::pow(tk.y(), 2)) ? -0.5f : 0.5f;
+//       const float pos2_second = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
+//       const float thisDXYSign05 = pos2_second > (std::pow(tk.x(), 2) + std::pow(tk.y(), 2)) ? -0.5f : 0.5f;
 
-      const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-tkk.x(), 2) + std::pow(tk.y()-tkk.y(), 2) );
+//       const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-tkk.x(), 2) + std::pow(tk.y()-tkk.y(), 2) );
       
-      const float invptq_second = tkk.charge()*tkk.invpT();
+//       const float invptq_second = tkk.charge()*tkk.invpT();
 
-      const float newPhi1 = tk.momPhi()-thisDXY*invR1GeV*tk.charge()*tk.invpT();
-      const float newPhi2 = tkk.momPhi()+thisDXY*invR1GeV*tkk.charge()*tkk.invpT();
+//       const float newPhi1 = tk.momPhi()-thisDXY*invR1GeV*tk.charge()*tk.invpT();
+//       const float newPhi2 = tkk.momPhi()+thisDXY*invR1GeV*tkk.charge()*tkk.invpT();
 
-      const float dphi = cdist(std::abs(newPhi1-newPhi2));
+//       const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
-      const float dr2 = deta2+dphi*dphi;
+//       const float dr2 = deta2+dphi*dphi;
       
-      const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
-      const float dz2 = thisDZ*thisDZ;
+//       const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
+//       const float dz2 = thisDZ*thisDZ;
 
 
-      if(std::abs(tk.momEta())<etamax_brl){
-      	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-      	  writetrack[tss]=false;	
-      }
-      else if(tk.pT()>ptmin_hpt){
-      	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-      	  writetrack[tss]=false;
-      }
-      else {
-      	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-      	  writetrack[tss]=false;
-      }
+//       if(std::abs(tk.momEta())<etamax_brl){
+//       	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+//       	  writetrack[tss]=false;	
+//       }
+//       else if(tk.pT()>ptmin_hpt){
+//       	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+//       	  writetrack[tss]=false;
+//       }
+//       else {
+//       	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+//       	  writetrack[tss]=false;
+//       }
 
-    } // inner loop
+//     } // inner loop
    
+
+    MyInputFunc  in;
+    ContFilter_1 one;
+    MyOutputFunc out;
+    pipeline p;
+    p.add_filter(in);
+    p.add_filter(one);
+    p.add_filter(out);
+
+    // Another thread initiates execution of the pipeline
+    thread t(RunPipeline, &p);
+
+    // Process the thread_bound_filter with the current thread.
+    while (in.process_item()!=thread_bound_filter::end_of_stream)
+        continue;
+
+    // Wait for pipeline to finish on the other thread.
+    t.join();
+
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
 
