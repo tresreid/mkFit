@@ -786,8 +786,6 @@ void Event::print_tracks(const TrackVec& tracks, bool print_hits) const
   }
 }
 
-#include "Filter.h"
-
 // called from MkBuilder PrepareSeeds which is called from the various buildtest functions 
 // is with the main tbb thing 
 int Event::clean_cms_seedtracks()
@@ -844,84 +842,158 @@ CALI_CXX_MARK_FUNCTION;
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
     if (tk.nFoundHits() < minNHits) continue;
    
-//     for (int tss= ts+1; tss<ns; tss++){
+  
+  int TSS = ts;
+  tbb::parallel_pipeline(9, // TBB NOTE: (recommendation) NumberOfFilters
+           // 1st filter
+           tbb::make_filter<void,TrackForFilter*>(tbb::filter::serial_in_order,
+                                                  [&](tbb::flow_control& fc)->TrackForFilter*
+          {   // TBB NOTE: this filter feeds input into the pipeline
+              
+              if(TSS >= ns){
+                  fc.stop();
+                  return 0;
+              } else {
+                  struct TrackForFilter* track = new TrackForFilter;
 
-//       const Track & tkk = seedTracks_[tss];
+                  track->tk    = seedTracks_[ts];
+                  track->ts    = ts;
+                  track->tkk   = seedTracks_[TSS];
+                  track->tss   = TSS;
+                  track->cont  = false;
+                  track->wire  = true;
 
-//       if (tkk.nFoundHits() < minNHits) continue;
+                  TSS++;
+                  return track;
+              }
+          }
+          )&
+           // 2nd filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = track->tkk.nFoundHits() < minNHits;
+              return track;
+          }
+          )&
+           // 3rd filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = track->tkk.charge() != track->tk.charge();
+              return track;
+          }
+          )&
+           // 4th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_brl_0*(track->tk.pT()) && 
+                               track->tk.pT()<ptmax_0 && 
+                               std::abs(track->tk.momEta())<etamax_brl;
+              return track;
+          }
+          )&
+           // 5th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_ec_0*(track->tk.pT()) &&
+                               track->tk.pT()<ptmax_0 && 
+                               std::abs(track->tk.momEta())>etamax_brl;
+              return track;
+          }
+          )&
+           // 6th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_1*(track->tk.pT()) &&
+                               track->tk.pT()>ptmax_0 &&
+                               track->tk.pT()<ptmax_1;
+              return track;
+          }
+          )&
+           // 7th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_2*(track->tk.pT()) && 
+                               track->tk.pT()>ptmax_1 && 
+                               track->tk.pT()<ptmax_2;
+              return track;
+          }
+          )&
+           // 8th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont)
+                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_3*(track->tk.pT()) &&
+                               track->tk.pT()>ptmax_2;
+              return track;
+          }
+          )&
+           // 9th filter
+           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
+                                                  [&](TrackForFilter *track)->TrackForFilter*
+          {
+              if(not track->cont){
+                const float Eta2 = track->tkk.momEta();
+                const float deta2 = std::pow(track->tk.momEta()-track->tkk.momEta(), 2);
 
-//       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-//       if (tkk.charge() != tk.charge()) continue;
-      
+                const float oldPhi2 = track->tkk.momPhi();
 
-// /////////// make each a filter
-//       if (std::abs(tkk.pT()-tk.pT())>dpt_brl_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())<etamax_brl) continue;
+                const float pos2_second = std::pow(track->tkk.x(), 2) + std::pow(track->tkk.y(), 2);
+                const float thisDXYSign05 = pos2_second > (std::pow(track->tk.x(), 2) + std::pow(track->tk.y(), 2)) ? -0.5f : 0.5f;
 
-//       if (std::abs(tkk.pT()-tk.pT())>dpt_ec_0*(tk.pT()) && tk.pT()<ptmax_0 && std::abs(tk.momEta())>etamax_brl) continue;
+                const float thisDXY = thisDXYSign05*sqrt( std::pow(track->tk.x()-track->tkk.x(), 2) + std::pow(track->tk.y()-track->tkk.y(), 2) );
+                
+                const float invptq_second = track->tkk.charge()*track->tkk.invpT();
 
-//       if (std::abs(tkk.pT()-tk.pT())>dpt_1*(tk.pT()) && tk.pT()>ptmax_0 && tk.pT()<ptmax_1) continue;
+                const float newPhi1 = track->tk.momPhi()-thisDXY*invR1GeV*track->tk.charge()*track->tk.invpT();
+                const float newPhi2 = track->tkk.momPhi()+thisDXY*invR1GeV*track->tkk.charge()*track->tkk.invpT();
 
-//       if (std::abs(tkk.pT()-tk.pT())>dpt_2*(tk.pT()) && tk.pT()>ptmax_1 && tk.pT()<ptmax_2) continue;
+                const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
-//       if (std::abs(tkk.pT()-tk.pT())>dpt_3*(tk.pT()) && tk.pT()>ptmax_2) continue;
-
-// //////////// filter  
-//       const float Eta2 = tkk.momEta();
-//       const float deta2 = std::pow(tk.momEta()-tkk.momEta(), 2);
-
-//       const float oldPhi2 = tkk.momPhi();
-
-//       const float pos2_second = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
-//       const float thisDXYSign05 = pos2_second > (std::pow(tk.x(), 2) + std::pow(tk.y(), 2)) ? -0.5f : 0.5f;
-
-//       const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-tkk.x(), 2) + std::pow(tk.y()-tkk.y(), 2) );
-      
-//       const float invptq_second = tkk.charge()*tkk.invpT();
-
-//       const float newPhi1 = tk.momPhi()-thisDXY*invR1GeV*tk.charge()*tk.invpT();
-//       const float newPhi2 = tkk.momPhi()+thisDXY*invR1GeV*tkk.charge()*tkk.invpT();
-
-//       const float dphi = cdist(std::abs(newPhi1-newPhi2));
-
-//       const float dr2 = deta2+dphi*dphi;
-      
-//       const float thisDZ = tk.z()-tkk.z()-thisDXY*(1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan(std::atan2(tkk.pT(),tkk.pz())));
-//       const float dz2 = thisDZ*thisDZ;
+                const float dr2 = deta2+dphi*dphi;
+                
+                const float thisDZ = track->tk.z()-track->tkk.z()-thisDXY*(1.f/std::tan(std::atan2(track->tk.pT(),track->tk.pz()))+1.f/std::tan(std::atan2(track->tkk.pT(),track->tkk.pz())));
+                const float dz2 = thisDZ*thisDZ;
 
 
-//       if(std::abs(tk.momEta())<etamax_brl){
-//       	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-//       	  writetrack[tss]=false;	
-//       }
-//       else if(tk.pT()>ptmin_hpt){
-//       	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-//       	  writetrack[tss]=false;
-//       }
-//       else {
-//       	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-//       	  writetrack[tss]=false;
-//       }
-
-//     } // inner loop
-   
-
-    MyInputFunc  in;
-    ContFilter_1 one;
-    MyOutputFunc out;
-    pipeline p;
-    p.add_filter(in);
-    p.add_filter(one);
-    p.add_filter(out);
-
-    // Another thread initiates execution of the pipeline
-    thread t(RunPipeline, &p);
-
-    // Process the thread_bound_filter with the current thread.
-    while (in.process_item()!=thread_bound_filter::end_of_stream)
-        continue;
-
-    // Wait for pipeline to finish on the other thread.
-    t.join();
+                if(std::abs(track->tk.momEta())<etamax_brl){
+                 if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+                   track->wire=false;  
+                }
+                else if(track->tk.pT()>ptmin_hpt){
+                 if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+                   track->wire=false;
+                }
+                else {
+                 if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+                   track->wire=false;
+                }
+              }
+              return track;
+          }
+          )&
+           // last filter
+           tbb::make_filter<TrackForFilter*,void>(tbb::filter::serial_in_order,
+                                                  [&](TrackForFilter *track)
+          { 
+            if(not track->cont)
+              writetrack[track->tss] = track->wire; 
+            delete track;   
+          }
+          )
+          );
 
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
