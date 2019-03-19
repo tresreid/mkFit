@@ -830,7 +830,32 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
+  std::vector<int>    nHits(ns);
+  std::vector<int>    charge(ns);
+  std::vector<float>  oldPhi(ns);
+  std::vector<float>  pos2(ns);
+  std::vector<float>  eta(ns);
+  std::vector<float>  theta(ns);
+  std::vector<float>  invptq(ns);
+  std::vector<float>  pt(ns);
+  std::vector<float>  x(ns);
+  std::vector<float>  y(ns);
+  std::vector<float>  z(ns);
 
+  for(int ts=0; ts<ns; ts++){
+    const Track & tk = seedTracks_[ts];
+    nHits[ts] = tk.nFoundHits();
+    charge[ts] = tk.charge();
+    oldPhi[ts] = tk.momPhi();
+    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+    eta[ts] = tk.momEta();
+    theta[ts] = std::atan2(tk.pT(),tk.pz());
+    invptq[ts] = tk.charge()*tk.invpT();
+    pt[ts] = tk.pT();
+    x[ts] = tk.x();
+    y[ts] = tk.y();
+    z[ts] = tk.z();
+  }
 
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
@@ -842,9 +867,77 @@ CALI_CXX_MARK_FUNCTION;
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
     if (tk.nFoundHits() < minNHits) continue;
    
+    const float oldPhi1 = oldPhi[ts];
+    const float pos2_first = pos2[ts];
+    const float Eta1 = eta[ts];
+    const float Pt1 = pt[ts];
+    const float invptq_first = invptq[ts]; 
+
+// for (int tss= ts+1; tss<ns; tss++){
+
+//       bool cont = false;
+
+//       if (nHits[tss] < minNHits) continue;
+
+
+//       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
+//       if (charge[tss] != charge[ts]) continue;
+      
+//       const float Pt2 = pt[tss];
+//       const float thisDPt = std::abs(Pt2-Pt1);
+
+//       if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
+
+//       if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
+
+//       if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
+
+//       if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
+
+//       if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
+
+    
+//       const float Eta2 = eta[tss];
+//       const float deta2 = std::pow(Eta1-Eta2, 2);
+
+//       const float oldPhi2 = oldPhi[tss];
+
+//       const float pos2_second = pos2[tss];
+//       const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
+
+//       const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
+      
+//       const float invptq_second = invptq[tss];
+
+//       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+//       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
+
+//       const float dphi = cdist(std::abs(newPhi1-newPhi2));
+
+//       const float dr2 = deta2+dphi*dphi;
+      
+//       const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+//       const float dz2 = thisDZ*thisDZ;
+
+//       ////// Reject tracks within dR-dz elliptical window.
+//       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
+//       if(std::abs(Eta1)<etamax_brl){
+//         if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+//           writetrack[tss]=false;  
+//       }
+//       else if(Pt1>ptmin_hpt){
+//         if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+//           writetrack[tss]=false;
+//       }
+//       else {
+//         if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+//           writetrack[tss]=false;
+//       }
+
+//     } // inner loop
   
-  int TSS = ts;
-  tbb::parallel_pipeline(9, // TBB NOTE: (recommendation) NumberOfFilters
+  int TSS = ts+1;
+  tbb::parallel_pipeline(1, // TBB NOTE: (recommendation) NumberOfFilters
            // 1st filter
            tbb::make_filter<void,TrackForFilter*>(tbb::filter::serial_in_order,
                                                   [&](tbb::flow_control& fc)->TrackForFilter*
@@ -856,12 +949,11 @@ CALI_CXX_MARK_FUNCTION;
               } else {
                   struct TrackForFilter* track = new TrackForFilter;
 
-                  track->tk    = seedTracks_[ts];
-                  track->ts    = ts;
-                  track->tkk   = seedTracks_[TSS];
-                  track->tss   = TSS;
-                  track->cont  = false;
-                  track->wire  = true;
+                  track->ts      = ts;
+                  track->tss     = TSS;
+                  track->thisDPt = 0.;
+                  track->cont    = false;
+                  track->wire    = true;
 
                   TSS++;
                   return track;
@@ -873,7 +965,7 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont)
-                track->cont  = track->tkk.nFoundHits() < minNHits;
+                track->cont  = (nHits[track->tss] < minNHits);
               return track;
           }
           )&
@@ -882,7 +974,7 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont)
-                track->cont  = track->tkk.charge() != track->tk.charge();
+                track->cont  = (charge[track->tss] != charge[track->ts]);
               return track;
           }
           )&
@@ -890,22 +982,20 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_brl_0*(track->tk.pT()) && 
-                               track->tk.pT()<ptmax_0 && 
-                               std::abs(track->tk.momEta())<etamax_brl;
-              return track;
+            const float Pt2 = pt[track->tss];
+            track->thisDPt = std::abs(Pt2-Pt1);
+            if(not track->cont)
+              track->cont  = (track->thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
+            return track;
           }
           )&
            // 5th filter
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_ec_0*(track->tk.pT()) &&
-                               track->tk.pT()<ptmax_0 && 
-                               std::abs(track->tk.momEta())>etamax_brl;
-              return track;
+            if(not track->cont)
+              track->cont  = (track->thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
+            return track;
           }
           )&
            // 6th filter
@@ -913,9 +1003,7 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont)
-                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_1*(track->tk.pT()) &&
-                               track->tk.pT()>ptmax_0 &&
-                               track->tk.pT()<ptmax_1;
+                track->cont  = (track->thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
               return track;
           }
           )&
@@ -924,9 +1012,7 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont)
-                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_2*(track->tk.pT()) && 
-                               track->tk.pT()>ptmax_1 && 
-                               track->tk.pT()<ptmax_2;
+                track->cont  = (track->thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
               return track;
           }
           )&
@@ -935,8 +1021,7 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont)
-                track->cont  = std::abs(track->tkk.pT()-track->tk.pT())>dpt_3*(track->tk.pT()) &&
-                               track->tk.pT()>ptmax_2;
+                track->cont  = (track->thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
               return track;
           }
           )&
@@ -945,40 +1030,41 @@ CALI_CXX_MARK_FUNCTION;
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
               if(not track->cont){
-                const float Eta2 = track->tkk.momEta();
-                const float deta2 = std::pow(track->tk.momEta()-track->tkk.momEta(), 2);
+                const float Eta2 = eta[track->tss];
+                const float deta2 = std::pow(Eta1-Eta2, 2);
 
-                const float oldPhi2 = track->tkk.momPhi();
+                const float oldPhi2 = oldPhi[track->tss];
 
-                const float pos2_second = std::pow(track->tkk.x(), 2) + std::pow(track->tkk.y(), 2);
-                const float thisDXYSign05 = pos2_second > (std::pow(track->tk.x(), 2) + std::pow(track->tk.y(), 2)) ? -0.5f : 0.5f;
+                const float pos2_second = pos2[track->tss];
+                const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
 
-                const float thisDXY = thisDXYSign05*sqrt( std::pow(track->tk.x()-track->tkk.x(), 2) + std::pow(track->tk.y()-track->tkk.y(), 2) );
+                const float thisDXY = thisDXYSign05*sqrt( std::pow(x[track->ts]-x[track->tss], 2) + std::pow(y[track->ts]-y[track->tss], 2) );
                 
-                const float invptq_second = track->tkk.charge()*track->tkk.invpT();
+                const float invptq_second = invptq[track->tss];
 
-                const float newPhi1 = track->tk.momPhi()-thisDXY*invR1GeV*track->tk.charge()*track->tk.invpT();
-                const float newPhi2 = track->tkk.momPhi()+thisDXY*invR1GeV*track->tkk.charge()*track->tkk.invpT();
+                const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+                const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
 
                 const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
                 const float dr2 = deta2+dphi*dphi;
                 
-                const float thisDZ = track->tk.z()-track->tkk.z()-thisDXY*(1.f/std::tan(std::atan2(track->tk.pT(),track->tk.pz()))+1.f/std::tan(std::atan2(track->tkk.pT(),track->tkk.pz())));
+                const float thisDZ = z[track->ts]-z[track->tss]-thisDXY*(1.f/std::tan(theta[track->ts])+1.f/std::tan(theta[track->tss]));
                 const float dz2 = thisDZ*thisDZ;
 
-
-                if(std::abs(track->tk.momEta())<etamax_brl){
-                 if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-                   track->wire=false;  
+                ////// Reject tracks within dR-dz elliptical window.
+                ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
+                if(std::abs(Eta1)<etamax_brl){
+                  if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+                    writetrack[track->tss]=false;  
                 }
-                else if(track->tk.pT()>ptmin_hpt){
-                 if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-                   track->wire=false;
+                else if(Pt1>ptmin_hpt){
+                  if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+                    writetrack[track->tss]=false;
                 }
                 else {
-                 if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-                   track->wire=false;
+                  if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+                    writetrack[track->tss]=false;
                 }
               }
               return track;
@@ -988,8 +1074,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,void>(tbb::filter::serial_in_order,
                                                   [&](TrackForFilter *track)
           { 
-            if(not track->cont)
-              writetrack[track->tss] = track->wire; 
+            // writetrack[track->tss] = track->wire; 
             delete track;   
           }
           )
@@ -1003,7 +1088,9 @@ CALI_CXX_MARK_FUNCTION;
 // #ifdef USE_CALI
 // CALI_MARK_END("clean_cms_seedtracks_loop2");
 // #endif
-
+  
+// printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
+  
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 #endif

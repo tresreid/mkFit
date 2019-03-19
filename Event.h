@@ -152,10 +152,9 @@ struct DataFile
 };
 
 struct TrackForFilter {
-  Track tk;
   int   ts;
-  Track tkk;
   int   tss;
+  float thisDPt;
   bool  cont;
   bool  wire;
 };
