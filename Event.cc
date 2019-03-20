@@ -937,7 +937,7 @@ CALI_CXX_MARK_FUNCTION;
 //     } // inner loop
   
   int TSS = ts+1;
-  tbb::parallel_pipeline(1, // TBB NOTE: (recommendation) NumberOfFilters
+  tbb::parallel_pipeline(11, // TBB NOTE: (recommendation) NumberOfFilters
            // 1st filter
            tbb::make_filter<void,TrackForFilter*>(tbb::filter::serial_in_order,
                                                   [&](tbb::flow_control& fc)->TrackForFilter*
@@ -964,8 +964,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = (nHits[track->tss] < minNHits);
+              if((not track->cont) && (nHits[track->tss] < minNHits)) track->cont  = true;
               return track;
           }
           )&
@@ -973,8 +972,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = (charge[track->tss] != charge[track->ts]);
+              if((not track->cont) && (charge[track->tss] != charge[track->ts])) track->cont  = true;
               return track;
           }
           )&
@@ -984,8 +982,8 @@ CALI_CXX_MARK_FUNCTION;
           {
             const float Pt2 = pt[track->tss];
             track->thisDPt = std::abs(Pt2-Pt1);
-            if(not track->cont)
-              track->cont  = (track->thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);
+            if((not track->cont) && (track->thisDPt>dpt_brl_0*(Pt1)) && (Pt1<ptmax_0) && (std::abs(Eta1)<etamax_brl)) track->cont  = true;
+            
             return track;
           }
           )&
@@ -993,8 +991,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-            if(not track->cont)
-              track->cont  = (track->thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);
+            if((not track->cont) && (track->thisDPt>dpt_ec_0*(Pt1)) && (Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)) track->cont  = true;
             return track;
           }
           )&
@@ -1002,8 +999,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = (track->thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);
+              if((not track->cont) && (track->thisDPt>dpt_1*(Pt1)) && (Pt1>ptmax_0 && Pt1<ptmax_1)) track->cont  = true;
               return track;
           }
           )&
@@ -1011,8 +1007,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = (track->thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);
+              if((not track->cont) && (track->thisDPt>dpt_2*(Pt1)) && (Pt1>ptmax_1) && (Pt1<ptmax_2)) track->cont  = true;
               return track;
           }
           )&
@@ -1020,8 +1015,7 @@ CALI_CXX_MARK_FUNCTION;
            tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
                                                   [&](TrackForFilter *track)->TrackForFilter*
           {
-              if(not track->cont)
-                track->cont  = (track->thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);
+              if((not track->cont) && (track->thisDPt>dpt_3*(Pt1)) && (Pt1>ptmax_2)) track->cont  = true;
               return track;
           }
           )&
@@ -1090,7 +1084,7 @@ CALI_CXX_MARK_FUNCTION;
 // #endif
   
 // printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
-  
+
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 #endif
