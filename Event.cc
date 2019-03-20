@@ -842,6 +842,8 @@ CALI_CXX_MARK_FUNCTION;
   std::vector<float>  y(ns);
   std::vector<float>  z(ns);
 
+  std::vector<bool> cont(7, false);
+
   for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
     nHits[ts] = tk.nFoundHits();
@@ -873,206 +875,70 @@ CALI_CXX_MARK_FUNCTION;
     const float Pt1 = pt[ts];
     const float invptq_first = invptq[ts]; 
 
-// for (int tss= ts+1; tss<ns; tss++){
+    for (int tss= ts+1; tss<ns; tss++){
 
-//       bool cont = false;
+      std::fill(cont.begin(),cont.end(),false);
+      const float Pt2 = pt[tss];
+      const float thisDPt = std::abs(Pt2-Pt1);
 
-//       if (nHits[tss] < minNHits) continue;
+      tbb::parallel_invoke(
+        [&]{cont[0] = (nHits[tss] < minNHits);},
+
+        [&]{cont[1] =  (charge[tss] != charge[ts]);},
+
+        [&]{cont[2] = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);},
+
+        [&]{cont[3] = (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl);},
+
+        [&]{cont[4] = (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1);},
+
+        [&]{cont[5] = (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2);},
+
+        [&]{cont[6] = (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2);}
+      );
 
 
-//       ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-//       if (charge[tss] != charge[ts]) continue;
-      
-//       const float Pt2 = pt[tss];
-//       const float thisDPt = std::abs(Pt2-Pt1);
-
-//       if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
-
-//       if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
-
-//       if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
-
-//       if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
-
-//       if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
-
+      if(not(cont[0] || cont[1] || cont[2] || cont[3] || cont[4] || cont[5] || cont[6])) {
     
-//       const float Eta2 = eta[tss];
-//       const float deta2 = std::pow(Eta1-Eta2, 2);
+        const float Eta2 = eta[tss];
+        const float deta2 = std::pow(Eta1-Eta2, 2);
 
-//       const float oldPhi2 = oldPhi[tss];
+        const float oldPhi2 = oldPhi[tss];
 
-//       const float pos2_second = pos2[tss];
-//       const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
+        const float pos2_second = pos2[tss];
+        const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
 
-//       const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
-      
-//       const float invptq_second = invptq[tss];
+        const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
+        
+        const float invptq_second = invptq[tss];
 
-//       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
-//       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
+        const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+        const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
 
-//       const float dphi = cdist(std::abs(newPhi1-newPhi2));
+        const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
-//       const float dr2 = deta2+dphi*dphi;
-      
-//       const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
-//       const float dz2 = thisDZ*thisDZ;
+        const float dr2 = deta2+dphi*dphi;
+        
+        const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+        const float dz2 = thisDZ*thisDZ;
 
-//       ////// Reject tracks within dR-dz elliptical window.
-//       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-//       if(std::abs(Eta1)<etamax_brl){
-//         if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-//           writetrack[tss]=false;  
-//       }
-//       else if(Pt1>ptmin_hpt){
-//         if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-//           writetrack[tss]=false;
-//       }
-//       else {
-//         if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-//           writetrack[tss]=false;
-//       }
-
-//     } // inner loop
+        ////// Reject tracks within dR-dz elliptical window.
+        ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
+        if(std::abs(Eta1)<etamax_brl){
+          if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+            writetrack[tss]=false;  
+        }
+        else if(Pt1>ptmin_hpt){
+          if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+            writetrack[tss]=false;
+        }
+        else {
+          if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+            writetrack[tss]=false;
+        }
+      } //cont
+    } // inner loop
   
-  int TSS = ts+1;
-  tbb::parallel_pipeline(11, // TBB NOTE: (recommendation) NumberOfFilters
-           // 1st filter
-           tbb::make_filter<void,TrackForFilter*>(tbb::filter::serial_in_order,
-                                                  [&](tbb::flow_control& fc)->TrackForFilter*
-          {   // TBB NOTE: this filter feeds input into the pipeline
-              
-              if(TSS >= ns){
-                  fc.stop();
-                  return 0;
-              } else {
-                  struct TrackForFilter* track = new TrackForFilter;
-
-                  track->ts      = ts;
-                  track->tss     = TSS;
-                  track->thisDPt = 0.;
-                  track->cont    = false;
-                  track->wire    = true;
-
-                  TSS++;
-                  return track;
-              }
-          }
-          )&
-           // 2nd filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if((not track->cont) && (nHits[track->tss] < minNHits)) track->cont  = true;
-              return track;
-          }
-          )&
-           // 3rd filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if((not track->cont) && (charge[track->tss] != charge[track->ts])) track->cont  = true;
-              return track;
-          }
-          )&
-           // 4th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-            const float Pt2 = pt[track->tss];
-            track->thisDPt = std::abs(Pt2-Pt1);
-            if((not track->cont) && (track->thisDPt>dpt_brl_0*(Pt1)) && (Pt1<ptmax_0) && (std::abs(Eta1)<etamax_brl)) track->cont  = true;
-            
-            return track;
-          }
-          )&
-           // 5th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-            if((not track->cont) && (track->thisDPt>dpt_ec_0*(Pt1)) && (Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)) track->cont  = true;
-            return track;
-          }
-          )&
-           // 6th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if((not track->cont) && (track->thisDPt>dpt_1*(Pt1)) && (Pt1>ptmax_0 && Pt1<ptmax_1)) track->cont  = true;
-              return track;
-          }
-          )&
-           // 7th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if((not track->cont) && (track->thisDPt>dpt_2*(Pt1)) && (Pt1>ptmax_1) && (Pt1<ptmax_2)) track->cont  = true;
-              return track;
-          }
-          )&
-           // 8th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if((not track->cont) && (track->thisDPt>dpt_3*(Pt1)) && (Pt1>ptmax_2)) track->cont  = true;
-              return track;
-          }
-          )&
-           // 9th filter
-           tbb::make_filter<TrackForFilter*,TrackForFilter*>(tbb::filter::parallel,
-                                                  [&](TrackForFilter *track)->TrackForFilter*
-          {
-              if(not track->cont){
-                const float Eta2 = eta[track->tss];
-                const float deta2 = std::pow(Eta1-Eta2, 2);
-
-                const float oldPhi2 = oldPhi[track->tss];
-
-                const float pos2_second = pos2[track->tss];
-                const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
-
-                const float thisDXY = thisDXYSign05*sqrt( std::pow(x[track->ts]-x[track->tss], 2) + std::pow(y[track->ts]-y[track->tss], 2) );
-                
-                const float invptq_second = invptq[track->tss];
-
-                const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
-                const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
-
-                const float dphi = cdist(std::abs(newPhi1-newPhi2));
-
-                const float dr2 = deta2+dphi*dphi;
-                
-                const float thisDZ = z[track->ts]-z[track->tss]-thisDXY*(1.f/std::tan(theta[track->ts])+1.f/std::tan(theta[track->tss]));
-                const float dz2 = thisDZ*thisDZ;
-
-                ////// Reject tracks within dR-dz elliptical window.
-                ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-                if(std::abs(Eta1)<etamax_brl){
-                  if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-                    writetrack[track->tss]=false;  
-                }
-                else if(Pt1>ptmin_hpt){
-                  if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-                    writetrack[track->tss]=false;
-                }
-                else {
-                  if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-                    writetrack[track->tss]=false;
-                }
-              }
-              return track;
-          }
-          )&
-           // last filter
-           tbb::make_filter<TrackForFilter*,void>(tbb::filter::serial_in_order,
-                                                  [&](TrackForFilter *track)
-          { 
-            // writetrack[track->tss] = track->wire; 
-            delete track;   
-          }
-          )
-          );
 
     if(writetrack[ts])
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
