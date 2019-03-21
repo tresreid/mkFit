@@ -877,7 +877,7 @@ CALI_CXX_MARK_FUNCTION;
       } else {
         if (not writetrack[TS]) {
           _ts = -1;
-        } else if (seedTracks_[TS].nFoundHits() < minNHits) {
+        } else if (nHits[TS] < minNHits) {
           _ts = -1;
         } else {
           _ts = TS;
@@ -899,7 +899,6 @@ CALI_CXX_MARK_FUNCTION;
         const float Pt1 = pt[_ts];
         const float invptq_first = invptq[_ts]; 
 
-        std::vector<bool> cont(7, false);
         for (int tss= _ts+1; tss<ns; tss++){
 
           if (nHits[tss] < minNHits) continue;
@@ -978,7 +977,7 @@ CALI_CXX_MARK_FUNCTION;
 // CALI_MARK_END("clean_cms_seedtracks_loop2");
 // #endif
   
-printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
+// printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
