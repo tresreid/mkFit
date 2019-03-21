@@ -877,14 +877,14 @@ CALI_CXX_MARK_FUNCTION;
 
     for (int tss= ts+1; tss<ns; tss++){
 
-      std::fill(cont.begin(),cont.end(),false);
+      // std::fill(cont.begin(),cont.end(),false);
       const float Pt2 = pt[tss];
       const float thisDPt = std::abs(Pt2-Pt1);
 
       tbb::parallel_invoke(
         [&]{cont[0] = (nHits[tss] < minNHits);},
 
-        [&]{cont[1] =  (charge[tss] != charge[ts]);},
+        [&]{cont[1] = (charge[tss] != charge[ts]);},
 
         [&]{cont[2] = (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl);},
 
@@ -899,7 +899,7 @@ CALI_CXX_MARK_FUNCTION;
 
 
       if(not(cont[0] || cont[1] || cont[2] || cont[3] || cont[4] || cont[5] || cont[6])) {
-    
+
         const float Eta2 = eta[tss];
         const float deta2 = std::pow(Eta1-Eta2, 2);
 

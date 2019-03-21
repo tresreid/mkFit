@@ -24,7 +24,6 @@
 namespace mkfit {
 
 struct DataFile;
-struct TrackForFilter;
 
 class Event
 {
@@ -151,13 +150,6 @@ struct DataFile
   void CloseWrite(int n_written); //override nevents in the header and close
 };
 
-struct TrackForFilter {
-  int   ts;
-  int   tss;
-  float thisDPt;
-  bool  cont;
-  bool  wire;
-};
 
 } // end namespace mkfit
 #endif
