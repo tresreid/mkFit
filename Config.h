@@ -304,6 +304,7 @@ namespace Config
   extern    int maxCandsPerEtaBin;
 
   extern    bool mtvLikeValidation;
+  extern    bool mtvForceSeedMatch;
   // Selection of simtracks from CMSSW. Used in Event::clean_cms_simtracks() and MkBuilder::prep_cmsswtracks()
   extern    int   cmsSelMinLayers;
 

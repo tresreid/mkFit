@@ -92,6 +92,7 @@ namespace Config
   float minFracHitsShared = 0.75;
 
   bool mtvLikeValidation = false;
+  bool mtvForceSeedMatch = false;
   int  cmsSelMinLayers = 12;
   int  nMinFoundHits = 10;
 

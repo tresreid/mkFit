@@ -196,6 +196,7 @@ The physics validation scripts supports also an option to produce results compat
 ```
 ./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
 ```
+In case one wants to use the MTV-like validation but requiring that the TP is matched to a seed the option ```--mtv-seed-match``` can also be added.
 
 This script will run the validation on the building tests specified by the ```${suite}``` option. It will also produce the full set of physics performance plots and text files detailing the various physics rates.
 

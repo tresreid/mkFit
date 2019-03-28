@@ -1174,7 +1174,7 @@ void MkBuilder::prep_simtracks()
 	if (simtrack.isNotFindable()) continue; // skip ones we already know are bad
 	if (simtrack.prodType()!=Track::ProdType::Signal || simtrack.charge()==0 || simtrack.posR()>3.5 || std::abs(simtrack.z())>30 || std::abs(simtrack.momEta())>2.5) simtrack.setNotFindable();
       }
-    return;
+    if (Config::mtvForceSeedMatch==false) return;
   }
 
   // Now, make sure sim track shares at least four hits with a single cmssw seed.
