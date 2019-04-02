@@ -842,13 +842,13 @@ CALI_CXX_MARK_FUNCTION;
   std::vector<float>  y(ns);
   std::vector<float>  z(ns);
 
-  float** dz2 = (float**)malloc(ns*sizeof(float*));
-  float** dr2 = (float**)malloc(ns*sizeof(float*));
-  // bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
+  // float** dz2 = (float**)malloc(ns*sizeof(float*));
+  // float** dr2 = (float**)malloc(ns*sizeof(float*));
+  bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
   for(int ts=0; ts<ns; ts++) {
-    dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
-    dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
-    // _writetrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
+    // dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
+    // dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
+    _writetrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
   }
 
 
@@ -859,7 +859,7 @@ CALI_CXX_MARK_FUNCTION;
     oldPhi[ts] = tk.momPhi();
     pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
     eta[ts] = tk.momEta();
-    theta[ts] = std::atan2(tk.pT(),tk.pz());
+    theta[ts] = 1.f/std::tan(std::atan2(tk.pT(),tk.pz()));
     invptq[ts] = tk.charge()*tk.invpT();
     pt[ts] = tk.pT();
     x[ts] = tk.x();
@@ -879,7 +879,7 @@ CALI_CXX_MARK_FUNCTION;
   // for(int ts = range.begin(); ts < range.end(); ts++){
 
   for(int ts = 0; ts < ns; ts++) {
-    // #pragma ivdep
+    #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
@@ -893,21 +893,22 @@ CALI_CXX_MARK_FUNCTION;
 
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
-      dr2[ts][tss-ts] = deta2+dphi*dphi;
+      const float dr2 = deta2+dphi*dphi;
+      // dr2[ts][tss-ts] = deta2+dphi*dphi;
       
-      const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
-      dz2[ts][tss-ts] = thisDZ*thisDZ;
+      const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
+      const float dz2 = thisDZ*thisDZ;
+      // dz2[ts][tss-ts] = thisDZ*thisDZ;
 
+      const bool _a = (std::abs(eta[ts])<etamax_brl);
+      const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drmax2_brl*dzmax2_brl);
+      const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
+      const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<dzmax2_hpt*drmax2_hpt);
+      const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<dzmax2_els*drmax2_els);
       
-      // const bool _a = (std::abs(eta[ts])<etamax_brl);
-      // const bool _b = (dz2/dzmax2_brl+dr2/drmax2_brl<1.0f);
-      // const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
-      // const bool _d = (dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f);
-      // const bool _e = (dz2/dzmax2_els+dr2/drmax2_els<1.0f);
-      
-      // // _writetrack[ts][tss-ts] =  !(( _a &&  _b)        \
-      // //                         ||   (!_a &&  _c && _d)  \
-      // //                         ||   (!_a && !_c && _e));
+      _writetrack[ts][tss-ts] =  !(( _a &&  _b)        \
+                              ||   (!_a &&  _c && _d)  \
+                              ||   (!_a && !_c && _e));
 
       // _writetrack[ts][tss-ts]=true;
       // if (_a) {
@@ -969,20 +970,20 @@ CALI_CXX_MARK_FUNCTION;
 
       ////// Reject tracks within dR-dz elliptical window.
       ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
-      if(std::abs(Eta1)<etamax_brl){
-        if(dz2[ts][tss-ts]/dzmax2_brl+dr2[ts][tss-ts]/drmax2_brl<1.0f)
-          writetrack[tss]=false;  
-      }
-      else if(Pt1>ptmin_hpt){
-        if(dz2[ts][tss-ts]/dzmax2_hpt+dr2[ts][tss-ts]/drmax2_hpt<1.0f)
-          writetrack[tss]=false;
-      }
-      else {
-        if(dz2[ts][tss-ts]/dzmax2_els+dr2[ts][tss-ts]/drmax2_els<1.0f)
-          writetrack[tss]=false;
-      }
+      // if(std::abs(Eta1)<etamax_brl){
+      //   if(dz2[ts][tss-ts]/dzmax2_brl+dr2[ts][tss-ts]/drmax2_brl<1.0f)
+      //     writetrack[tss]=false;  
+      // }
+      // else if(Pt1>ptmin_hpt){
+      //   if(dz2[ts][tss-ts]/dzmax2_hpt+dr2[ts][tss-ts]/drmax2_hpt<1.0f)
+      //     writetrack[tss]=false;
+      // }
+      // else {
+      //   if(dz2[ts][tss-ts]/dzmax2_els+dr2[ts][tss-ts]/drmax2_els<1.0f)
+      //     writetrack[tss]=false;
+      // }
 
-      // writetrack[tss] = writetrack[tss] && _writetrack[ts][tss-ts];
+      writetrack[tss] = writetrack[tss] && _writetrack[ts][tss-ts];
 
     }
    
@@ -992,13 +993,13 @@ CALI_CXX_MARK_FUNCTION;
   } //big loop
 
   for(int ts=0; ts<ns; ts++) {
-      free(dz2[ts]);
-      free(dr2[ts]);
-      // free(_writetrack[ts]);
+      // free(dz2[ts]);
+      // free(dr2[ts]);
+      free(_writetrack[ts]);
   }
-  free(dz2);
-  free(dr2);
-  // free(_writetrack);
+  // free(dz2);
+  // free(dr2);
+  free(_writetrack);
 
   // free(oldPhi);
   // free(pos2);
@@ -1010,7 +1011,7 @@ CALI_CXX_MARK_FUNCTION;
   // free(z);
   // free(writetrack);
 
-  printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
+  // printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
