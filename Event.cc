@@ -857,7 +857,6 @@ CALI_CXX_MARK_FUNCTION;
     nHits[ts] = tk.nFoundHits();
     charge[ts] = tk.charge();
     oldPhi[ts] = tk.momPhi();
-    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
     eta[ts] = tk.momEta();
     theta[ts] = 1.f/std::tan(std::atan2(tk.pT(),tk.pz()));
     invptq[ts] = tk.charge()*tk.invpT();
@@ -868,17 +867,19 @@ CALI_CXX_MARK_FUNCTION;
 
   }
 
-  #pragma vector
+  #pragma vector always
+  #pragma ivdep
   for(int ts=0; ts<ns; ts++){
     pos2[ts] = std::pow(x[ts], 2) + std::pow(y[ts], 2);
+    invptq[ts] = invR1GeV*invptq[ts];
   }
 
-  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
-  // [&](const tbb::blocked_range<int>& range)
-  // {
-  // for(int ts = range.begin(); ts < range.end(); ts++){
+  tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  [&](const tbb::blocked_range<int>& range)
+  {
+  for(int ts = range.begin(); ts != range.end(); ts++){
 
-  for(int ts = 0; ts < ns; ts++) {
+  // for(int ts = 0; ts < ns; ts++) {
     #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
@@ -888,8 +889,8 @@ CALI_CXX_MARK_FUNCTION;
 
       const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
       
-      const float newPhi1 = oldPhi[ts] -thisDXY*invR1GeV*invptq[ts];
-      const float newPhi2 = oldPhi[tss]+thisDXY*invR1GeV*invptq[tss];
+      const float newPhi1 = oldPhi[ts] -thisDXY*invptq[ts];
+      const float newPhi2 = oldPhi[tss]+thisDXY*invptq[tss];
 
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
@@ -926,7 +927,7 @@ CALI_CXX_MARK_FUNCTION;
 
     }
   }
-  // }); 
+  }); 
 
   for(int ts=0; ts<ns; ts++){
 

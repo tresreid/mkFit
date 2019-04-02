@@ -109,7 +109,7 @@ do
             export TAU_METRICS=TIME,${metric}
             ## Building-only benchmark
             echo "${oBase}: Benchmark [nTH:${minth}, nVU:${nvu}]"
-            echo ${bExe} #> log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}.txt
+            ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}.txt
             mkdir ${out_dir}/${tau_dir}_${metric}
             mv MULTI__* ${out_dir}/${tau_dir}_${metric}
         done

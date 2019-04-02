@@ -109,9 +109,9 @@ do
         do
             ## set Caliper output file
             # export CALI_REPORT_FILENAME=cali_${oBase}_NVU${nvu}_NTH${minth}_HS${hack_size}.json
-            mkdir ${out_dir}/CALI_${metric}
-            export CALI_REPORT_FILENAME=${out_dir}/CALI_${metric}/cali_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.json
-            export CALI_PAPI_COUNTERS=${metric}
+            # mkdir ${out_dir}/CALI_${metric}
+            # export CALI_REPORT_FILENAME=${out_dir}/CALI_${metric}/cali_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.json
+            # export CALI_PAPI_COUNTERS=${metric}
             ## Building-only benchmark
             echo "${oBase}: Benchmark [nTH:${minth}, nEVTH:${nevthr}, nVU:${nvu}]"
             ${bExe} #> log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
