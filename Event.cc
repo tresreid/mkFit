@@ -820,27 +820,43 @@ CALI_CXX_MARK_FUNCTION;
   const float dzmax2_els = dzmax_els*dzmax_els;
   const float drmax2_els = drmax_els*drmax_els;
 
+  const float drzmax2_brl = drmax2_brl*dzmax2_brl;
+  const float drzmax2_hpt = drmax2_hpt*dzmax2_hpt;
+  const float drzmax2_els = drmax2_els*dzmax2_els;
+
   const int ns = seedTracks_.size(); // order 1000 for TTbar70
 
   TrackVec cleanSeedTracks;
-  cleanSeedTracks.reserve(ns);
+  // cleanSeedTracks.reserve(ns);
   std::vector<bool> writetrack(ns, true);
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
 // printf("\nns = %d\n", ns);
 
-  std::vector<int>    nHits(ns);
-  std::vector<int>    charge(ns);
-  std::vector<float>  oldPhi(ns);
-  std::vector<float>  pos2(ns);
-  std::vector<float>  eta(ns);
-  std::vector<float>  theta(ns);
-  std::vector<float>  invptq(ns);
-  std::vector<float>  pt(ns);
-  std::vector<float>  x(ns);
-  std::vector<float>  y(ns);
-  std::vector<float>  z(ns);
+  // std::vector<int>    nHits(ns);
+  // std::vector<int>    charge(ns);
+  // std::vector<float>  oldPhi(ns);
+  // std::vector<float>  pos2(ns);
+  // std::vector<float>  eta(ns);
+  // std::vector<float>  theta(ns);
+  // std::vector<float>  invptq(ns);
+  // std::vector<float>  pt(ns);
+  // std::vector<float>  x(ns);
+  // std::vector<float>  y(ns);
+  // std::vector<float>  z(ns);
+
+  int*   nHits  = (int*)  _mm_malloc(ns*sizeof(int),  64);
+  int*   charge = (int*)  _mm_malloc(ns*sizeof(int),  64);
+  float* oldPhi = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* pos2   = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* eta    = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* theta  = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* invptq = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* pt     = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* x      = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* y      = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* z      = (float*)_mm_malloc(ns*sizeof(float),64);
 
   // float** dz2 = (float**)malloc(ns*sizeof(float*));
   // float** dr2 = (float**)malloc(ns*sizeof(float*));
@@ -874,12 +890,12 @@ CALI_CXX_MARK_FUNCTION;
     invptq[ts] = invR1GeV*invptq[ts];
   }
 
-  tbb::parallel_for(tbb::blocked_range<int>(0, ns),
-  [&](const tbb::blocked_range<int>& range)
-  {
-  for(int ts = range.begin(); ts != range.end(); ts++){
+  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  // [&](const tbb::blocked_range<int>& range)
+  // {
+  // for(int ts = range.begin(); ts != range.end(); ts++){
 
-  // for(int ts = 0; ts < ns; ts++) {
+  for(int ts = 0; ts < ns; ts++) {
     #pragma ivdep
     for (int tss = ts+1; tss < ns; tss++) {
 
@@ -902,10 +918,10 @@ CALI_CXX_MARK_FUNCTION;
       // dz2[ts][tss-ts] = thisDZ*thisDZ;
 
       const bool _a = (std::abs(eta[ts])<etamax_brl);
-      const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drmax2_brl*dzmax2_brl);
+      const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drzmax2_brl);
       const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
-      const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<dzmax2_hpt*drmax2_hpt);
-      const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<dzmax2_els*drmax2_els);
+      const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<drzmax2_hpt);
+      const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<drzmax2_els);
       
       _writetrack[ts][tss-ts] =  !(( _a &&  _b)        \
                               ||   (!_a &&  _c && _d)  \
@@ -927,7 +943,7 @@ CALI_CXX_MARK_FUNCTION;
 
     }
   }
-  }); 
+  // }); 
 
   for(int ts=0; ts<ns; ts++){
 
@@ -1001,16 +1017,18 @@ CALI_CXX_MARK_FUNCTION;
   // free(dz2);
   // free(dr2);
   free(_writetrack);
+  _mm_free(nHits);
+  _mm_free(charge);
+  _mm_free(oldPhi);
+  _mm_free(pos2);
+  _mm_free(eta);
+  _mm_free(theta);
+  _mm_free(invptq);
+  _mm_free(pt);
+  _mm_free(x);
+  _mm_free(y);
+  _mm_free(z);
 
-  // free(oldPhi);
-  // free(pos2);
-  // free(eta);
-  // free(theta);
-  // free(invptq);
-  // free(x);
-  // free(y);
-  // free(z);
-  // free(writetrack);
 
   // printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 
