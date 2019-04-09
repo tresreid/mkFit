@@ -832,32 +832,34 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  std::vector<float>  oldPhi(ns);
-  std::vector<float>  pos2(ns);
-  std::vector<float>  eta(ns);
-  std::vector<float>  theta(ns);
-  std::vector<float>  invptq(ns);
-  std::vector<float>  x(ns);
-  std::vector<float>  y(ns);
-  std::vector<float>  z(ns);
+  // std::vector<int>    nHits(ns);
+  // std::vector<int>    charge(ns);
+  // std::vector<float>  oldPhi(ns);
+  // std::vector<float>  pos2(ns);
+  // std::vector<float>  eta(ns);
+  // std::vector<float>  theta(ns);
+  // std::vector<float>  invptq(ns);
+  // std::vector<float>  pt(ns);
+  // std::vector<float>  x(ns);
+  // std::vector<float>  y(ns);
+  // std::vector<float>  z(ns);
 
-  std::vector<float>  dr2(ns);
-  std::vector<float>  dz2(ns);
-  std::vector<int>    tss_map(ns);
+  // std::vector<float>  dr2(ns);
+  // std::vector<float>  dz2(ns);
+  // std::vector<int>    tss_map(ns);
 
-  // float* oldPhi  = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* pos2    = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* eta     = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* theta   = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* invptq  = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* x       = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* y       = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* z       = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* oldPhi  = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* pos2    = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* eta     = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* theta   = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* invptq  = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* x       = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* y       = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* z       = (float*)_mm_malloc(ns*sizeof(float),64);
 
-  // float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* tss_map = (float*)_mm_malloc(ns*sizeof(int),64);
-
+  float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  float* tss_map = (float*)_mm_malloc(ns*sizeof(int),64);
 
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
@@ -910,12 +912,8 @@ CALI_CXX_MARK_FUNCTION;
       _tss++;
     }
 
-    tbb::parallel_for(tbb::blocked_range<int>(0, _tss),
-    [&](const tbb::blocked_range<int>& range)
-    {
     #pragma simd
-    for(int tss = range.begin(); tss != range.end(); tss++){
-    // for (int tss= 0; tss<_tss; tss++){
+    for (int tss= 0; tss<_tss; tss++){
       const float Eta2 = eta[tss];
       const float deta2 = std::pow(Eta1-Eta2, 2);
       const float oldPhi2 = oldPhi[tss];
@@ -932,13 +930,8 @@ CALI_CXX_MARK_FUNCTION;
       dr2[tss] = deta2+dphi*dphi;      
       dz2[tss] = thisDZ*thisDZ;
     }
-    });
 
-    tbb::parallel_for(tbb::blocked_range<int>(0, _tss),
-    [&](const tbb::blocked_range<int>& range)
-    {
-    for(int tss = range.begin(); tss != range.end(); tss++){
-    // for (int tss= 0; tss<_tss; tss++){
+    for (int tss= 0; tss<_tss; tss++){
       if(std::abs(Eta1)<etamax_brl){
         if(dz2[tss]*drmax2_brl+dr2[tss]*dzmax2_brl<drzmax2_brl)
           writetrack[tss_map[tss]]=false;  
@@ -953,8 +946,6 @@ CALI_CXX_MARK_FUNCTION;
       }
 
     } // inner loop
-    });
-
 
     if(writetrack[ts]){
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
@@ -973,17 +964,17 @@ CALI_CXX_MARK_FUNCTION;
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 #endif
 
-  // _mm_free(oldPhi);
-  // _mm_free(pos2);
-  // _mm_free(eta);
-  // _mm_free(theta);
-  // _mm_free(invptq);
-  // _mm_free(x);
-  // _mm_free(y);
-  // _mm_free(z);
-  // _mm_free(dr2);
-  // _mm_free(dz2);
-  // _mm_free(tss_map);
+  _mm_free(oldPhi);
+  _mm_free(pos2);
+  _mm_free(eta);
+  _mm_free(theta);
+  _mm_free(invptq);
+  _mm_free(x);
+  _mm_free(y);
+  _mm_free(z);
+  _mm_free(dr2);
+  _mm_free(dz2);
+  _mm_free(tss_map);
 
   seedTracks_.swap(cleanSeedTracks);
 
