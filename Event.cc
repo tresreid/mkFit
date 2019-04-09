@@ -158,7 +158,7 @@ void Event::Simulate()
       float pt = sqrt(mom[0]*mom[0]+mom[1]*mom[1]);
       mom=SVector3(1./pt,atan2(mom[1],mom[0]),atan2(pt,mom[2]));
       for (size_t its = 0; its < initialTSs.size(); its++){
-	initialTSs[its].convertFromCartesianToCCS();
+  initialTSs[its].convertFromCartesianToCCS();
       }
 
       // MT: I'm putting in a mutex for now ...
@@ -180,17 +180,17 @@ void Event::Simulate()
         layerHits_[hitinfos[i].layer_].emplace_back(hits[i]);
 
         simHitsInfo_.emplace_back(hitinfos[i]);
-	if (Config::sim_val || Config::fit_val) 
+  if (Config::sim_val || Config::fit_val) 
         {
-	  simTrackStates_.emplace_back(initialTSs[i]);
-	}
+    simTrackStates_.emplace_back(initialTSs[i]);
+  }
       }
     }
 #ifdef TBB
   });
 #endif
 
-  // do some work to ensure everything is aligned after multithreading 	
+  // do some work to ensure everything is aligned after multithreading  
   std::unordered_map<int,int> mcHitIDMap;
   for (size_t ihit = 0; ihit < simHitsInfo_.size(); ihit++)
   {
@@ -198,9 +198,9 @@ void Event::Simulate()
   }
 
   std::sort(simHitsInfo_.begin(),   simHitsInfo_.end(),
-	    [](const MCHitInfo& a, const MCHitInfo& b)
-	    { return a.mcHitID() < b.mcHitID(); });
-		
+      [](const MCHitInfo& a, const MCHitInfo& b)
+      { return a.mcHitID() < b.mcHitID(); });
+    
   TSVec tmpTSVec(simTrackStates_.size());
   for (size_t its = 0; its < simTrackStates_.size(); its++)
   {
@@ -247,8 +247,8 @@ void Event::Segment(BinInfoMap & segmentMap)
 
       for(int ihit = firstEtaBinIdx; ihit < etaBinSize+firstEtaBinIdx; ++ihit){
         dprint("ihit: " << ihit << " r(layer): " << layerHits_[ilayer][ihit].r() << "(" << ilayer << ") phi: " 
-	                << layerHits_[ilayer][ihit].phi() << " phipart: " << getPhiPartition(layerHits_[ilayer][ihit].phi()) << " eta: "
-	                << layerHits_[ilayer][ihit].eta() << " etapart: " << getEtaPartition(layerHits_[ilayer][ihit].eta()));
+                  << layerHits_[ilayer][ihit].phi() << " phipart: " << getPhiPartition(layerHits_[ilayer][ihit].phi()) << " eta: "
+                  << layerHits_[ilayer][ihit].eta() << " etapart: " << getEtaPartition(layerHits_[ilayer][ihit].eta()));
         int phibin = getPhiPartition(layerHits_[ilayer][ihit].phi());
         lay_eta_phi_bin_count[phibin]++;
       }
@@ -282,7 +282,7 @@ void Event::Segment(BinInfoMap & segmentMap)
       etahitstotal += etahits;
 
       for (int phibin = 0; phibin < Config::nPhiPart; phibin++){
-	//	if (segmentMap[ilayer][etabin][phibin].second > 3) {std::cout << "   phibin: " << phibin << " hits: " << segmentMap[ilayer][etabin][phibin].second << std::endl;}
+  //  if (segmentMap[ilayer][etabin][phibin].second > 3) {std::cout << "   phibin: " << phibin << " hits: " << segmentMap[ilayer][etabin][phibin].second << std::endl;}
       }
     }
     std::cout << "layer: " << ilayer << " totalhits: " << etahitstotal << std::endl;
@@ -597,12 +597,12 @@ void Event::read_in(DataFile &data_file, FILE *in_fp)
       if (idx >= 0)
       {
         const Hit &hit = layerHits_[lyr][idx];
-	printf("    hit %2d lyr=%2d idx=%3d pos r=%7.3f x=% 8.3f y=% 8.3f z=% 8.3f   mc_hit=%3d mc_trk=%3d\n",
+  printf("    hit %2d lyr=%2d idx=%3d pos r=%7.3f x=% 8.3f y=% 8.3f z=% 8.3f   mc_hit=%3d mc_trk=%3d\n",
                ih, lyr, idx, layerHits_[lyr][idx].r(), layerHits_[lyr][idx].x(), layerHits_[lyr][idx].y(), layerHits_[lyr][idx].z(),
                hit.mcHitID(), hit.mcTrackID(simHitsInfo_));
       }
       else
-	printf("    hit %2d idx=%i\n", ih, t.getHitIdx(ih));
+  printf("    hit %2d idx=%i\n", ih, t.getHitIdx(ih));
     }
 #endif
   }
@@ -820,6 +820,10 @@ CALI_CXX_MARK_FUNCTION;
   const float dzmax2_els = dzmax_els*dzmax_els;
   const float drmax2_els = drmax_els*drmax_els;
 
+  const float drzmax2_brl = drmax2_brl*dzmax2_brl;
+  const float drzmax2_hpt = drmax2_hpt*dzmax2_hpt;
+  const float drzmax2_els = drmax2_els*dzmax2_els;
+
   const int ns = seedTracks_.size(); // order 1000 for TTbar70
 
   TrackVec cleanSeedTracks;
@@ -828,14 +832,11 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  std::vector<int>    nHits(ns);
-  std::vector<int>    charge(ns);
   std::vector<float>  oldPhi(ns);
   std::vector<float>  pos2(ns);
   std::vector<float>  eta(ns);
   std::vector<float>  theta(ns);
   std::vector<float>  invptq(ns);
-  std::vector<float>  pt(ns);
   std::vector<float>  x(ns);
   std::vector<float>  y(ns);
   std::vector<float>  z(ns);
@@ -844,28 +845,18 @@ CALI_CXX_MARK_FUNCTION;
   std::vector<float>  dz2(ns);
   std::vector<int>    tss_map(ns);
 
-// #ifdef USE_CALI
-// CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
-// #endif
+  // float* oldPhi  = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* pos2    = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* eta     = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* theta   = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* invptq  = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* x       = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* y       = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* z       = (float*)_mm_malloc(ns*sizeof(float),64);
 
-  // for(int ts=0; ts<ns; ts++){
-  //   const Track & tk = seedTracks_[ts];
-  //   nHits[ts] = tk.nFoundHits();
-  //   charge[ts] = tk.charge();
-  //   oldPhi[ts] = tk.momPhi();
-  //   pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-  //   eta[ts] = tk.momEta();
-  //   theta[ts] = std::atan2(tk.pT(),tk.pz());
-  //   invptq[ts] = tk.charge()*tk.invpT();
-  //   pt[ts] = tk.pT();
-  //   x[ts] = tk.x();
-  //   y[ts] = tk.y();
-  //   z[ts] = tk.z();
-  // }
-
-// #ifdef USE_CALI
-// CALI_MARK_END("clean_cms_seedtracks_loop1");
-// #endif
+  // float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* tss_map = (float*)_mm_malloc(ns*sizeof(int),64);
 
 
 // #ifdef USE_CALI
@@ -907,50 +898,63 @@ CALI_CXX_MARK_FUNCTION;
       // nHits[_tss]   = tkk.nFoundHits();
       // charge[_tss]  = tkk.charge();
       oldPhi[_tss]  = tkk.momPhi();
-      pos2[_tss]    = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
+      // pos2[_tss]    = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
+      pos2[_tss]    = (std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2)) > pos2_first ? -0.5f : 0.5f;
       eta[_tss]     = tkk.momEta();
-      theta[_tss]   = std::atan2(tkk.pT(),tkk.pz());
+      theta[_tss]   = (1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan((std::atan2(tkk.pT(),tkk.pz()))) );
       invptq[_tss]  = tkk.charge()*tkk.invpT();
       // pt[_tss]      = tkk.pT();
-      x[_tss]       = tkk.x();
-      y[_tss]       = tkk.y();
-      z[_tss]       = tkk.z();
+      x[_tss]       = std::pow(tk.x()-tkk.x(), 2);
+      y[_tss]       = std::pow(tk.y()-tkk.y(), 2);
+      z[_tss]       = tk.z()-tkk.z();
       _tss++;
     }
 
+    tbb::parallel_for(tbb::blocked_range<int>(0, _tss),
+    [&](const tbb::blocked_range<int>& range)
+    {
     #pragma simd
-    for (int tss= 0; tss<_tss; tss++){
+    for(int tss = range.begin(); tss != range.end(); tss++){
+    // for (int tss= 0; tss<_tss; tss++){
       const float Eta2 = eta[tss];
       const float deta2 = std::pow(Eta1-Eta2, 2);
       const float oldPhi2 = oldPhi[tss];
-      const float pos2_second = pos2[tss];
-      const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
-      const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-x[tss], 2) + std::pow(tk.y()-y[tss], 2) );      
+      // const float pos2_second = pos2[tss];
+      // const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
+      // const float thisDXY = thisDXYSign05*sqrt( x[tss] + y[tss] );      
+      const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
       const float invptq_second = invptq[tss];
       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
-      const float thisDZ = tk.z()-z[tss]-thisDXY*(1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan(theta[tss]));
+      const float thisDZ = z[tss]-thisDXY*theta[tss];
       
       dr2[tss] = deta2+dphi*dphi;      
       dz2[tss] = thisDZ*thisDZ;
     }
+    });
 
-    for (int tss= 0; tss<_tss; tss++){
+    tbb::parallel_for(tbb::blocked_range<int>(0, _tss),
+    [&](const tbb::blocked_range<int>& range)
+    {
+    for(int tss = range.begin(); tss != range.end(); tss++){
+    // for (int tss= 0; tss<_tss; tss++){
       if(std::abs(Eta1)<etamax_brl){
-        if(dz2[tss]/dzmax2_brl+dr2[tss]/drmax2_brl<1.0f)
+        if(dz2[tss]*drmax2_brl+dr2[tss]*dzmax2_brl<drzmax2_brl)
           writetrack[tss_map[tss]]=false;  
       }
       else if(Pt1>ptmin_hpt){
-        if(dz2[tss]/dzmax2_hpt+dr2[tss]/drmax2_hpt<1.0f)
+        if(dz2[tss]*drmax2_hpt+dr2[tss]*dzmax2_hpt<drzmax2_hpt)
           writetrack[tss_map[tss]]=false;
       }
       else {
-        if(dz2[tss]/dzmax2_els+dr2[tss]/drmax2_els<1.0f)
+        if(dz2[tss]*drmax2_els+dr2[tss]*dzmax2_els<drzmax2_els)
           writetrack[tss_map[tss]]=false;
       }
 
     } // inner loop
+    });
+
 
     if(writetrack[ts]){
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
@@ -963,11 +967,23 @@ CALI_CXX_MARK_FUNCTION;
 // CALI_MARK_END("clean_cms_seedtracks_loop2");
 // #endif
   
-printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
+// printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size()); 
 
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 #endif
+
+  // _mm_free(oldPhi);
+  // _mm_free(pos2);
+  // _mm_free(eta);
+  // _mm_free(theta);
+  // _mm_free(invptq);
+  // _mm_free(x);
+  // _mm_free(y);
+  // _mm_free(z);
+  // _mm_free(dr2);
+  // _mm_free(dz2);
+  // _mm_free(tss_map);
 
   seedTracks_.swap(cleanSeedTracks);
 
@@ -1017,8 +1033,8 @@ void Event::relabel_cmsswtracks_from_seeds()
     {
       if (cmsswTracks_[icmssw].label() == static_cast<int>(iseed))
       {
-	cmsswLabelMap[icmssw] = seedTracks_[iseed].label();
-  	break;
+  cmsswLabelMap[icmssw] = seedTracks_[iseed].label();
+    break;
       }
     }
   }
