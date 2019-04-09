@@ -832,22 +832,6 @@ CALI_CXX_MARK_FUNCTION;
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  // std::vector<int>    nHits(ns);
-  // std::vector<int>    charge(ns);
-  // std::vector<float>  oldPhi(ns);
-  // std::vector<float>  pos2(ns);
-  // std::vector<float>  eta(ns);
-  // std::vector<float>  theta(ns);
-  // std::vector<float>  invptq(ns);
-  // std::vector<float>  pt(ns);
-  // std::vector<float>  x(ns);
-  // std::vector<float>  y(ns);
-  // std::vector<float>  z(ns);
-
-  // std::vector<float>  dr2(ns);
-  // std::vector<float>  dz2(ns);
-  // std::vector<int>    tss_map(ns);
-
   float* oldPhi  = (float*)_mm_malloc(ns*sizeof(float),64);
   float* pos2    = (float*)_mm_malloc(ns*sizeof(float),64);
   float* eta     = (float*)_mm_malloc(ns*sizeof(float),64);
@@ -897,15 +881,11 @@ CALI_CXX_MARK_FUNCTION;
       if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
 
       tss_map[_tss] = tss;
-      // nHits[_tss]   = tkk.nFoundHits();
-      // charge[_tss]  = tkk.charge();
       oldPhi[_tss]  = tkk.momPhi();
-      // pos2[_tss]    = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
       pos2[_tss]    = (std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2)) > pos2_first ? -0.5f : 0.5f;
       eta[_tss]     = tkk.momEta();
       theta[_tss]   = (1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan((std::atan2(tkk.pT(),tkk.pz()))) );
       invptq[_tss]  = tkk.charge()*tkk.invpT();
-      // pt[_tss]      = tkk.pT();
       x[_tss]       = std::pow(tk.x()-tkk.x(), 2);
       y[_tss]       = std::pow(tk.y()-tkk.y(), 2);
       z[_tss]       = tk.z()-tkk.z();
@@ -917,9 +897,6 @@ CALI_CXX_MARK_FUNCTION;
       const float Eta2 = eta[tss];
       const float deta2 = std::pow(Eta1-Eta2, 2);
       const float oldPhi2 = oldPhi[tss];
-      // const float pos2_second = pos2[tss];
-      // const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
-      // const float thisDXY = thisDXYSign05*sqrt( x[tss] + y[tss] );      
       const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
       const float invptq_second = invptq[tss];
       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
