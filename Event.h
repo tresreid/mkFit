@@ -150,5 +150,6 @@ struct DataFile
   void CloseWrite(int n_written); //override nevents in the header and close
 };
 
+
 } // end namespace mkfit
 #endif
