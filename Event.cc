@@ -860,11 +860,11 @@ CALI_CXX_MARK_FUNCTION;
 
   // float** dz2 = (float**)malloc(ns*sizeof(float*));
   // float** dr2 = (float**)malloc(ns*sizeof(float*));
-  bool** _writetrack = (bool**)malloc(ns*sizeof(bool*));
+  bool** _writetrack = (bool**)_mm_malloc(ns*sizeof(bool*),64);
   for(int ts=0; ts<ns; ts++) {
     // dz2[ts] = (float*)malloc((ns-ts)*sizeof(float));
     // dr2[ts] = (float*)malloc((ns-ts)*sizeof(float));
-    _writetrack[ts] = (bool*)malloc((ns-ts)*sizeof(bool));
+    _writetrack[ts] = (bool*)_mm_malloc((ns-ts)*sizeof(bool),64);
   }
 
 
@@ -880,7 +880,6 @@ CALI_CXX_MARK_FUNCTION;
     x[ts] = tk.x();
     y[ts] = tk.y();
     z[ts] = tk.z();
-
   }
 
   #pragma vector always
@@ -890,14 +889,19 @@ CALI_CXX_MARK_FUNCTION;
     invptq[ts] = invR1GeV*invptq[ts];
   }
 
-  // tbb::parallel_for(tbb::blocked_range<int>(0, ns),
-  // [&](const tbb::blocked_range<int>& range)
-  // {
-  // for(int ts = range.begin(); ts != range.end(); ts++){
 
-  for(int ts = 0; ts < ns; ts++) {
-    #pragma ivdep
-    for (int tss = ts+1; tss < ns; tss++) {
+  tbb::parallel_for(tbb::blocked_range<int>(0, ns),
+  [&](const tbb::blocked_range<int>& range)
+  {
+  for(int ts = range.begin(); ts != range.end(); ts++){
+  // for(int ts = 0; ts < ns; ts++) {
+
+    const bool _a = (std::abs(eta[ts])<etamax_brl);
+    const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
+
+    const tbb::blocked_range<int>& range_tss = tbb::blocked_range<int>(ts+1, ns);
+    #pragma ivdep  
+    for (int tss = range_tss.begin(); tss != range_tss.end(); tss++) {
 
       const float deta2 = std::pow(eta[ts]-eta[tss], 2);
 
@@ -911,15 +915,11 @@ CALI_CXX_MARK_FUNCTION;
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
 
       const float dr2 = deta2+dphi*dphi;
-      // dr2[ts][tss-ts] = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(theta[ts]+theta[tss]);
       const float dz2 = thisDZ*thisDZ;
-      // dz2[ts][tss-ts] = thisDZ*thisDZ;
 
-      const bool _a = (std::abs(eta[ts])<etamax_brl);
       const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drzmax2_brl);
-      const bool _c = (seedTracks_[ts].pT()>ptmin_hpt);
       const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<drzmax2_hpt);
       const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<drzmax2_els);
       
@@ -927,23 +927,9 @@ CALI_CXX_MARK_FUNCTION;
                               ||   (!_a &&  _c && _d)  \
                               ||   (!_a && !_c && _e));
 
-      // _writetrack[ts][tss-ts]=true;
-      // if (_a) {
-      //   if (_b)
-      //     _writetrack[ts][tss-ts]=false;  
-      // }
-      // else if (_c) {
-      //   if (_d) 
-      //     _writetrack[ts][tss-ts]=false;
-      // }
-      // else {
-      //   if (_e)
-      //     _writetrack[ts][tss-ts]=false;
-      // }
-
     }
   }
-  // }); 
+  }); 
 
   for(int ts=0; ts<ns; ts++){
 
@@ -1012,11 +998,11 @@ CALI_CXX_MARK_FUNCTION;
   for(int ts=0; ts<ns; ts++) {
       // free(dz2[ts]);
       // free(dr2[ts]);
-      free(_writetrack[ts]);
+      _mm_free(_writetrack[ts]);
   }
   // free(dz2);
   // free(dr2);
-  free(_writetrack);
+  _mm_free(_writetrack);
   _mm_free(nHits);
   _mm_free(charge);
   _mm_free(oldPhi);
