@@ -840,24 +840,28 @@ CALI_CXX_MARK_FUNCTION;
   std::vector<float>  y(ns);
   std::vector<float>  z(ns);
 
+  std::vector<float>  dr2(ns);
+  std::vector<float>  dz2(ns);
+  std::vector<int>    tss_map(ns);
+
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop1");
 // #endif
 
-  for(int ts=0; ts<ns; ts++){
-    const Track & tk = seedTracks_[ts];
-    nHits[ts] = tk.nFoundHits();
-    charge[ts] = tk.charge();
-    oldPhi[ts] = tk.momPhi();
-    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-    eta[ts] = tk.momEta();
-    theta[ts] = std::atan2(tk.pT(),tk.pz());
-    invptq[ts] = tk.charge()*tk.invpT();
-    pt[ts] = tk.pT();
-    x[ts] = tk.x();
-    y[ts] = tk.y();
-    z[ts] = tk.z();
-  }
+  // for(int ts=0; ts<ns; ts++){
+  //   const Track & tk = seedTracks_[ts];
+  //   nHits[ts] = tk.nFoundHits();
+  //   charge[ts] = tk.charge();
+  //   oldPhi[ts] = tk.momPhi();
+  //   pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+  //   eta[ts] = tk.momEta();
+  //   theta[ts] = std::atan2(tk.pT(),tk.pz());
+  //   invptq[ts] = tk.charge()*tk.invpT();
+  //   pt[ts] = tk.pT();
+  //   x[ts] = tk.x();
+  //   y[ts] = tk.y();
+  //   z[ts] = tk.z();
+  // }
 
 // #ifdef USE_CALI
 // CALI_MARK_END("clean_cms_seedtracks_loop1");
@@ -869,77 +873,81 @@ CALI_CXX_MARK_FUNCTION;
 // #endif
   for(int ts=0; ts<ns; ts++){
 
+    const Track & tk = seedTracks_[ts];
+
     if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
-    if (nHits[ts] < minNHits) continue;
+    if (tk.nFoundHits() < minNHits) continue;
 
-    const float oldPhi1 = oldPhi[ts];
-    const float pos2_first = pos2[ts];
-    const float Eta1 = eta[ts];
-    const float Pt1 = pt[ts];
-    const float invptq_first = invptq[ts]; 
-
+    const float oldPhi1 = tk.momPhi();
+    const float pos2_first = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+    const float Eta1 = tk.momEta();
+    const float Pt1 = tk.pT();
+    const float invptq_first = tk.charge()*tk.invpT(); 
    
+    int _tss = 0;
+
     //#pragma simd /* Vectorization via simd had issues with icc */
     for (int tss= ts+1; tss<ns; tss++){
 
-      if (nHits[tss] < minNHits) continue;
+      const Track & tkk = seedTracks_[tss];
 
-      ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
-      if (charge[tss] != charge[ts]) continue;
+      if (tkk.nFoundHits() < minNHits) continue;
+      if (tkk.charge() != tk.charge()) continue;
       
-      const float Pt2 = pt[tss];
+      const float Pt2 = tkk.pT();
       const float thisDPt = std::abs(Pt2-Pt1);
-      ////// Require pT consistency between seeds. If dpT is large, do not remove seed-track.
-      ////// Adaptive thresholds, based on pT of reference seed-track (choice is a compromise between efficiency and duplicate rate):
-      ////// - 2.5% if track is barrel and w/ pT<2 GeV
-      ////// - 1.25% if track is non-barrel and w/ pT<2 GeV
-      ////// - 10% if track w/ 2<pT<5 GeV
-      ////// - 20% if track w/ 5<pT<10 GeV
-      ////// - 25% if track w/ pT>10 GeV
+
       if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
-
       if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
-
       if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
-
       if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
-
       if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
 
-    
+      tss_map[_tss] = tss;
+      // nHits[_tss]   = tkk.nFoundHits();
+      // charge[_tss]  = tkk.charge();
+      oldPhi[_tss]  = tkk.momPhi();
+      pos2[_tss]    = std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2);
+      eta[_tss]     = tkk.momEta();
+      theta[_tss]   = std::atan2(tkk.pT(),tkk.pz());
+      invptq[_tss]  = tkk.charge()*tkk.invpT();
+      // pt[_tss]      = tkk.pT();
+      x[_tss]       = tkk.x();
+      y[_tss]       = tkk.y();
+      z[_tss]       = tkk.z();
+      _tss++;
+    }
+
+    #pragma simd
+    for (int tss= 0; tss<_tss; tss++){
       const float Eta2 = eta[tss];
       const float deta2 = std::pow(Eta1-Eta2, 2);
-
       const float oldPhi2 = oldPhi[tss];
-
       const float pos2_second = pos2[tss];
       const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
-
-      const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
-      
+      const float thisDXY = thisDXYSign05*sqrt( std::pow(tk.x()-x[tss], 2) + std::pow(tk.y()-y[tss], 2) );      
       const float invptq_second = invptq[tss];
-
       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
-
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
-
-      const float dr2 = deta2+dphi*dphi;
+      const float thisDZ = tk.z()-z[tss]-thisDXY*(1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan(theta[tss]));
       
-      const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
-      const float dz2 = thisDZ*thisDZ;
+      dr2[tss] = deta2+dphi*dphi;      
+      dz2[tss] = thisDZ*thisDZ;
+    }
 
-     if(std::abs(Eta1)<etamax_brl){
-        if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
-          writetrack[tss]=false;  
+    for (int tss= 0; tss<_tss; tss++){
+      if(std::abs(Eta1)<etamax_brl){
+        if(dz2[tss]/dzmax2_brl+dr2[tss]/drmax2_brl<1.0f)
+          writetrack[tss_map[tss]]=false;  
       }
       else if(Pt1>ptmin_hpt){
-        if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
-          writetrack[tss]=false;
+        if(dz2[tss]/dzmax2_hpt+dr2[tss]/drmax2_hpt<1.0f)
+          writetrack[tss_map[tss]]=false;
       }
       else {
-        if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
-          writetrack[tss]=false;
+        if(dz2[tss]/dzmax2_els+dr2[tss]/drmax2_els<1.0f)
+          writetrack[tss_map[tss]]=false;
       }
 
     } // inner loop
@@ -955,7 +963,7 @@ CALI_CXX_MARK_FUNCTION;
 // CALI_MARK_END("clean_cms_seedtracks_loop2");
 // #endif
   
-// printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
+printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
 
 #ifdef DEBUG
   printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
