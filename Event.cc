@@ -922,6 +922,8 @@ CALI_CXX_MARK_FUNCTION;
       const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
 
+      const float dphi = cdist(std::abs(newPhi1-newPhi2));
+
       const float dr2 = deta2+dphi*dphi;
       
       const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
