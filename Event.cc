@@ -848,26 +848,22 @@ CALI_CXX_MARK_FUNCTION;
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
 // #endif
-  for(int ts=0; ts<ns; ts++){
-
+  for (int ts= 0; ts<ns; ts++){
+    
     const Track & tk = seedTracks_[ts];
-
-    if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
+    if (not writetrack[ts]) continue;
     if (tk.nFoundHits() < minNHits) continue;
 
     const float oldPhi1 = tk.momPhi();
     const float pos2_first = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
     const float Eta1 = tk.momEta();
     const float Pt1 = tk.pT();
-    const float invptq_first = tk.charge()*tk.invpT(); 
+    const float invptq_first = invR1GeV*tk.charge()*tk.invpT(); 
    
     int _tss = 0;
 
-    //#pragma simd /* Vectorization via simd had issues with icc */
     for (int tss= ts+1; tss<ns; tss++){
-
       const Track & tkk = seedTracks_[tss];
-
       if (tkk.nFoundHits() < minNHits) continue;
       if (tkk.charge() != tk.charge()) continue;
       
@@ -899,7 +895,7 @@ CALI_CXX_MARK_FUNCTION;
       const float oldPhi2 = oldPhi[tss];
       const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
       const float invptq_second = invptq[tss];
-      const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+      const float newPhi1 = oldPhi1-thisDXY*invptq_first;
       const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
       const float dphi = cdist(std::abs(newPhi1-newPhi2));
       const float thisDZ = z[tss]-thisDXY*theta[tss];
@@ -920,6 +916,7 @@ CALI_CXX_MARK_FUNCTION;
       else {
         if(dz2[tss]*drmax2_els+dr2[tss]*dzmax2_els<drzmax2_els)
           writetrack[tss_map[tss]]=false;
+
       }
 
     } // inner loop
