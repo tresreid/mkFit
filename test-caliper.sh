@@ -43,14 +43,14 @@ then
     # mOpt="-j 32 AVX2:=1 USE_CALI:=1"
     mOpt="-j 32 AVX_512:=1 USE_CALI:=1"
     dir=/data2/slava77/samples
-    out_dir=cali_clean_seeds_parallel_inner
+    out_dir=cali_last_try
     maxth=64
     maxvu=16
     declare -a nths=("1" "2" "10")
     declare -a nvus=("16")
     # declare -a nvus=("1" "2" "4" "8" "16")
     declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
-    declare -a metrics=("PAPI_TOT_CYC" "PAPI_L2_TCM" "PAPI_L2_TCA")
+    declare -a metrics=("PAPI_TOT_CYC" "L2_RQSTS:REFERENCES" "PAPI_L2_TCM" "PAPI_MEM_WCY" )
     # declare -a metrics=("PAPI_LST_INS" "PAPI_L1_TCM" "PAPI_L2_TCA" "PAPI_L2_TCM" "PAPI_L3_TCA" "PAPI_L3_TCM" "PAPI_VEC_SP" "PAPI_SP_OPS" "PAPI_NATIVE_FP_ARITH:512B_PACKED_SINGLE")
 else 
     echo ${ben_arch} "is not a valid architecture! Exiting..."
@@ -108,8 +108,8 @@ do
             export CALI_REPORT_FILENAME=${out_dir}/CALI_${metric}/cali_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.json
             export CALI_PAPI_COUNTERS=${metric}
             ## Building-only benchmark
-            echo "${oBase}: Benchmark [nTH:${minth}, nVU:${nvu}]"
-            echo ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
+            "${oBase}: Benchmark [nTH:${minth}, nVU:${nvu}]"
+            ${bExe} > log_${metric}_${oBase}_NVU${nvu}_NTH${minth}_${build_type}_${tag}.txt
         done
     done
 done

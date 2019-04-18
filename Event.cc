@@ -827,23 +827,27 @@ CALI_CXX_MARK_FUNCTION;
   const int ns = seedTracks_.size(); // order 1000 for TTbar70
 
   TrackVec cleanSeedTracks;
-  cleanSeedTracks.reserve(ns);
+  // cleanSeedTracks.reserve(ns);
   std::vector<bool> writetrack(ns, true);
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  float* oldPhi  = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* pos2    = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* eta     = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* theta   = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* invptq  = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* x       = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* y       = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* z       = (float*)_mm_malloc(ns*sizeof(float),64);
+  int tile_size = 32; 
 
-  float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  float* tss_map = (float*)_mm_malloc(ns*sizeof(int),64);
+  float* oldPhi  = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* pos2    = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* eta     = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* theta   = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* invptq  = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* x       = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* y       = (float*)_mm_malloc(tile_size*sizeof(float),64);
+  float* z       = (float*)_mm_malloc(tile_size*sizeof(float),64);
+
+  // float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  // float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
+  bool* _writetrack = (bool*)_mm_malloc(tile_size*sizeof(bool),64);
+  int*  tss_map     = (int*) _mm_malloc(tile_size*sizeof(int), 64);
+
 
 // #ifdef USE_CALI
 // CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
@@ -859,67 +863,71 @@ CALI_CXX_MARK_FUNCTION;
     const float Eta1 = tk.momEta();
     const float Pt1 = tk.pT();
     const float invptq_first = invR1GeV*tk.charge()*tk.invpT(); 
-   
-    int _tss = 0;
+    const float theta1 = 1.f/std::tan(std::atan2(tk.pT(),tk.pz()));
+    const bool _a = (std::abs(Eta1)<etamax_brl);
+    const bool _c = (Pt1>ptmin_hpt);
 
-    for (int tss= ts+1; tss<ns; tss++){
-      const Track & tkk = seedTracks_[tss];
-      if (tkk.nFoundHits() < minNHits) continue;
-      if (tkk.charge() != tk.charge()) continue;
-      
-      const float Pt2 = tkk.pT();
-      const float thisDPt = std::abs(Pt2-Pt1);
+    for (int tile= ts+1; tile<ns-tile_size; tile+=tile_size){
 
-      if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
-      if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
-      if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
-      if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
-      if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
+      int _tss = 0;
+      for (int tss= tile; tss<std::min(tile+tile_size, ns); tss++){
+        const Track & tkk = seedTracks_[tss];
+        if (tkk.nFoundHits() < minNHits) continue;
+        if (tkk.charge() != tk.charge()) continue;
+        
+        const float Pt2 = tkk.pT();
+        const float thisDPt = std::abs(Pt2-Pt1);
 
-      tss_map[_tss] = tss;
-      oldPhi[_tss]  = tkk.momPhi();
-      pos2[_tss]    = (std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2)) > pos2_first ? -0.5f : 0.5f;
-      eta[_tss]     = tkk.momEta();
-      theta[_tss]   = (1.f/std::tan(std::atan2(tk.pT(),tk.pz()))+1.f/std::tan((std::atan2(tkk.pT(),tkk.pz()))) );
-      invptq[_tss]  = tkk.charge()*tkk.invpT();
-      x[_tss]       = std::pow(tk.x()-tkk.x(), 2);
-      y[_tss]       = std::pow(tk.y()-tkk.y(), 2);
-      z[_tss]       = tk.z()-tkk.z();
-      _tss++;
-    }
+        if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
+        if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
+        if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
+        if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
+        if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
+        if (not writetrack[tss]) continue;
 
-    #pragma simd
-    for (int tss= 0; tss<_tss; tss++){
-      const float Eta2 = eta[tss];
-      const float deta2 = std::pow(Eta1-Eta2, 2);
-      const float oldPhi2 = oldPhi[tss];
-      const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
-      const float invptq_second = invptq[tss];
-      const float newPhi1 = oldPhi1-thisDXY*invptq_first;
-      const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
-      const float dphi = cdist(std::abs(newPhi1-newPhi2));
-      const float thisDZ = z[tss]-thisDXY*theta[tss];
-      
-      dr2[tss] = deta2+dphi*dphi;      
-      dz2[tss] = thisDZ*thisDZ;
-    }
-
-    for (int tss= 0; tss<_tss; tss++){
-      if(std::abs(Eta1)<etamax_brl){
-        if(dz2[tss]*drmax2_brl+dr2[tss]*dzmax2_brl<drzmax2_brl)
-          writetrack[tss_map[tss]]=false;  
-      }
-      else if(Pt1>ptmin_hpt){
-        if(dz2[tss]*drmax2_hpt+dr2[tss]*dzmax2_hpt<drzmax2_hpt)
-          writetrack[tss_map[tss]]=false;
-      }
-      else {
-        if(dz2[tss]*drmax2_els+dr2[tss]*dzmax2_els<drzmax2_els)
-          writetrack[tss_map[tss]]=false;
-
+        tss_map[_tss] = tss;
+        oldPhi[_tss]  = tkk.momPhi();
+        pos2[_tss]    = (std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2)) > pos2_first ? -0.5f : 0.5f;
+        eta[_tss]     = tkk.momEta();
+        theta[_tss]   = (theta1+1.f/std::tan((std::atan2(tkk.pT(),tkk.pz()))) );
+        invptq[_tss]  = tkk.charge()*tkk.invpT();
+        x[_tss]       = std::pow(tk.x()-tkk.x(), 2);
+        y[_tss]       = std::pow(tk.y()-tkk.y(), 2);
+        z[_tss]       = tk.z()-tkk.z();
+        _tss++;
       }
 
-    } // inner loop
+
+      #pragma ivdep 
+      for (int tss= 0; tss<_tss; tss++){
+
+        const float Eta2 = eta[tss];
+        const float deta2 = std::pow(Eta1-Eta2, 2);
+        const float oldPhi2 = oldPhi[tss];
+        const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
+        const float invptq_second = invptq[tss];
+        const float newPhi1 = oldPhi1-thisDXY*invptq_first;
+        const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
+        const float dphi = cdist(std::abs(newPhi1-newPhi2));
+        const float thisDZ = z[tss]-thisDXY*theta[tss];
+        
+        const float dr2 = deta2+dphi*dphi;      
+        const float dz2 = thisDZ*thisDZ;
+
+        const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drzmax2_brl);
+        const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<drzmax2_hpt);
+        const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<drzmax2_els);
+        
+        _writetrack[tss] =  !(( _a &&  _b)        \
+                         ||   (!_a &&  _c && _d)  \
+                         ||   (!_a && !_c && _e));
+      }
+
+      for (int tss= 0; tss<_tss; tss++){
+        writetrack[tss_map[tss]] =  _writetrack[tss];  
+      } // inner loop
+
+    } //tile loop
 
     if(writetrack[ts]){
       cleanSeedTracks.emplace_back(seedTracks_[ts]);
@@ -946,8 +954,9 @@ CALI_CXX_MARK_FUNCTION;
   _mm_free(x);
   _mm_free(y);
   _mm_free(z);
-  _mm_free(dr2);
-  _mm_free(dz2);
+  // _mm_free(dr2);
+  // _mm_free(dz2);
+  _mm_free(_writetrack);
   _mm_free(tss_map);
 
   seedTracks_.swap(cleanSeedTracks);
