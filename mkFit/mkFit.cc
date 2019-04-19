@@ -662,6 +662,10 @@ int main(int argc, const char *argv[])
         "  --seed-input     <str>   which seed collecion used for building (def: %s)\n"
         "  --seed-cleaning  <str>   which seed cleaning to apply if using cmssw seeds (def: %s)\n" 
         "  --cf-seeding             enable conformal fit over seeds (def: %s)\n"
+        "\n"
+	" **Duplicate removal options\n"
+	"  --remove-dup            run duplicate removal after building, using both hit and kinematic criteria (def: %s)\n"
+	"  --remove-dup-no-hit     run duplicate removal after building, using kinematic criteria only (def: %s)\n"
 	"\n"
 	" **Additional options for building\n"
         "  --chi2cut        <flt>   chi2 cut used in building test (def: %.1f)\n"
@@ -675,6 +679,7 @@ int main(int argc, const char *argv[])
 	"  --quality-val            enable printout validation for MkBuilder (def: %s)\n"
 	"                             must enable: --dump-for-plots\n"
 	"  --dump-for-plots         make shell printouts for plots (def: %s)\n"
+        "  --mtv-like-val           configure validation to emulate CMSSW MultiTrackValidator (MTV) (def: %s)\n"
 	"\n"
 	" **ROOT based options\n"
         "  --sim-val-for-cmssw      enable ROOT based validation for CMSSW tracks with simtracks as reference [eff, FR, DR] (def: %s)\n"
@@ -770,6 +775,9 @@ int main(int argc, const char *argv[])
 	getOpt(Config::seedCleaning, g_clean_opts).c_str(),
         b2a(Config::cf_seeding),
 
+	b2a(Config::removeDuplicates && Config::useHitsForDuplicates),
+	b2a(Config::removeDuplicates && !Config::useHitsForDuplicates),
+
 	Config::chi2Cut,
 	b2a(Config::usePhiQArrays),
         b2a(Config::kludgeCmsHitErrors),
@@ -778,6 +786,7 @@ int main(int argc, const char *argv[])
 
         b2a(Config::quality_val),
         b2a(Config::dumpForPlots),
+        b2a(Config::mtvLikeValidation),
 
         b2a(Config::sim_val_for_cmssw),
         b2a(Config::sim_val),
@@ -964,6 +973,16 @@ int main(int argc, const char *argv[])
       printf("--use-phiq-arr has no effect: recompile with CONFIG_PhiQArrays\n");
 #endif
     }
+    else if(*i == "--remove-dup")
+    {
+      Config::removeDuplicates = true;
+      Config::useHitsForDuplicates = true;
+    }
+    else if(*i == "--remove-dup-no-hit")
+    {
+      Config::removeDuplicates = true;
+      Config::useHitsForDuplicates = false;
+    }
     else if(*i == "--kludge-cms-hit-errors")
     {
       Config::kludgeCmsHitErrors = true;
@@ -983,6 +1002,12 @@ int main(int argc, const char *argv[])
     else if (*i == "--dump-for-plots")
     {
       Config::dumpForPlots = true;
+    }
+    else if (*i == "--mtv-like-val")
+    {
+      Config::mtvLikeValidation = true;
+      Config::cmsSelMinLayers = 0;
+      Config::nMinFoundHits = 0;
     }
     else if (*i == "--sim-val-for-cmssw")
     {
@@ -1110,6 +1135,11 @@ int main(int argc, const char *argv[])
   if (Config::seedCleaning != cleanSeedsPure && (Config::cmsswMatchingFW == labelBased || Config::cmsswMatchingBK == labelBased))
   {
     std::cerr << "What have you done?!? Can't mix cmssw label matching without pure seeds! Exiting..." << std::endl;
+    exit(1);
+  }
+  else if (Config::mtvLikeValidation && Config::inclusiveShorts)
+  {
+    std::cerr << "What have you done?!? Short reco tracks are already accounted for in the MTV-Like Validation! Inclusive shorts is only an option for the standard simval, and will break the MTV-Like simval! Exiting..." << std::endl;
     exit(1);
   }
 

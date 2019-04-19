@@ -158,7 +158,7 @@ void Event::Simulate()
       float pt = sqrt(mom[0]*mom[0]+mom[1]*mom[1]);
       mom=SVector3(1./pt,atan2(mom[1],mom[0]),atan2(pt,mom[2]));
       for (size_t its = 0; its < initialTSs.size(); its++){
-  initialTSs[its].convertFromCartesianToCCS();
+	initialTSs[its].convertFromCartesianToCCS();
       }
 
       // MT: I'm putting in a mutex for now ...
@@ -180,17 +180,17 @@ void Event::Simulate()
         layerHits_[hitinfos[i].layer_].emplace_back(hits[i]);
 
         simHitsInfo_.emplace_back(hitinfos[i]);
-  if (Config::sim_val || Config::fit_val) 
+	if (Config::sim_val || Config::fit_val) 
         {
-    simTrackStates_.emplace_back(initialTSs[i]);
-  }
+	  simTrackStates_.emplace_back(initialTSs[i]);
+	}
       }
     }
 #ifdef TBB
   });
 #endif
 
-  // do some work to ensure everything is aligned after multithreading  
+  // do some work to ensure everything is aligned after multithreading 	
   std::unordered_map<int,int> mcHitIDMap;
   for (size_t ihit = 0; ihit < simHitsInfo_.size(); ihit++)
   {
@@ -198,9 +198,9 @@ void Event::Simulate()
   }
 
   std::sort(simHitsInfo_.begin(),   simHitsInfo_.end(),
-      [](const MCHitInfo& a, const MCHitInfo& b)
-      { return a.mcHitID() < b.mcHitID(); });
-    
+	    [](const MCHitInfo& a, const MCHitInfo& b)
+	    { return a.mcHitID() < b.mcHitID(); });
+		
   TSVec tmpTSVec(simTrackStates_.size());
   for (size_t its = 0; its < simTrackStates_.size(); its++)
   {
@@ -247,8 +247,8 @@ void Event::Segment(BinInfoMap & segmentMap)
 
       for(int ihit = firstEtaBinIdx; ihit < etaBinSize+firstEtaBinIdx; ++ihit){
         dprint("ihit: " << ihit << " r(layer): " << layerHits_[ilayer][ihit].r() << "(" << ilayer << ") phi: " 
-                  << layerHits_[ilayer][ihit].phi() << " phipart: " << getPhiPartition(layerHits_[ilayer][ihit].phi()) << " eta: "
-                  << layerHits_[ilayer][ihit].eta() << " etapart: " << getEtaPartition(layerHits_[ilayer][ihit].eta()));
+	                << layerHits_[ilayer][ihit].phi() << " phipart: " << getPhiPartition(layerHits_[ilayer][ihit].phi()) << " eta: "
+	                << layerHits_[ilayer][ihit].eta() << " etapart: " << getEtaPartition(layerHits_[ilayer][ihit].eta()));
         int phibin = getPhiPartition(layerHits_[ilayer][ihit].phi());
         lay_eta_phi_bin_count[phibin]++;
       }
@@ -282,7 +282,7 @@ void Event::Segment(BinInfoMap & segmentMap)
       etahitstotal += etahits;
 
       for (int phibin = 0; phibin < Config::nPhiPart; phibin++){
-  //  if (segmentMap[ilayer][etabin][phibin].second > 3) {std::cout << "   phibin: " << phibin << " hits: " << segmentMap[ilayer][etabin][phibin].second << std::endl;}
+	//	if (segmentMap[ilayer][etabin][phibin].second > 3) {std::cout << "   phibin: " << phibin << " hits: " << segmentMap[ilayer][etabin][phibin].second << std::endl;}
       }
     }
     std::cout << "layer: " << ilayer << " totalhits: " << etahitstotal << std::endl;
@@ -529,7 +529,9 @@ void Event::read_in(DataFile &data_file, FILE *in_fp)
     printf("Read %i seedtracks (neg value means actual reading was skipped)\n", ns);
     for (int it = 0; it < ns; it++)
     {
-      printf("  q=%+i pT=%6.3f nHits=%i label=% i\n",seedTracks_[it].charge(),seedTracks_[it].pT(),seedTracks_[it].nFoundHits(),seedTracks_[it].label());
+      const Track& ss = seedTracks_[it];
+      printf("  %3i q=%+i pT=%7.3f eta=% 7.3f nHits=%i label=% i\n",
+             it,ss.charge(),ss.pT(),ss.momEta(),ss.nFoundHits(),ss.label());
 #ifdef DUMP_SEED_HITS
       for (int ih = 0; ih < seedTracks_[it].nTotalHits(); ++ih)
       {
@@ -587,7 +589,7 @@ void Event::read_in(DataFile &data_file, FILE *in_fp)
   for (int it = 0; it < nt; it++)
   {
     const Track &t = simTracks_[it];
-    printf("  %i with q=%+i pT=%7.3f eta=% 7.3f nHits=%2d  label=%4d\n",
+    printf("  %3i q=%+i pT=%7.3f eta=% 7.3f nHits=%2d  label=%4d\n",
            it, t.charge(), t.pT(), t.momEta(), t.nFoundHits(), t.label());
 #ifdef DUMP_TRACK_HITS
     for (int ih = 0; ih < t.nTotalHits(); ++ih)
@@ -597,12 +599,12 @@ void Event::read_in(DataFile &data_file, FILE *in_fp)
       if (idx >= 0)
       {
         const Hit &hit = layerHits_[lyr][idx];
-  printf("    hit %2d lyr=%2d idx=%3d pos r=%7.3f x=% 8.3f y=% 8.3f z=% 8.3f   mc_hit=%3d mc_trk=%3d\n",
+	printf("    hit %2d lyr=%2d idx=%3d pos r=%7.3f x=% 8.3f y=% 8.3f z=% 8.3f   mc_hit=%3d mc_trk=%3d\n",
                ih, lyr, idx, layerHits_[lyr][idx].r(), layerHits_[lyr][idx].x(), layerHits_[lyr][idx].y(), layerHits_[lyr][idx].z(),
                hit.mcHitID(), hit.mcTrackID(simHitsInfo_));
       }
       else
-  printf("    hit %2d idx=%i\n", ih, t.getHitIdx(ih));
+	printf("    hit %2d idx=%i\n", ih, t.getHitIdx(ih));
     }
 #endif
   }
@@ -660,7 +662,7 @@ void Event::read_in(DataFile &data_file, FILE *in_fp)
   if (!Config::silent) printf("Read complete, %d simtracks on file.\n", nt);
 }
 
-void Event::setInputFromCMSSW(std::vector<HitVec>&& hits, TrackVec&& seeds)
+void Event::setInputFromCMSSW(std::vector<HitVec> hits, TrackVec seeds)
 {
   layerHits_ = std::move(hits);
   seedTracks_ = std::move(seeds);
@@ -724,13 +726,11 @@ int Event::clean_cms_simtracks()
   // Returns number of passed simtracks.
 
   dprintf("Event::clean_cms_simtracks processing %d simtracks.\n", simTracks_.size());
-  
+
   int n_acc = 0;
   int i = -1;//wrap in ifdef DEBUG?
-
   for (Track & t : simTracks_)
   {
-
     i++;
 
     t.sortHitsByLayer();
@@ -786,14 +786,8 @@ void Event::print_tracks(const TrackVec& tracks, bool print_hits) const
   }
 }
 
-// called from MkBuilder PrepareSeeds which is called from the various buildtest functions 
-// is with the main tbb thing 
 int Event::clean_cms_seedtracks()
 {
-
-#ifdef USE_CALI
-CALI_CXX_MARK_FUNCTION;
-#endif
 
   const int minNHits     = Config::minNHits_seedclean;
   const float etamax_brl = Config::c_etamax_brl;
@@ -820,149 +814,149 @@ CALI_CXX_MARK_FUNCTION;
   const float dzmax2_els = dzmax_els*dzmax_els;
   const float drmax2_els = drmax_els*drmax_els;
 
-  const float drzmax2_brl = drmax2_brl*dzmax2_brl;
-  const float drzmax2_hpt = drmax2_hpt*dzmax2_hpt;
-  const float drzmax2_els = drmax2_els*dzmax2_els;
-
-  const int ns = seedTracks_.size(); // order 1000 for TTbar70
+  const int ns = seedTracks_.size();
 
   TrackVec cleanSeedTracks;
-  // cleanSeedTracks.reserve(ns);
+  cleanSeedTracks.reserve(ns);
   std::vector<bool> writetrack(ns, true);
 
   const float invR1GeV = 1.f/Config::track1GeVradius;
 
-  int tile_size = 32; 
+  std::vector<int>    nHits(ns);
+  std::vector<int>    charge(ns);
+  std::vector<float>  oldPhi(ns);
+  std::vector<float>  pos2(ns);
+  std::vector<float>  eta(ns);
+  std::vector<float>  theta(ns);
+  std::vector<float>  invptq(ns);
+  std::vector<float>  pt(ns);
+  std::vector<float>  x(ns);
+  std::vector<float>  y(ns);
+  std::vector<float>  z(ns);
 
-  float* oldPhi  = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* pos2    = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* eta     = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* theta   = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* invptq  = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* x       = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* y       = (float*)_mm_malloc(tile_size*sizeof(float),64);
-  float* z       = (float*)_mm_malloc(tile_size*sizeof(float),64);
-
-  // float* dr2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  // float* dz2     = (float*)_mm_malloc(ns*sizeof(float),64);
-  bool* _writetrack = (bool*)_mm_malloc(tile_size*sizeof(bool),64);
-  int*  tss_map     = (int*) _mm_malloc(tile_size*sizeof(int), 64);
-
-
-// #ifdef USE_CALI
-// CALI_MARK_BEGIN("clean_cms_seedtracks_loop2");
-// #endif
-  for (int ts= 0; ts<ns; ts++){
-    
+  for(int ts=0; ts<ns; ts++){
     const Track & tk = seedTracks_[ts];
-    if (not writetrack[ts]) continue;
-    if (tk.nFoundHits() < minNHits) continue;
+    nHits[ts] = tk.nFoundHits();
+    charge[ts] = tk.charge();
+    oldPhi[ts] = tk.momPhi();
+    pos2[ts] = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
+    eta[ts] = tk.momEta();
+    theta[ts] = std::atan2(tk.pT(),tk.pz());
+    invptq[ts] = tk.charge()*tk.invpT();
+    pt[ts] = tk.pT();
+    x[ts] = tk.x();
+    y[ts] = tk.y();
+    z[ts] = tk.z();
+  }
 
-    const float oldPhi1 = tk.momPhi();
-    const float pos2_first = std::pow(tk.x(), 2) + std::pow(tk.y(), 2);
-    const float Eta1 = tk.momEta();
-    const float Pt1 = tk.pT();
-    const float invptq_first = invR1GeV*tk.charge()*tk.invpT(); 
-    const float theta1 = 1.f/std::tan(std::atan2(tk.pT(),tk.pz()));
-    const bool _a = (std::abs(Eta1)<etamax_brl);
-    const bool _c = (Pt1>ptmin_hpt);
+  for(int ts=0; ts<ns; ts++){
 
-    for (int tile= ts+1; tile<ns-tile_size; tile+=tile_size){
+    if (not writetrack[ts]) continue;//FIXME: this speed up prevents transitive masking; check build cost!
+    if (nHits[ts] < minNHits) continue;
 
-      int _tss = 0;
-      for (int tss= tile; tss<std::min(tile+tile_size, ns); tss++){
-        const Track & tkk = seedTracks_[tss];
-        if (tkk.nFoundHits() < minNHits) continue;
-        if (tkk.charge() != tk.charge()) continue;
-        
-        const float Pt2 = tkk.pT();
-        const float thisDPt = std::abs(Pt2-Pt1);
+    const float oldPhi1 = oldPhi[ts];
+    const float pos2_first = pos2[ts];
+    const float Eta1 = eta[ts];
+    const float Pt1 = pt[ts];
+    const float invptq_first = invptq[ts]; 
 
-        if (thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl) continue;
-        if (thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl) continue;
-        if (thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1) continue;
-        if (thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2) continue;
-        if (thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2) continue;
-        if (not writetrack[tss]) continue;
+    //#pragma simd /* Vectorization via simd had issues with icc */
+    for (int tss= ts+1; tss<ns; tss++){
 
-        tss_map[_tss] = tss;
-        oldPhi[_tss]  = tkk.momPhi();
-        pos2[_tss]    = (std::pow(tkk.x(), 2) + std::pow(tkk.y(), 2)) > pos2_first ? -0.5f : 0.5f;
-        eta[_tss]     = tkk.momEta();
-        theta[_tss]   = (theta1+1.f/std::tan((std::atan2(tkk.pT(),tkk.pz()))) );
-        invptq[_tss]  = tkk.charge()*tkk.invpT();
-        x[_tss]       = std::pow(tk.x()-tkk.x(), 2);
-        y[_tss]       = std::pow(tk.y()-tkk.y(), 2);
-        z[_tss]       = tk.z()-tkk.z();
-        _tss++;
+      if (nHits[tss] < minNHits) continue;
+
+      const float Pt2 = pt[tss];
+
+      ////// Always require charge consistency. If different charge is assigned, do not remove seed-track
+      if(charge[tss] != charge[ts])
+        continue;
+      
+      const float thisDPt = std::abs(Pt2-Pt1);
+      ////// Require pT consistency between seeds. If dpT is large, do not remove seed-track.
+      ////// Adaptive thresholds, based on pT of reference seed-track (choice is a compromise between efficiency and duplicate rate):
+      ////// - 2.5% if track is barrel and w/ pT<2 GeV
+      ////// - 1.25% if track is non-barrel and w/ pT<2 GeV
+      ////// - 10% if track w/ 2<pT<5 GeV
+      ////// - 20% if track w/ 5<pT<10 GeV
+      ////// - 25% if track w/ pT>10 GeV
+      if(thisDPt>dpt_brl_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)<etamax_brl)
+	continue;
+
+      else if(thisDPt>dpt_ec_0*(Pt1) && Pt1<ptmax_0 && std::abs(Eta1)>etamax_brl)
+	continue;
+
+      else if(thisDPt>dpt_1*(Pt1) && Pt1>ptmax_0 && Pt1<ptmax_1)
+	continue;
+
+      else if(thisDPt>dpt_2*(Pt1) && Pt1>ptmax_1 && Pt1<ptmax_2)
+	continue;
+
+      else if(thisDPt>dpt_3*(Pt1) && Pt1>ptmax_2)
+	continue;
+
+
+      const float Eta2 = eta[tss];
+      const float deta2 = std::pow(Eta1-Eta2, 2);
+
+      const float oldPhi2 = oldPhi[tss];
+
+      const float pos2_second = pos2[tss];
+      const float thisDXYSign05 = pos2_second > pos2_first ? -0.5f : 0.5f;
+
+      const float thisDXY = thisDXYSign05*sqrt( std::pow(x[ts]-x[tss], 2) + std::pow(y[ts]-y[tss], 2) );
+      
+      const float invptq_second = invptq[tss];
+
+      const float newPhi1 = oldPhi1-thisDXY*invR1GeV*invptq_first;
+      const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
+
+      const float dphi = cdist(std::abs(newPhi1-newPhi2));
+
+      const float dr2 = deta2+dphi*dphi;
+      
+      const float thisDZ = z[ts]-z[tss]-thisDXY*(1.f/std::tan(theta[ts])+1.f/std::tan(theta[tss]));
+      const float dz2 = thisDZ*thisDZ;
+
+      ////// Reject tracks within dR-dz elliptical window.
+      ////// Adaptive thresholds, based on observation that duplicates are more abundant at large pseudo-rapidity and low track pT
+      if(std::abs(Eta1)<etamax_brl){
+	if(dz2/dzmax2_brl+dr2/drmax2_brl<1.0f)
+	  writetrack[tss]=false;	
+      }
+      else if(Pt1>ptmin_hpt){
+	if(dz2/dzmax2_hpt+dr2/drmax2_hpt<1.0f)
+	  writetrack[tss]=false;
+      }
+      else {
+	if(dz2/dzmax2_els+dr2/drmax2_els<1.0f)
+	  writetrack[tss]=false;
       }
 
-
-      #pragma ivdep 
-      for (int tss= 0; tss<_tss; tss++){
-
-        const float Eta2 = eta[tss];
-        const float deta2 = std::pow(Eta1-Eta2, 2);
-        const float oldPhi2 = oldPhi[tss];
-        const float thisDXY = pos2[tss]*sqrt( x[tss] + y[tss] );      
-        const float invptq_second = invptq[tss];
-        const float newPhi1 = oldPhi1-thisDXY*invptq_first;
-        const float newPhi2 = oldPhi2+thisDXY*invR1GeV*invptq_second;
-        const float dphi = cdist(std::abs(newPhi1-newPhi2));
-        const float thisDZ = z[tss]-thisDXY*theta[tss];
-        
-        const float dr2 = deta2+dphi*dphi;      
-        const float dz2 = thisDZ*thisDZ;
-
-        const bool _b = (dz2*drmax2_brl+dr2*dzmax2_brl<drzmax2_brl);
-        const bool _d = (dz2*drmax2_hpt+dr2*dzmax2_hpt<drzmax2_hpt);
-        const bool _e = (dz2*drmax2_els+dr2*dzmax2_els<drzmax2_els);
-        
-        _writetrack[tss] =  !(( _a &&  _b)        \
-                         ||   (!_a &&  _c && _d)  \
-                         ||   (!_a && !_c && _e));
-      }
-
-      for (int tss= 0; tss<_tss; tss++){
-        writetrack[tss_map[tss]] =  _writetrack[tss];  
-      } // inner loop
-
-    } //tile loop
-
-    if(writetrack[ts]){
-      cleanSeedTracks.emplace_back(seedTracks_[ts]);
     }
+   
+    if(writetrack[ts])
+      cleanSeedTracks.emplace_back(seedTracks_[ts]);
 
-  } //outer loop  
-
-
-// #ifdef USE_CALI
-// CALI_MARK_END("clean_cms_seedtracks_loop2");
-// #endif
+  }
   
-// printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size()); 
-
-#ifdef DEBUG
-  printf("Number of seeds: %d --> %d\n", ns, cleanSeedTracks.size());
-#endif
-
-  _mm_free(oldPhi);
-  _mm_free(pos2);
-  _mm_free(eta);
-  _mm_free(theta);
-  _mm_free(invptq);
-  _mm_free(x);
-  _mm_free(y);
-  _mm_free(z);
-  // _mm_free(dr2);
-  // _mm_free(dz2);
-  _mm_free(_writetrack);
-  _mm_free(tss_map);
-
   seedTracks_.swap(cleanSeedTracks);
 
+#ifdef DEBUG
+  {
+    const int ns2 = seedTracks_.size();
+    printf("Number of CMS seeds before %d --> after %d cleaning\n", ns, ns2);
+
+    for (int it = 0; it < ns2; it++)
+    {
+      const Track& ss = seedTracks_[it];
+      printf("  %3i q=%+i pT=%7.3f eta=% 7.3f nHits=%i label=% i\n",
+             it,ss.charge(),ss.pT(),ss.momEta(),ss.nFoundHits(),ss.label());
+    }
+  }
+#endif
+
   return seedTracks_.size();
-} // clean_cms_seedtracks 
+}
 
 int Event::clean_cms_seedtracks_badlabel()
 {
@@ -1007,8 +1001,8 @@ void Event::relabel_cmsswtracks_from_seeds()
     {
       if (cmsswTracks_[icmssw].label() == static_cast<int>(iseed))
       {
-  cmsswLabelMap[icmssw] = seedTracks_[iseed].label();
-    break;
+	cmsswLabelMap[icmssw] = seedTracks_[iseed].label();
+  	break;
       }
     }
   }

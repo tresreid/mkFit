@@ -20,16 +20,24 @@
 8) Other helpful README's in the repository
 9) CMSSW integration
    1) Considerations for `mkFit` code
-   2) Instructions to use `mkFit` from CMSSW
+   2) Building and setting up `mkFit` for CMSSW
       1) Build `mkFit`
          1) Lxplus
          2) Phi3
       2) Set up `mkFit` as an external
       3) Pull CMSSW code and build
-      4) Use `mkFit` in InitialStep of CMS offline tracking
-      5) Timing measurements
-      6) Producing MultiTrackValidator plots
-      7) Interpreting MultiTrackValidator plots
+   3) Recipes for the impatient on phi3
+      1) Offline tracking (initialStep)
+      2) HLT tracking (iter0)
+   4) More thorough running instructions
+      1) Offline tracking (initialStep)
+         1) Customize functions
+         2) Timing measurements
+         3) Producing MultiTrackValidator plots
+      2) HLT tracking (iter0)
+   5) Interpretation of results
+      1) MultiTrackValidator plots
+      2) Timing
 10) Other useful information
     1) Important Links
     2) Tips and Tricks
@@ -51,7 +59,7 @@ The main development platform is phi3. This is the recommended machine for begin
 
 **Extra platform configuration information**
 - phi1, phi3, and lnx4108 are dual socket machines and have two identical Xeons on each board
-- phi1 and phi2 both have TurboBoost disabled, while it is enabled on phi3
+- phi1, phi2, and phi3 all have TurboBoost disabled to disentangle some effects of dynamic frequency scaling with higher vectorization
 
 For further info on the configuration of each machine, use your favorite text file viewer to peruse the files ```/proc/cpuinfo``` and ```/proc/meminfo``` on each machine.
 
@@ -100,7 +108,7 @@ make -j 32 AVX_512:=1
 To run the code with some generic options, do:
 
 ```
-./mkFit/mkFit --cmssw-n2seeds --input-file /data2/slava77/samples/2017/pass-4874f28/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU/a/memoryFile.fv3.clean.writeAll.recT.072617.bin --build-ce --num-thr 64 --num-events 20
+./mkFit/mkFit --cmssw-n2seeds --input-file /data2/slava77/samples/2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU/memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin --build-ce --num-thr 64 --num-events 20
 ```
 
 Consult Sections 7-8 for where to find more information on descriptions of the code, which list resources on where to find the full set of options for running the code.
@@ -192,6 +200,11 @@ The main physics performance script that is run is:
 ./val_scripts/validation-cmssw-benchmarks.sh ${suite}
 ```
 
+The physics validation scripts supports also an option to produce results compatible with the standard tracking validation in CMSSW, the MultiTrackValidator (MTV). This can run as:
+```
+./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
+```
+
 This script will run the validation on the building tests specified by the ```${suite}``` option. It will also produce the full set of physics performance plots and text files detailing the various physics rates.
 
 It should be mentioned that each of these scripts within ```./xeon_scripts/runBenchmark.sh``` can be launched on their own, as again, they each set the environment and run tests and/or plot making. However, for simplicity's sake, it is easiest when prepping for a PR to just run the master ```./xeon_scripts/runBenchmark.sh```.  If you want to test locally, it is of course possible to launch the scripts one at a time.
@@ -221,15 +234,20 @@ The main script for collecting plots and sending them to LXPLUS can be called by
 ./web/move-benchmarks.sh ${outdir_name} ${suite} ${afs_or_eos}
 ```
 
-where again, ```${suite}``` defaults to ```forPR```. ```${outdir_name}``` will be the top-level directory where the output is collected and eventually shipped to LXPLUS. This will call ```./web/collectBenchmarks.sh ${outdir_name} ${suite}```, which will sort the files, and then call ```./web/tarAndSendToLXPLUS.sh ${outdir_name} ${suite} ${afs_or_eos}```, which packs up the top-level output dir and copies it to either an /afs or /eos userspace on LXPLUS. This will also run another script remotely on LXPLUS to copy ```web/index.php``` into each directory to have a nice web GUI for the plots. N.B. There are some assumptions on the remote directory structure, naming, and files present in order for ```web/tarAndSendToLXPLUS.sh``` to work. Please consult ```web/README_WEBPLOTS.md``` for setting this up properly!
+where again, ```${suite}``` defaults to ```forPR```. ```${outdir_name}``` will be the top-level directory where the output is collected and eventually shipped to LXPLUS. This script first calls ```./web/collectBenchmarks.sh ${outdir_name} ${suite}```, which will sort the files, and then calls the script ```./web/copyphp.sh```, which copies ```web/index.php``` into the ```${outdir_name}``` to have a nice GUI on the web, and finally calls ```./web/tarAndSendToLXPLUS.sh ${outdir_name} ${suite} ${afs_or_eos}```, which packs up the top-level output dir and copies it to either an /afs or /eos userspace on LXPLUS. 
 
-Lastly, the option ```${afs_or_eos}``` takes either of the following arguments: ```afs``` or ```eos```, and defaults to ```afs```. The mapping of the username to the remote directories is in ```web/tarAndSendToLXPLUS.sh```. If an incorrect string is passed, the script will exit. N.B. AFS is being phased out at CERN, so the preferred option is ```eos```.
+The option ```${afs_or_eos}``` takes either of the following arguments: ```afs``` or ```eos```, and defaults to ```eos```. The mapping of the username to the remote directories is in ```web/tarAndSendToLXPLUS.sh```. If an incorrect string is passed, the script will exit. 
+
+**IMPORTANT NOTES**
+1) AFS is being phased out at CERN, so the preferred option is ```eos```.
+
+2) There are some assumptions on the remote directory structure, naming, and files present in order for ```web/tarAndSendToLXPLUS.sh``` to work. Please consult ```web/README_WEBPLOTS.md``` for setting this up properly!
 
 **IMPORTANT DISCLAIMERS**
 
 1. There is a script: ```./xeon_scripts/trashSKL-SP.sh``` that is run at the very end of the ```./web/move-benchmarks.sh``` script that will delete log files, pngs, validation directories, root files, and the neat directory created to house all the validation plots.  This means that if the scp fails, the plots will still be deleted locally, and you will be forced to re-run the whole suite!!  You can of course comment this script out if this bothers you.
 
-2. ```web/tarAndSendToLXPLUS.sh``` has a number of pieces that execute code on LXPLUS, which includes executing scripts to copy ```web/index.php``` removing the copied over tarball of plots. If you are uncomfortable with this, you can comment it out.
+2. ```web/tarAndSendToLXPLUS.sh``` executes a script remotely on LXPLUS when using AFS, which makes the directory readable to outside world. If you are uncomfortable with this, you can comment it out. If your website is on EOS, then please ignore this disclaimer.
 
 ### Section 5.iv: Interpreting the results
 
@@ -296,6 +314,13 @@ Three different matching criteria are used for making associations between recon
   - Efficiency = fraction of findable ref. tracks matched to a reco track
   - Duplicate rate = fraction of matched ref. tracks with more than one match to a reco track
   - Fake rate = fraction of "good" reco tracks without a match to a ref. track 
+
+In case the MTV-like validation is selected with the option ```mtv-like-val```, the above requirements are replaced with the following:
+- Reference tracks:
+  - Sim tracks required to come from the hard-scatter interaction, originate from R<3.5 cm and |z|<30 cm, and with pseudorapidity |eta|<2.5 (no requirement to have four hits that match a seed)
+- All reconstructed tracks are considered "To-be-validated"
+- Matching Criteria:
+  - Reco track is matched to a sim track if > 75% of hits on reco track match hits from a single sim track (including hits from the seed)
 
 There are text files within these directories that contain the average numbers for each of the figures of merit, which start with "totals\_\*.txt." In addition, these directories contain nHit plots, as well as kinematic difference plots for matched tracks. Best matched plots are for differences with matched reco tracks with the best track score if more than one reco track matches a ref. track. 
 
@@ -413,7 +438,7 @@ Given that this is a living repository, the comments in the code may not always 
 
 ## Section 9: CMSSW integration
 
-The supported CMSSW version is currently `10_2_0_pre3`. The
+The supported CMSSW version is currently `10_4_0_patch1`. The
 integration of `mkFit` in CMSSW is based on setting it up as a CMSSW
 external.
 
@@ -429,7 +454,7 @@ life easier for everybody.
   - Currently there are non-const global variables e.g. in `Config` namespace
 * All iteration-specific parameters should be passed from CMSSW to `mkFit` at run time
 
-### Section 9.ii: Instructions to use `mkFit` from CMSSW
+### Section 9.ii: Building and setting up `mkFit` for CMSSW
 
 #### Section 9.ii.a: Build `mkFit`
 
@@ -447,12 +472,11 @@ Currently there is no working recipe to compile with `icc` on LPC.
 ##### Section 9.ii.a.a: Lxplus
 
 ```bash
-cmsrel CMSSW_10_2_0_pre3
-pushd CMSSW_10_2_0_pre3/src
+source /cvmfs/projects.cern.ch/intelsw/psxe/linux/x86_64/2019/compilers_and_libraries_2019.1.144/linux/bin/iccvars.sh intel64
+cmsrel CMSSW_10_4_0_patch1
+pushd CMSSW_10_4_0_patch1/src
 cmsenv
 git cms-init
-scram setup icc-ccompiler
-source $(scram tool tag icc-ccompiler ICC_CCOMPILER_BASE)/bin/iccvars.sh intel64
 popd
 git clone git@github.com:cerati/mictest
 pushd mictest
@@ -463,22 +487,19 @@ popd
 ##### Section 9.ii.a.b: Phi3
 
 ```bash
+source /cvmfs/cms.cern.ch/cmsset_default.sh
 source /opt/intel/bin/compilervars.sh intel64
-git clone git@github.com:cerati/mictest
-pushd mictest
-TBB_PREFIX=$(dirname $(cd $CMSSW_BASE && scram tool tag tbb INCLUDE)) make -j 12
-popd
-cmsrel CMSSW_10_2_0_pre3
-pushd CMSSW_10_2_0_pre3/src
+export SCRAM_ARCH=slc7_amd64_gcc700
+cmsrel CMSSW_10_4_0_patch1
+pushd CMSSW_10_4_0_patch1/src
 cmsenv
 git cms-init
 popd
+git clone git@github.com:cerati/mictest
+pushd mictest
+TBB_PREFIX=$(dirname $(cd $CMSSW_BASE && scram tool tag tbb INCLUDE)) make -j 12 AVX_512:=1
+popd
 ```
-
-The `lxplus` recipe can also be used (to pick `icc` from CMSSW
-externals), but then the `$INTEL_LICENSE_FILE` has to be reset to the
-value given by `/opt/intel/bin/compilervars.sh` after sourcing
-`iccvars.sh`.
 
 #### Section 9.ii.b: Set up `mkFit` as an external
 
@@ -486,7 +507,7 @@ Assuming you are in the aforementioned parent directory, the following
 recipe will create a scram tool file, and set up scram to use it
 
 ```bash
-pushd CMSSW_10_2_0_pre3/src
+pushd CMSSW_10_4_0_patch1/src
 cat <<EOF >mkfit.xml
 <tool name="mkfit" version="1.0">
   <client>
@@ -508,22 +529,97 @@ cmsenv
 The following recipe will pull the necessary CMSSW-side code and build it
 
 ```bash
-# in CMSSW_10_2_0_pre3/src
+# in CMSSW_10_4_0_patch1/src
 git cms-remote add makortel
 git fetch makortel
-git checkout -b mkfit_1020pre3 makortel/mkfit_1020pre3
+git checkout -b mkfit_1040p1 makortel/mkfit_1040p1
 git cms-addpkg $(git diff $CMSSW_VERSION --name-only | cut -d/ -f-2 | uniq)
 git cms-checkdeps -a
 scram b -j 12
 ```
 
-#### Section 9.ii.d: Use `mkFit` in InitialStep of CMS offline tracking
+### Section 9.iii Recipes for the impatient on phi3
+
+#### Section 9.iii.a: Offline tracking (initialStep)
+
+Reconstruction up to initialStep (in reality initialStepPreSplitting
+named as initialStep)
+
+```bash
+# in CMSSW_10_4_0_patch1/src
+
+# sample = 10mu, ttbarnopu, ttbar_pu50, ttbar_pu70
+# mkfit = 1, 0
+# timing = 0, 1
+# (maxEvents = 0, <N>, -1)
+# nthreads = 1, <N>
+# nstreams = 0, <N>
+cmsRun RecoTracker/MkFit/test/reco_cfg.py sample=ttbar_pu70 timing=1
+```
+* The default values for the command line parameters are the first ones.
+* `mkfit=1` runs MkFit, `0` runs CMSSW tracking
+* For `timing=0` (default), the job produces `step3_inDQM.root` that
+  needs to be "harvested" to get a "normal" ROOT file with the
+  histograms.
+* Note that `timing=0` reads the input from the T2 over xrootd, which
+  requires a GRID proxy certificate (e.g. `voms-proxy-init -valid
+  172:00 -voms cms`). The input files are on the T2 because they are
+  too big to fit on the local disk of phi3. `timing=1` uses slimmed
+  input files (with RAW data only) from the local disk.
+* Especially for `timing=1` it is advisable to capture the output of
+  the job to a file to save the output of the simple timing measurement
+* If `maxEvents` is set to `0`, the number of events to be processed
+  is set to a relatively small value depending on the sample for short
+  testing purposes.
+* Setting `maxEvents=-1` means to process all events.
+* `nthreads` sets the number of threads (default 1), and `nstreams`
+  the number of EDM streams (or events in flight, default 0, meaning
+  the same value as the number of threads)
+
+DQM harvesting (unless running timing)
+```bash
+cmsRun RecoTracker/MkFit/test/reco_harvest_cfg.py
+```
+* Produces `DQM_V0001_R000000001__Global__CMSSW_X_Y_Z__RECO.root`
+
+Producing plots (unless running timing)
+```bash
+makeTrackValidationPlots.py --extended --ptcut <DQM file> [<another DQM file>]
+```
+* Produces `plots` directory with PDF files and HTML pages for
+  navigation. Copy the directory to your web area of choice.
+* See `makeTrackValidationPlots.py --help` for more options
+
+#### Section 9.iii.b HLT tracking (iter0)
+
+HLT reconstruction
+
+```bash
+# in CMSSW_10_4_0_patch1/src
+
+cmsRun RecoTracker/MkFit/test/hlt_cfg.py sample=ttbar_pu70 timing=1
+```
+* Options and behavior is the same as for the offline reconstruction above
+
+DQM harvesting (unless running timing)
+```bash
+cmsRun RecoTracker/MkFit/test/hlt_harvest.py
+```
+
+Producing plots (unless running timing)
+```bash
+makeTrackValidationPlots.py --extended <DQM file> [<another DQM file>]
+```
+
+### Section 9.iv More thorough instructions
+
+#### Section 9.iv.a: Offline tracking (initialStep)
 
 The example below uses 2018 tracking-only workflow
 
 ```bash
 # Generate configuration
-runTheMatrix.py -l 10824.1 --apply 2 --command "--customise RecoTracker/MkFit/customizeInitialStepToMkFit.customizeInitialStepToMkFit" -j 0
+runTheMatrix.py -l 10824.1 --apply 2 --command "--customise RecoTracker/MkFit/customizeInitialStepToMkFit.customizeInitialStepToMkFit --customise RecoTracker/MkFit/customizeInitialStepOnly.customizeInitialStepOnly" -j 0
 cd 10824.1*
 # edit step3*RECO*.py to contain your desired (2018 RelVal MC) input files
 cmsRun step3*RECO*.py
@@ -536,7 +632,25 @@ reconstruction configuration file.
 By default `mkFit` is configured to use Clone Engine with N^2 seed
 cleaning, and to do the backward fit (to the innermost hit) within `mkFit`.
 
-#### Section 9.ii.e: Timing measurements
+For profiling it is suggested to replace the
+`customizeInitialStepOnly` customize function with
+`customizeInitialStepOnlyNoMTV`. See below for more details.
+
+##### Section 9.iv.a.a: Customize functions
+
+* `RecoTracker/MkFit/customizeInitialStepToMkFit.customizeInitialStepToMkFit`
+  * Replaces initialStep track building module with `mkFit`.
+* `RecoTracker/MkFit/customizeInitialStepOnly.customizeInitialStepOnly`
+  * Run only the initialStep tracking. In practice this configuration
+    runs the initialStepPreSplitting iteration, but named as
+    initialStep. MultiTrackValidator is included, and configured to
+    monitor initialStep. Intended to provide the minimal configuration
+    for CMSSW tests.
+* `RecoTracker/MkFit/customizeInitialStepOnly.customizeInitialStepOnlyNoMTV`
+  * Otherwise same as `customizeInitialStepOnly` except drops
+    MultiTrackValidator. Intended for profiling.
+
+##### Section 9.iv.a.b: Timing measurements
 
 There are several options for the CMSSW module timing measurements:
 
@@ -552,7 +666,7 @@ There are several options for the CMSSW module timing measurements:
   * Look for the timing of `initialStepTrackCandidates`
 
 
-#### Section 9.ii.f: Producing MultiTrackValidator plots
+#### Section 9.iv.a.c: Producing MultiTrackValidator plots
 
 The `step3` above runs also the [MultiTrackValidator](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMultiTrackValidator).
 
@@ -572,7 +686,9 @@ The script produces a directory `plots` that can be copied to any web
 area. Note that the script produces an `index.html` to ease the
 navigation.
 
-#### Section 9.ii.g: Interpreting MultiTrackValidator plots
+### Section 9.v: Interpretation of results
+
+#### Section 9.v.a: MultiTrackValidator plots
 
 As the recipe above replaces the initialStep track building, we are
 interested in the plots of "initialStep" (in the main page), and in
@@ -599,6 +715,22 @@ SimTrack as "reconstructed") if more than 75 % of the clusters of the
 track are linked to a single SimTrack. A cluster is linked to a
 SimTrack if the SimTrack has induced any amount of charge to any of
 the digis (= pixel or strip) of the cluster.
+
+#### Section 9.v.b: Timing
+
+When looking the per-module timing numbers, please see the following
+table for the relevant modules to look for, and what is their purpose.
+
+| **Module in offline** | **Module in HLT** | **Description** |
+|-----------------------|-------------------|-----------------|
+| `initialStepTrackCandidatesMkFitInput` | `hltIter0PFlowCkfTrackCandidatesMkFitInput` | Input data conversion |
+| `initialStepTrackCandidatesMkFit` | `hltIter0PFlowCkfTrackCandidatesMkFit` | MkFit itself |
+| `initialStepTrackCandidates` | `hltIter0PFlowCkfTrackCandidates` | Output data conversion |
+
+The MTV timing plot of initialStep "Building" includes the
+contributions of all three modules.
+
+
 
 ## Section 10: Other useful information
 

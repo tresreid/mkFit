@@ -135,13 +135,13 @@ public:
     int maxN = 0;
     int maxL = 0;
     for (auto const& lh : m_event_of_hits.m_layers_of_hits){
-      auto lsize = lh.m_hit_phis.size();
+      auto lsize = static_cast<int>(lh.m_hit_phis.size());
       if (lsize > maxN){
         maxN = lsize;
         maxL = lh.layer_id();
       }
     }
-    return {maxN,maxL};
+    return {maxN, maxL};
   }
 
   void begin_event(Event* ev, const char* build_type);
@@ -158,9 +158,10 @@ public:
   void map_track_hits  (TrackVec & tracks); // m_event->layerHits_ -> m_event_of_hits.m_layers_of_hits
   void remap_track_hits(TrackVec & tracks); // m_event_of_hits.m_layers_of_hits -> m_event->layerHits_
 
+  void quality_prep_tracks(TrackVec & tracks);
   void quality_val();
   void quality_reset();
-  void quality_process(Track& tkcand, std::map<int,int> & cmsswLabelToPos);
+  void quality_process(Track& tkcand, const int itrack, std::map<int,int> & cmsswLabelToPos);
   void quality_print();
   void track_print(Track &t, const char* pref);
 
@@ -175,6 +176,10 @@ public:
   void prep_reftracks(TrackVec& tracks, TrackExtraVec& extras, const bool realigntracks); 
   void prep_tracks(TrackVec& tracks, TrackExtraVec& extras, const bool realigntracks); // sort hits by layer, init track extras, align track labels if true
   void score_tracks(TrackVec& tracks); // if track score not already assigned
+
+  void find_duplicates(TrackVec& tracks);
+  void remove_duplicates(TrackVec& tracks);
+  void handle_duplicates();
 
   // --------
 

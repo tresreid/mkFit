@@ -84,6 +84,17 @@ namespace Config
   matchOpts cmsswMatchingFW = hitBased;
   matchOpts cmsswMatchingBK = trkParamBased;
 
+  bool  removeDuplicates = false;
+  bool  useHitsForDuplicates = true;
+  float maxdPhi = 0.1;
+  float maxdPt  = 0.05;
+  float maxdEta = 0.2;
+  float minFracHitsShared = 0.75;
+
+  bool mtvLikeValidation = false;
+  int  cmsSelMinLayers = 12;
+  int  nMinFoundHits = 10;
+
   bool  kludgeCmsHitErrors = false;
   bool  backwardFit = false;
   bool  includePCA = false;
