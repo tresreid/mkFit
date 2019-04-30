@@ -356,8 +356,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     for (int qi = qb1; qi < qb2; ++qi)
     {
-      //make a copy, hoping it fits in caches...
-      const auto q_bin_infos = L.m_phi_bin_infos[qi];
+      const auto& q_bin_infos = L.m_phi_bin_infos[qi];
 
       for (int pi = pb1; pi < pb2; ++pi)
       {
