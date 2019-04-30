@@ -158,8 +158,11 @@ void LayerOfHits::SuckInHits(const HitVec &hitv)
       curr_qphi = jqphi;
     }
 
-    m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_phis.push_back(ha[j].phi);
-    m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_qs  .push_back(ha[j].q);
+    if (Config::usePhiQArrays)
+    {
+      m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_phis.push_back(ha[j].phi);
+      m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_qs  .push_back(ha[j].q);
+    }
 
     m_phi_bin_infos[q_bin][phi_bin].iend++;
   }
