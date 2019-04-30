@@ -228,7 +228,8 @@ void MkFinderFV<nseeds, ncands>::SelectHitIndices(const LayerOfHits &layer_of_hi
       }
       for (int pi = pb1[iseed]; pi < pb2[iseed]; ++pi) {
         int pb = pi & L.m_phi_mask;
-        for (int hi = L.m_phi_bin_infos[qi][pb].first; hi < L.m_phi_bin_infos[qi][pb].second; ++hi) {
+	const auto& bin_info = L.m_phi_bin_infos[qi][pb];
+        for (int hi = bin_info.ibegin; hi < bin_info.iend; ++hi) {
           unsigned int pass[ncands] = {};
           if (Config::usePhiQArrays) {
             #pragma omp simd
@@ -240,12 +241,16 @@ void MkFinderFV<nseeds, ncands>::SelectHitIndices(const LayerOfHits &layer_of_hi
               const float phi  = phiv[itrack];
               const float dphi = dphiv[itrack];
               
-              const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
-              const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
+	      //this may be broken... fixme
+	      const auto idx = hi-bin_info.ibegin;
+	      const float ddq   =       std::abs(q   - bin_info.m_bin_hit_qs[idx]);
+	      const float ddphi = cdist(std::abs(phi - bin_info.m_bin_hit_phis[idx]));
+              // const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+              // const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
               
               dprintf("     SHI %5d  %6.3f %6.3f %6.4f %7.5f   %s\n",
                       hi,
-                      L.m_hit_qs[hi], L.m_hit_phis[hi], q, phi,
+                      bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], q, phi,
                       (ddq < dq && ddphi < dphi) ? "PASS" : "FAIL");
               
                       pass[i] = goodv[itrack] && ddq < dq && ddphi < dphi;

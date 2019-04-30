@@ -80,10 +80,10 @@ void LayerOfHits::SuckInHits(const HitVec &hitv)
     alloc_hits(1.02 * size);
   }
 
-  if (!Config::usePhiQArrays)
-  {
-    m_hit_phis.resize(size);
-  }
+  // if (!Config::usePhiQArrays)
+  // {
+  //   m_hit_phis.resize(size);
+  // }
 
   struct HitInfo
   {
@@ -140,11 +140,11 @@ void LayerOfHits::SuckInHits(const HitVec &hitv)
     // Could fix the mis-sorts. Set ha size to size + 1 and fake last entry to avoid ifs.
 
     memcpy(&m_hits[i], &hitv[j], sizeof(Hit));
-    if (Config::usePhiQArrays)
-    {
-      m_hit_phis[i] = ha[j].phi;
-      m_hit_qs  [i] = ha[j].q;
-    }
+    // if (Config::usePhiQArrays)
+    // {
+    //   m_hit_phis[i] = ha[j].phi;
+    //   m_hit_qs  [i] = ha[j].q;
+    // }
 
     const int phi_bin = ha[j].phibin;
     const int q_bin = ha[j].qbin;
@@ -153,11 +153,14 @@ void LayerOfHits::SuckInHits(const HitVec &hitv)
     const int jqphi = hit_qphiFines[j] & m_phi_fine_mask;
     if (jqphi != curr_qphi)
     {
-      m_phi_bin_infos[q_bin][phi_bin] = {i, i};
+      m_phi_bin_infos[q_bin][phi_bin].ibegin = i;
+      m_phi_bin_infos[q_bin][phi_bin].iend = i;
+      m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_phis.push_back(ha[j].phi);
+      m_phi_bin_infos[q_bin][phi_bin].m_bin_hit_qs  .push_back(ha[j].q);
       curr_qphi = jqphi;
     }
 
-    m_phi_bin_infos[q_bin][phi_bin].second++;
+    m_phi_bin_infos[q_bin][phi_bin].iend++;
   }
 
 
@@ -228,19 +231,20 @@ void LayerOfHits::SelectHitIndices(float q, float phi, float dq, float dphi, std
     {
       int pb = pi & m_phi_mask;
 
-      for (uint16_t hi = m_phi_bin_infos[qi][pb].first; hi < m_phi_bin_infos[qi][pb].second; ++hi)
+      const auto& bin_info = m_phi_bin_infos[qi][pb];
+      for (uint16_t hi = bin_info.ibegin; hi < bin_info.ibegin; ++hi)
       {
         // Here could enforce some furhter selection on hits
 	if (Config::usePhiQArrays)
 	{
-	  float ddq   = std::abs(q   - m_hit_qs[hi]);
-	  float ddphi = std::abs(phi - m_hit_phis[hi]);
-	  if (ddphi > Config::PI) ddphi = Config::TwoPI - ddphi;
+	  const auto idx = hi-bin_info.ibegin;
+	  const float ddq   =       std::abs(q   - bin_info.m_bin_hit_qs[idx]);
+	  const float ddphi = cdist(std::abs(phi - bin_info.m_bin_hit_phis[idx]));
 	  
 	  if (dump)
 	    printf("     SHI %3d %4d %4d %5d  %6.3f %6.3f %6.4f %7.5f   %s\n",
 		   qi, pi, pb, hi,
-		   m_hit_qs[hi], m_hit_phis[hi], ddq, ddphi,
+		   bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], ddq, ddphi,
 		   (ddq < dq && ddphi < dphi) ? "PASS" : "FAIL");
 	  
 	  if (ddq < dq && ddphi < dphi)
@@ -267,7 +271,7 @@ void LayerOfHits::PrintBins()
       if (pb % 8 == 0)
         printf(" Phi %4d: ", pb);
       printf("%5d,%4d   %s",
-             m_phi_bin_infos[qb][pb].first, m_phi_bin_infos[qb][pb].second,
+             m_phi_bin_infos[qb][pb].ibegin, m_phi_bin_infos[qb][pb].ibegin,
              ((pb + 1) % 8 == 0) ? "\n" : "");
     }
   }

@@ -36,7 +36,15 @@ typedef tbb::concurrent_vector<TripletIdx> TripletIdxConVec;
 // Need a good "array of pods" class with aligned alloc and automatic growth.
 // For now just implement the no-resize / no-destroy basics in the BoH.
 
-typedef std::pair<uint16_t, uint16_t> PhiBinInfo_t;
+/* typedef std::pair<uint16_t, uint16_t> PhiBinInfo_t; */
+
+struct PhiBinInfo_t
+{
+  uint16_t ibegin;
+  uint16_t iend;
+  std::vector<float> m_bin_hit_phis;
+  std::vector<float> m_bin_hit_qs;
+};
 
 typedef std::vector<PhiBinInfo_t> vecPhiBinInfo_t;
 
@@ -66,8 +74,8 @@ public:
   const LayerInfo          *m_layer_info = 0;
   Hit                      *m_hits = 0;
   vecvecPhiBinInfo_t        m_phi_bin_infos;
-  std::vector<float>        m_hit_phis;
-  std::vector<float>        m_hit_qs;
+  /* std::vector<float>        m_hit_phis; */
+  /* std::vector<float>        m_hit_qs; */
 
   float m_qmin, m_qmax, m_fq;
   int   m_nq = 0;
@@ -144,11 +152,11 @@ protected:
     m_hits = (Hit*) _mm_malloc(sizeof(Hit) * size, 64);
     m_capacity = size;
     for (int ihit = 0; ihit < m_capacity; ihit++){m_hits[ihit] = Hit();} 
-    if (Config::usePhiQArrays)
-    {
-      m_hit_phis.resize(size);
-      m_hit_qs  .resize(size);
-    }
+    /* if (Config::usePhiQArrays) */
+    /* { */
+    /*   m_hit_phis.resize(size); */
+    /*   m_hit_qs  .resize(size); */
+    /* } */
   }
 
   void free_hits()

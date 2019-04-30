@@ -356,6 +356,9 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     for (int qi = qb1; qi < qb2; ++qi)
     {
+      //make a copy, hoping it fits in caches...
+      const auto q_bin_infos = L.m_phi_bin_infos[qi];
+
       for (int pi = pb1; pi < pb2; ++pi)
       {
         const int pb = pi & L.m_phi_mask;
@@ -368,7 +371,8 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
         //SK: ~20x1024 bin sizes give mostly 1 hit per bin. Commented out for 128 bins or less
         // #pragma nounroll
-        for (uint16_t hi = L.m_phi_bin_infos[qi][pb].first; hi < L.m_phi_bin_infos[qi][pb].second; ++hi)
+	const auto& bin_info = q_bin_infos[pb];
+        for (uint16_t hi = bin_info.ibegin; hi < bin_info.iend; ++hi)
         {
           // MT: Access into m_hit_zs and m_hit_phis is 1% run-time each.
 
@@ -376,12 +380,13 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 	  {
             if (XHitSize[itrack] >= MPlexHitIdxMax) continue;
 
-            const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
-            const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
+	    const auto idx = hi-bin_info.ibegin;
+            const float ddq   =       std::abs(q   - bin_info.m_bin_hit_qs[idx]);
+            const float ddphi = cdist(std::abs(phi - bin_info.m_bin_hit_phis[idx]));
             
             dprintf("     SHI %3d %4d %4d %5d  %6.3f %6.3f %6.4f %7.5f   %s\n",
                     qi, pi, pb, hi,
-                    L.m_hit_qs[hi], L.m_hit_phis[hi], ddq, ddphi,
+                    bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], ddq, ddphi,
                     (ddq < dq && ddphi < dphi) ? "PASS" : "FAIL");
             
             // MT: Removing extra check gives full efficiency ...
