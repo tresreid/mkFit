@@ -327,6 +327,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
   // Vectorizing this makes it run slower!
   //#pragma ivdep
   //#pragma omp simd
+#pragma novector
   for (int itrack = 0; itrack < N_proc; ++itrack)
   {
     if (XWsrResult[itrack].m_wsr == WSR_Outside)
@@ -354,10 +355,13 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
     // This would then work best with relatively small bin sizes.
     // Or, set them up so I can always take 3x3 array around the intersection.
 
+#pragma novector
     for (int qi = qb1; qi < qb2; ++qi)
     {
       const auto& q_bin_infos = L.m_phi_bin_infos[qi];
 
+#pragma ivdep
+#pragma omp simd
       for (int pi = pb1; pi < pb2; ++pi)
       {
         const int pb = pi & L.m_phi_mask;
@@ -371,6 +375,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
         //SK: ~20x1024 bin sizes give mostly 1 hit per bin. Commented out for 128 bins or less
         // #pragma nounroll
 	const auto& bin_info = q_bin_infos[pb];
+#pragma novector
         for (uint16_t hi = bin_info.ibegin; hi < bin_info.iend; ++hi)
         {
           // MT: Access into m_hit_zs and m_hit_phis is 1% run-time each.
