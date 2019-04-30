@@ -251,6 +251,7 @@ void MkFinderFV<nseeds, ncands>::SelectHitIndices(const LayerOfHits &layer_of_hi
               dprintf("     SHI %5d  %6.3f %6.3f %6.4f %7.5f   %s\n",
                       hi,
                       bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], q, phi,
+		      // L.m_hit_qs[hi], L.m_hit_phis[hi], q, phi,
                       (ddq < dq && ddphi < dphi) ? "PASS" : "FAIL");
               
                       pass[i] = goodv[itrack] && ddq < dq && ddphi < dphi;

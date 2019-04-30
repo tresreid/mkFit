@@ -383,10 +383,13 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 	    const auto idx = hi-bin_info.ibegin;
             const float ddq   =       std::abs(q   - bin_info.m_bin_hit_qs[idx]);
             const float ddphi = cdist(std::abs(phi - bin_info.m_bin_hit_phis[idx]));
+            // const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+            // const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
             
             dprintf("     SHI %3d %4d %4d %5d  %6.3f %6.3f %6.4f %7.5f   %s\n",
                     qi, pi, pb, hi,
-                    bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], ddq, ddphi,
+		    bin_info.m_bin_hit_qs[idx], bin_info.m_bin_hit_phis[idx], ddq, ddphi,
+                    // L.m_hit_qs[hi], L.m_hit_phis[hi], ddq, ddphi,
                     (ddq < dq && ddphi < dphi) ? "PASS" : "FAIL");
             
             // MT: Removing extra check gives full efficiency ...
