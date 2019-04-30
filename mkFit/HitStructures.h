@@ -42,8 +42,9 @@ struct PhiBinInfo_t
 {
   uint16_t ibegin;
   uint16_t iend;
-  std::vector<float> m_bin_hit_phis;
-  std::vector<float> m_bin_hit_qs;
+  std::vector<std::pair<float, float> > m_bin_hit_phiqs;
+  //std::vector<float> m_bin_hit_phis;
+  //std::vector<float> m_bin_hit_qs;
 };
 
 typedef std::vector<PhiBinInfo_t> vecPhiBinInfo_t;
