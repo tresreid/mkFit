@@ -354,7 +354,18 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
     // This would then work best with relatively small bin sizes.
     // Or, set them up so I can always take 3x3 array around the intersection.
 
-    std::vector<uint16_t> his;
+    size_t nhits = 0;
+    for (int qi = qb1; qi < qb2; ++qi)
+    {
+      for (int pi = pb1; pi < pb2; ++pi)
+      {
+        const int pb = pi & L.m_phi_mask;
+	nhits+=(L.m_phi_bin_infos[qi][pb].second-L.m_phi_bin_infos[qi][pb].first);
+      }
+    }
+
+    size_t pos = 0;
+    std::vector<uint16_t> his(nhits);
     for (int qi = qb1; qi < qb2; ++qi)
     {
       for (int pi = pb1; pi < pb2; ++pi)
@@ -362,7 +373,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
         const int pb = pi & L.m_phi_mask;
         for (uint16_t hi = L.m_phi_bin_infos[qi][pb].first; hi < L.m_phi_bin_infos[qi][pb].second; ++hi)
         {
-	  his.push_back(hi);
+	  his[pos++] = hi;
 	}
       }
     }
