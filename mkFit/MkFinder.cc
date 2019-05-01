@@ -371,19 +371,19 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     if (Config::usePhiQArrays)
     {
-      for (uint16_t hidx = 0; hidx<his.size(); hidx++)
+      for (uint16_t hidx = 0; hidx<pos; hidx++)
       {
-	if ( hidx>=pos ) break;
 	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
 	const auto hi = his[hidx];
 	const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+	if (ddq >= dq) continue;
 	const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
-	if ( ddq < dq && ddphi < dphi ) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
+	if (ddphi >= dphi) continue;
+	XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
       }
     } else {
-      for (uint16_t hidx = 0; hidx<his.size(); hidx++)
+      for (uint16_t hidx = 0; hidx<pos; hidx++)
       {
-	if ( hidx>=pos ) break;
 	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
 	XHitArr.At(itrack, XHitSize[itrack]++, 0) = his[hidx];
       }
