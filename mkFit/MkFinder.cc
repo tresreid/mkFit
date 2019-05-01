@@ -371,19 +371,21 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     if (Config::usePhiQArrays)
     {
-      for (auto hi = his.begin(); hi<his.end(); hi++)
+      for (uint16_t hidx = 0; hidx<his.size(); hidx++)
       {
-	if ( hi-his.begin()>=pos ) break;
+	if ( hidx>=pos ) break;
 	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
-	const float ddq   =       std::abs(q   - L.m_hit_qs[*hi]);
-	const float ddphi = cdist(std::abs(phi - L.m_hit_phis[*hi]));
-	if ( ddq < dq && ddphi < dphi ) XHitArr.At(itrack, XHitSize[itrack]++, 0) = *hi;
+	const auto hi = his[hidx];
+	const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+	const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
+	if ( ddq < dq && ddphi < dphi ) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
       }
     } else {
-      for (auto hi = his.begin(); hi<his.end(); hi++)
+      for (uint16_t hidx = 0; hidx<his.size(); hidx++)
       {
-	if ( hi-his.begin()>=pos ) break;
-	if (XHitSize[itrack] < MPlexHitIdxMax) XHitArr.At(itrack, XHitSize[itrack]++, 0) = *hi;
+	if ( hidx>=pos ) break;
+	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
+	XHitArr.At(itrack, XHitSize[itrack]++, 0) = his[hidx];
       }
     }
 
