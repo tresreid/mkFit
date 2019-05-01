@@ -378,10 +378,8 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
       }
     }
 
-    std::vector<bool> his_msk(his.size(), true);
     if (Config::usePhiQArrays)
     {
-#pragma omp simd
       for (auto hi = his.begin(); hi<his.end(); hi++)
       {
 	const float ddq   =       std::abs(q   - L.m_hit_qs[*hi]);
