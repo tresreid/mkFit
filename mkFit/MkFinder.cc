@@ -337,8 +337,8 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     const int qb1 = qb1v[itrack];
     const int qb2 = qb2v[itrack];
-    const int pb1 = pb1v[itrack];
-    const int pb2 = pb2v[itrack];
+    const int pb1 = pb1v[itrack] & L.m_phi_mask;
+    const int pb2 = pb2v[itrack] & L.m_phi_mask;
 
     // Used only by usePhiQArrays
     const float q = qv[itrack];
@@ -357,9 +357,9 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
     size_t nhits = 0;
     for (int qi = qb1; qi < qb2; ++qi)
     {
-      for (int pi = pb1; pi < pb2; ++pi)
+#pragma omp simd
+      for (int pb = pb1; pb < pb2; ++pb)
       {
-        const int pb = pi & L.m_phi_mask;
 	nhits+=(L.m_phi_bin_infos[qi][pb].second-L.m_phi_bin_infos[qi][pb].first);
       }
     }
@@ -368,9 +368,9 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
     std::vector<uint16_t> his(nhits);
     for (int qi = qb1; qi < qb2; ++qi)
     {
-      for (int pi = pb1; pi < pb2; ++pi)
+      for (int pb = pb1; pb < pb2; ++pb)
       {
-        const int pb = pi & L.m_phi_mask;
+#pragma omp simd
         for (uint16_t hi = L.m_phi_bin_infos[qi][pb].first; hi < L.m_phi_bin_infos[qi][pb].second; ++hi)
         {
 	  his[pos++] = hi;
@@ -378,23 +378,25 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
       }
     }
 
+    std::vector<bool> his_msk(his.size(), true);
     if (Config::usePhiQArrays)
-    {
+      {
 #pragma novector
-      for (size_t hidx=0; hidx<his.size(); hidx++)
-      {
-	if (XHitSize[itrack] >= MPlexHitIdxMax) continue;
-	const auto hi = his[hidx];
-	const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
-	const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
-	if (ddq < dq && ddphi < dphi) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
+	for (size_t hidx=0; hidx<his.size(); hidx++)
+	  {
+	    const auto hi = his[hidx];
+	    const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+	    const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
+	    his_msk[hidx] = (ddq < dq && ddphi < dphi);
+	  }
       }
-    } else {
-      for (const auto hi : his)
-      {
-	if (XHitSize[itrack] < MPlexHitIdxMax) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
-      }
+    
+    for (size_t hidx=0; hidx<his.size(); hidx++)
+    {
+      const auto hi = his[hidx];
+      if (his_msk[hidx] && (XHitSize[itrack] < MPlexHitIdxMax) ) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
     }
+
     /*
     for (int qi = qb1; qi < qb2; ++qi)
     {
