@@ -354,6 +354,41 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
     // This would then work best with relatively small bin sizes.
     // Or, set them up so I can always take 3x3 array around the intersection.
 
+    for (int dummy = 0; dummy<1; dummy++) {
+
+    std::vector<uint16_t> his;
+    for (int qi = qb1; qi < qb2; ++qi)
+    {
+      for (int pi = pb1; pi < pb2; ++pi)
+      {
+        const int pb = pi & L.m_phi_mask;
+        for (uint16_t hi = L.m_phi_bin_infos[qi][pb].first; hi < L.m_phi_bin_infos[qi][pb].second; ++hi)
+        {
+	  his.push_back(hi);
+	}
+      }
+    }
+
+    std::vector<bool> his_msk(his.size(), true);
+    if (Config::usePhiQArrays)
+    {
+#pragma novector
+      for (size_t hidx=0; hidx<his.size(); hidx++)
+	{
+	  const auto hi = his[hidx];
+	  const float ddq   =       std::abs(q   - L.m_hit_qs[hi]);
+	  const float ddphi = cdist(std::abs(phi - L.m_hit_phis[hi]));
+	  his_msk[hidx] = (ddq < dq && ddphi < dphi);
+	}
+    }
+
+    for (size_t hidx=0; hidx<his.size(); hidx++)
+    {
+      const auto hi = his[hidx];
+      if (his_msk[hidx] && (XHitSize[itrack] < MPlexHitIdxMax) ) XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
+    }
+    }
+    /*
     for (int qi = qb1; qi < qb2; ++qi)
     {
       for (int pi = pb1; pi < pb2; ++pi)
@@ -406,6 +441,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
         }//for (uint16_t hi =
       }//pi
     }//qi
+    */
   }//itrack
 }
 
