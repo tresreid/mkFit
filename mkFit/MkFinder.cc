@@ -371,7 +371,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 
     if (Config::usePhiQArrays)
     {
-      for (uint16_t hidx = 0; hidx<pos; hidx++)
+      for (size_t hidx = 0; hidx<pos; hidx++)
       {
 	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
 	const auto hi = his[hidx];
@@ -382,7 +382,7 @@ void MkFinder::SelectHitIndices(const LayerOfHits &layer_of_hits,
 	XHitArr.At(itrack, XHitSize[itrack]++, 0) = hi;
       }
     } else {
-      for (uint16_t hidx = 0; hidx<pos; hidx++)
+      for (size_t hidx = 0; hidx<pos; hidx++)
       {
 	if ( XHitSize[itrack] >= MPlexHitIdxMax ) break;
 	XHitArr.At(itrack, XHitSize[itrack]++, 0) = his[hidx];
