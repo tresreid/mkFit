@@ -166,9 +166,9 @@ namespace
     return cand1.nFoundHits() > cand2.nFoundHits();
   }
 
-  bool sortCandByScore(const Track & cand1, const Track & cand2)
+  bool sortCandByScore(const TrackCand & cand1, const TrackCand & cand2)
   {
-    return mkfit::sortByScoreCand(cand1,cand2);
+    return mkfit::sortByScoreTrackCand(cand1,cand2);
   }
 }
 
@@ -1909,7 +1909,7 @@ void MkBuilder::FindTracksStandard()
         {
           if (tmp_cands[is].size() > 0)
           {
-            eoccs[start_seed+is].resize(0);
+            eoccs[start_seed+is].clear();
 
             // Put good candidates into eoccs, process -2 candidates.
             int  n_placed    = 0;

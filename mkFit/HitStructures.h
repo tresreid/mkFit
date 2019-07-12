@@ -321,7 +321,7 @@ protected:
   // using from TrackBase:
   // short int lastHitIdx_
   // short int nFoundHits_
-  short int    nMissingHits_ = 0;
+  short int    nMissingHits_        = 0;
 
   short int    nInsideMinusOneHits_ = 0;
   short int    nTailMinusOneHits_   = 0;
@@ -368,7 +368,9 @@ public:
 
     // this will be different for CloneEngine and Std, especially as long as we
     // instantiate all candidates before purging them.
-    m_hots.reserve(128); // N_layer * N_cands ~~ 20 * 6 = 120
+    // ce:  N_layer * N_cands ~~ 20 * 6 = 120
+    // std: i don't know, let's say double
+    m_hots.reserve(256);
   }
 
   void Reset()
@@ -439,6 +441,8 @@ public:
     m_size      (0)
   {
     Reset(size);
+
+    m_candidates.reserve(256);
   }
 
   void Reset(int new_capacity)

@@ -70,7 +70,6 @@ void MkFinder::InputTracksAndHitIdx(const std::vector<CombCandidate>     & track
     SeedType(imp, 0, 0) = tracks[idxs[i].first].m_seed_type;
     SeedIdx(imp, 0, 0) = idxs[i].first;
     CandIdx(imp, 0, 0) = idxs[i].second;
-    TrkCand[imp] = & trk;
   }
 }
 
@@ -94,7 +93,6 @@ void MkFinder::InputTracksAndHitIdx(const std::vector<CombCandidate>            
     SeedType(imp, 0, 0) = tracks[idxs[i].first].m_seed_type;
     SeedIdx(imp, 0, 0) = idxs[i].first;
     CandIdx(imp, 0, 0) = idxs[i].second.trkIdx;
-    TrkCand[imp] = & trk;
   }
 }
 
@@ -648,7 +646,6 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
             // QQQ only instantiate if it will pass, be better than N_best
 	    TrackCand newcand;
             copy_out(newcand, itrack, iC);
-            newcand.setCombCandidate(TrkCand[itrack]->combCandidate());
 	    newcand.addHitIdx(XHitArr.At(itrack, hit_cnt, 0), layer_of_hits.layer_id(), chi2);
 	    newcand.setSeedTypeForRanking(SeedType(itrack, 0, 0));
 	    newcand.setCandScore(getScoreCand(newcand));
@@ -687,7 +684,6 @@ void MkFinder::FindCandidates(const LayerOfHits &layer_of_hits,
     // QQQ as above, only create and add if score better
     TrackCand newcand;
     copy_out(newcand, itrack, iP);
-    newcand.setCombCandidate(TrkCand[itrack]->combCandidate());
     newcand.addHitIdx(fake_hit_idx, layer_of_hits.layer_id(), 0.);
     newcand.setSeedTypeForRanking(SeedType(itrack, 0, 0));
     newcand.setCandScore(getScoreCand(newcand));
@@ -816,7 +812,7 @@ void MkFinder::UpdateWithLastHit(const LayerOfHits &layer_of_hits, int N_proc,
 {
   for (int i = 0; i < N_proc; ++i)
   {
-    const HitOnTrack &hot = TrkCand[i]->getLastHitOnTrack(); // HoTArrs[i][ NHits[i] - 1];
+    const HitOnTrack &hot = LastHoT[i];
 
     const Hit &hit = layer_of_hits.GetHit(hot.index);
 

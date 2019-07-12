@@ -73,8 +73,9 @@ public:
   MPlexQI    NInsideMinusOneHits;  // sub: before we copied all hit idcs and had a loop counting them
   MPlexQI    NTailMinusOneHits;  // sub: before we copied all hit idcs and had a loop counting them
   MPlexQI    LastHitCcIndex; // add: index of last hit in CombCand hit tree
-  const TrackCand *TrkCand[NN]; // hmmh, I could get far by using this ...
-                                // but only one var is accessed through this.
+  HitOnTrack LastHoT[NN];
+  CombCandidate *CombCand[NN];
+  // const TrackCand *TrkCand[NN]; // hmmh, could get all data through this guy ... but scattered
 
   // Hit indices into LayerOfHits to explore.
   WSR_Result  XWsrResult[NN]; // Could also merge it with XHitSize. Or use smaller arrays.
@@ -211,6 +212,9 @@ private:
 
     NInsideMinusOneHits(mslot, 0, 0) = trk.nInsideMinusOneHits();
     NTailMinusOneHits  (mslot, 0, 0) = trk.nTailMinusOneHits();
+
+    LastHoT[mslot]  = trk.getLastHitOnTrack();
+    CombCand[mslot] = trk.combCandidate();
   }
 
   void copy_out(TrackCand& trk, const int mslot, const int tslot) const
@@ -228,6 +232,8 @@ private:
 
     trk.setNInsideMinusOneHits(NInsideMinusOneHits(mslot, 0, 0));
     trk.setNTailMinusOneHits  (NTailMinusOneHits  (mslot, 0, 0));
+
+    trk.setCombCandidate( CombCand[mslot] );
   }
 
   void add_hit(const int mslot, int index, int layer)
