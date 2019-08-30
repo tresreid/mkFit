@@ -72,6 +72,11 @@ fi
 subdir=2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU
 file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
 nevents=20
+MEIFnevents=120
+if [[ "${suite}" == "forConf" ]]
+then
+MEIFnevents=5000
+fi
 
 ## Common executable setup
 minth=1
@@ -113,9 +118,9 @@ do
 		do
 		    if (( ${nev} <= ${nth} ))
 		    then
-			nproc=$(( ${nevents} * ${nev} ))
+			nproc=$(( ${MEIFnevents} * ${nev} ))
 			echo "${oBase}: Benchmark [nTH:${nth}, nVU:${maxvu}int, nEV:${nev}]"
-			${bExe} --silent --num-thr-ev ${nev} --num-events ${nproc} --remove-dup >& log_${oBase}_NVU${maxvu}int_NTH${nth}_NEV${nev}.txt
+			${bExe} --loop-over-file --silent --num-thr-ev ${nev} --num-events ${nproc} --remove-dup >& log_${oBase}_NVU${maxvu}int_NTH${nth}_NEV${nev}.txt
 		    fi
 		done
 	    fi

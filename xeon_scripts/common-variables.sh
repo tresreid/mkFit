@@ -23,12 +23,12 @@ export SNB_TEMPDIR=tmp
 
 # vars for LNX7188
 export LNXG_HOST=${lnxuser}@lnx7188.classe.cornell.edu
-export LNXG_WORKDIR=/home/${lnxuser}
+export LNXG_WORKDIR=/mnt/data1/${lnxuser}/work
 export LNXG_TEMPDIR=/tmp/tmp7188
 
 # vars for LNX4108
 export LNXS_HOST=${lnxuser}@lnx4108.classe.cornell.edu
-export LNXS_WORKDIR=/home/${lnxuser}
+export LNXS_WORKDIR=/mnt/scratch/${lnxuser}/work
 export LNXS_TEMPDIR=/tmp/tmp4108
 
 # SSH options
