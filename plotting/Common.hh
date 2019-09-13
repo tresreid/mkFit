@@ -189,7 +189,7 @@ namespace
       arch_opt.vumax = 16;
       
       arch_opt.thmin = 1;
-      arch_opt.thmax = 64;
+      arch_opt.thmax = 48;//64;
 
       arch_opt.vutimemin = 0.;
       arch_opt.vutimemax = 0.25;

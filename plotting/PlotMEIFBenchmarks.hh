@@ -28,9 +28,9 @@ namespace
     events.emplace_back(2,kBlue);
     events.emplace_back(4,kGreen+1);
     events.emplace_back(8,kRed);
-    events.emplace_back((ARCH==SNB?12:16),kMagenta);
+    events.emplace_back(((ARCH==SNB || ARCH==LNXS)?12:16),kMagenta);
     
-    if (ARCH == KNL || ARCH == SKL || ARCH == LNXG || ARCH == LNXS)
+    if (ARCH == KNL || ARCH == SKL || ARCH == LNXG)
     {
       events.emplace_back(32,kAzure+10);
       events.emplace_back(64,kOrange+3);
@@ -39,6 +39,13 @@ namespace
     {
       events.emplace_back(128,kViolet-1);
     }
+    if (ARCH == LNXS)
+    {
+      events.emplace_back(24,kViolet-1);
+      events.emplace_back(32,kAzure+10);
+      events.emplace_back(48,kOrange+3);
+    }
+	
 
     // set nevents once events is set
     nevents = events.size();

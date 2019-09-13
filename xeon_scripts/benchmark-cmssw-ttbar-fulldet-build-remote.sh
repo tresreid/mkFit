@@ -45,8 +45,11 @@ fi
 # execute tests remotely
 echo "Executing ${remote_arch} tests remotely..."
 SSHO ${HOST} bash -c "'
+bash ${DIR}/../../../core_info/run_senses.sh & 
 cd ${DIR}
+pgrep -f run_senses.sh > ${DIR}/../../../core_info/pid.txt
 ./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build.sh ${remote_arch} ${suite} ${useARCH} ${lnxuser} 
+bash ${DIR}/../../../core_info/sed.sh
 exit
 '"
 

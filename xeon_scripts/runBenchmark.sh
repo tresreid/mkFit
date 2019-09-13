@@ -35,7 +35,7 @@ sleep 3 ## so you can see the settings
 ##### Launch Tests #####
 if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 4 ]]
 then
-echo "Tar and send to LNX7188"
+#echo "Tar and send to LNX7188"
 ./xeon_scripts/tarAndSendToRemote.sh LNX-G ${suite} ${useARCH} ${lnxuser}
 if [ $? -eq 1 ]; then
 echo "lnx7188 has bad settings. Please fix them and try again"
@@ -87,8 +87,8 @@ echo "Run benchmarking on SKL-SP"
 fi
 
 ##### Validation tests #####
-echo "Running ROOT based validation"
-./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
+#echo "Running ROOT based validation"
+#./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
 
 if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]]
 then
@@ -111,7 +111,7 @@ echo "Producing plots from text files"
 ./plotting/textDumpPlots.sh ${suite} ${useARCH} ${lnxuser} 
 
 ##### Final cleanup #####
-make distclean
+#make distclean
 
 ##### Final message #####
 echo "Finished benchmarking and validation suite!"
