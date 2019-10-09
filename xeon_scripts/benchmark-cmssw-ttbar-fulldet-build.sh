@@ -75,7 +75,7 @@ fi
 subdir=2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU
 file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
 nevents=20
-MEIFnevents=1000000
+MEIFnevents=120
 if [[ "${suite}" == "forConf" ]]
 then
 MEIFnevents=5000
