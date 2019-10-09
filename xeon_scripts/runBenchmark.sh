@@ -45,15 +45,15 @@ fi
 echo "Run benchmarking on LNX7188 concurrently with SKL-SP benchmarks" 
 ./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build-remote.sh LNX-G ${suite} ${useARCH} ${lnxuser} >& benchmark_lnx-g_dump.txt &
 
-echo "Tar and send to LNX4108"
-./xeon_scripts/tarAndSendToRemote.sh LNX-S ${suite} ${useARCH} ${lnxuser}
-if [ $? -eq 1 ]; then
-echo "lnx4108 has bad settings. Please fix them and try again"
-exit 1
-fi
-
-echo "Run benchmarking on LNX4108 concurrently with SKL-SP benchmarks" 
-./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build-remote.sh LNX-S ${suite} ${useARCH} ${lnxuser} >& benchmark_lnx-s_dump.txt &
+#echo "Tar and send to LNX4108"
+#./xeon_scripts/tarAndSendToRemote.sh LNX-S ${suite} ${useARCH} ${lnxuser}
+#if [ $? -eq 1 ]; then
+#echo "lnx4108 has bad settings. Please fix them and try again"
+#exit 1
+#fi
+#
+#echo "Run benchmarking on LNX4108 concurrently with SKL-SP benchmarks" 
+#./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build-remote.sh LNX-S ${suite} ${useARCH} ${lnxuser} >& benchmark_lnx-s_dump.txt &
 fi
 
 if [[ ${useARCH} -eq 3 ]] || [[ ${useARCH} -eq 4 ]]

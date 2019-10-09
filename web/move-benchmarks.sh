@@ -24,9 +24,9 @@ echo "Moving plots and text files remotely to lxplus"
 ./web/tarAndSendToLXPLUS.sh ${dir} ${suite} ${afs_or_eos} ${lxpuser}
 
 # Final cleanup of directory
-echo "Removing local files"
-./xeon_scripts/trashSKL-SP.sh ${useARCH} 
-rm -rf ${dir}
+#echo "Removing local files"
+#./xeon_scripts/trashSKL-SP.sh ${useARCH} 
+#rm -rf ${dir}
 
 # Final message
 echo "Finished moving benchmark plots to LXPLUS!"

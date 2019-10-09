@@ -51,9 +51,12 @@ then
     dir=/data2/slava77/samples
     maxth=64
     maxvu=16
-    declare -a nths=("1" "2" "4" "8" "16" "32" "48" "64")
+    declare -a nths=("1" "32" "48" "64")
     declare -a nvus=("1" "2" "4" "8" "16")
-    declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
+    declare -a nevs=("1" "32" "64")
+    #declare -a nths=("1" "2" "4" "8" "16" "32" "48" "64")
+    #declare -a nvus=("1" "2" "4" "8" "16")
+    #declare -a nevs=("1" "2" "4" "8" "16" "32" "64")
 elif [[ "${ben_arch}" == "LNX-S" ]]
 then 
     mOpt="-j 32 AVX_512:=1"
@@ -72,7 +75,7 @@ fi
 subdir=2017/pass-c93773a/initialStep/PU70HS/10224.0_TTbar_13+TTbar_13TeV_TuneCUETP8M1_2017PU_GenSimFullINPUT+DigiFullPU_2017PU+RecoFullPU_2017PU+HARVESTFullPU_2017PU
 file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
 nevents=20
-MEIFnevents=120
+MEIFnevents=1000000
 if [[ "${suite}" == "forConf" ]]
 then
 MEIFnevents=5000
@@ -109,6 +112,13 @@ do
 	    ## Building-only benchmark
 	    echo "${oBase}: Benchmark [nTH:${nth}, nVU:${maxvu}int]"
 	    ${bExe} --num-events ${nevents} >& log_${oBase}_NVU${maxvu}int_NTH${nth}.txt
+
+
+    #echo "Ensuring the input file is fully in the memory caches"
+    #dd if=${dir}/${subdir}/${file} of=/dev/null bs=10M
+    #dd if=${dir}/${subdir}/${file} of=/dev/null bs=10M
+    #dd if=${dir}/${subdir}/${file} of=/dev/null bs=10M
+    #dd if=${dir}/${subdir}/${file} of=/dev/null bs=10M
 
 	    ## Multiple Events in Flight benchmark
 	    check_meif=$( CheckIfMEIF ${build} )
