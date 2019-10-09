@@ -28,7 +28,7 @@ export LNXG_TEMPDIR=tmp/tmp7188
 
 # vars for LNX4108
 export LNXS_HOST=${lnxuser}@lnx4108.classe.cornell.edu
-export LNXS_WORKDIR=/mnt/scrathc/${lnxuser}/work
+export LNXS_WORKDIR=/mnt/scratch/${lnxuser}/work
 export LNXS_TEMPDIR=tmp/tmp4108
 
 # SSH options

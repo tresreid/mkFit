@@ -86,9 +86,9 @@ echo "Run benchmarking on SKL-SP"
 ./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build.sh SKL-SP ${suite} ${useARCH} ${lnxuser} 
 fi
 
-##### Validation tests #####
-echo "Running ROOT based validation"
-./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
+###### Validation tests #####
+#echo "Running ROOT based validation"
+#./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
 
 if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]]
 then
