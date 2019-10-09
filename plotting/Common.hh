@@ -103,7 +103,7 @@ namespace
       arch_opt.thmeiftimemax = 0.5;
 
       arch_opt.thmeifspeedupmin = 0.;
-      arch_opt.thmeifspeedupmax = arch_opt.thmax;
+      arch_opt.thmeifspeedupmax = 24.;
     }
     else if (ARCH == KNL)
     {
@@ -129,7 +129,7 @@ namespace
       arch_opt.thmeiftimemax = arch_opt.thtimemax;
 
       arch_opt.thmeifspeedupmin = 0.;
-      arch_opt.thmeifspeedupmax = arch_opt.thspeedupmax;
+      arch_opt.thmeifspeedupmax = 80.;
     }
     else if (ARCH == SKL)
     {
@@ -155,7 +155,7 @@ namespace
       arch_opt.thmeiftimemax = arch_opt.thtimemax;
 
       arch_opt.thmeifspeedupmin = 0.;
-      arch_opt.thmeifspeedupmax = arch_opt.thspeedupmax;
+      arch_opt.thmeifspeedupmax = 38.;
     }
     else if (ARCH == LNXG)
     {
@@ -181,7 +181,7 @@ namespace
       arch_opt.thmeiftimemax = arch_opt.thtimemax;
 
       arch_opt.thmeifspeedupmin = 0.;
-      arch_opt.thmeifspeedupmax = arch_opt.thspeedupmax;
+      arch_opt.thmeifspeedupmax = 38.;
     }
     else if (ARCH == LNXS)
     {
@@ -189,7 +189,7 @@ namespace
       arch_opt.vumax = 16;
       
       arch_opt.thmin = 1;
-      arch_opt.thmax = 64;
+      arch_opt.thmax = 48.;
 
       arch_opt.vutimemin = 0.;
       arch_opt.vutimemax = 0.25;
@@ -207,7 +207,7 @@ namespace
       arch_opt.thmeiftimemax = arch_opt.thtimemax;
 
       arch_opt.thmeifspeedupmin = 0.;
-      arch_opt.thmeifspeedupmax = arch_opt.thspeedupmax;
+      arch_opt.thmeifspeedupmax = 38.;
     }
     else
     {

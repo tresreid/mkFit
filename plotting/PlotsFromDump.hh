@@ -26,7 +26,7 @@ namespace
 
     if(useARCH ==0 or useARCH==2 or useARCH==3 or useARCH==4){
     tests.emplace_back("SKL-SP","NVU1_NTH1",kRed+1,kOpenTriangleUp);
-    tests.emplace_back("SKL-SP","NVU16int_NTH64",kMagenta+1,kOpenTriangleDown);
+    tests.emplace_back("SKL-SP","NVU16int_NTH48",kMagenta+1,kOpenTriangleDown);
     }
     if(useARCH ==3 or useARCH==4){
     tests.emplace_back("SNB","NVU1_NTH1",kBlue,kOpenDiamond);
@@ -38,7 +38,7 @@ namespace
     tests.emplace_back("LNX-G","NVU1_NTH1",7,40);
     tests.emplace_back("LNX-G","NVU16int_NTH64",8,42);
     tests.emplace_back("LNX-S","NVU1_NTH1",46,49);
-    tests.emplace_back("LNX-S","NVU16int_NTH64",30,48);
+    tests.emplace_back("LNX-S","NVU16int_NTH48",30,48);
    }
     // set ntests after tests is set up
     ntests = tests.size();

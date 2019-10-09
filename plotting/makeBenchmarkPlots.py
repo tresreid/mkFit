@@ -48,7 +48,7 @@ def run():
         thvals = ['1','2','4','8','16','32','48','64']
     elif arch == 'LNX-S' :
         nvu = '16int'
-        thvals = ['1','2','4','8','16','32','48','64']
+        thvals = ['1','2','4','8','12','24','32','48']
     else :
         print arch,'is not a valid architecture! Exiting...'
         sys.exit(0)
