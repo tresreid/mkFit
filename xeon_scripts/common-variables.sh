@@ -6,7 +6,8 @@ useARCH=${2:-0} # which computer cluster to run on. 0=phi3, 1=lnx, 2= phi3+lnx, 
 lnxuser=${3:-${USER}} #username for lnx computers
 
 # samples
-export sample=CMSSW_TTbar_PU50
+#export sample=CMSSW_TTbar_PU50
+export sample=CMSSW_TTbar_PU70
 
 # Validation architecture
 export val_arch=SKL-SP
@@ -189,9 +190,9 @@ then
     arch_array_benchmark=("SKL-SP skl-sp")
 elif [[ ${useARCH} -eq 1 ]]
 then
-    arch_array=(LNX-G LNX-S)
-    arch_array_textdump=("LNX-G ${Base_Test}" "LNX-G NVU16int_NTH64" "LNX-S ${Base_Test}" "LNX-S NVU16int_NTH48")
-    arch_array_benchmark=("LNX-G lnx-g" "LNX-S lnx-s")
+    arch_array=(LNX-G)
+    arch_array_textdump=("LNX-G ${Base_Test}" "LNX-G NVU16int_NTH64")
+    arch_array_benchmark=("LNX-G lnx-g")
 elif [[ ${useARCH} -eq 2 ]]
 then
     arch_array=(SKL-SP LNX-G LNX-S)
@@ -207,6 +208,11 @@ then
     arch_array=(SNB KNL SKL-SP LNX-G LNX-S)
     arch_array_textdump=("SNB ${Base_Test}" "SNB NVU8int_NTH24" "KNL ${Base_Test}" "KNL NVU16int_NTH256" "SKL-SP ${Base_Test}" "SKL-SP NVU16int_NTH64" "LNX-G ${Base_Test}" "LNX-G NVU16int_NTH64" "LNX-S ${Base_Test}" "LNX-S NVU16int_NTH48")
     arch_array_benchmark=("SNB snb" "KNL knl" "SKL-SP skl-sp" "LNX-G lnx-g" "LNX-S lnx-s")
+elif [[ ${useARCH} -eq 5 ]]
+then
+    arch_array=(LNX-G LNX-S)
+    arch_array_textdump=("LNX-G ${Base_Test}" "LNX-G NVU16int_NTH64" "LNX-S ${Base_Test}" "LNX-S NVU16int_NTH48")
+    arch_array_benchmark=("LNX-G lnx-g" "LNX-S lnx-s")
 else
     echo "${useARCH} is not a valid useARCH option! Exiting..."
     exit

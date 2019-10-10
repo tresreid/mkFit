@@ -34,9 +34,11 @@ namespace
     tests.emplace_back("KNL","NVU1_NTH1",kGreen+1,kOpenTriangleUp);
     tests.emplace_back("KNL","NVU16int_NTH256",kOrange+1,kOpenTriangleDown);
     }
-    if(useARCH == 1 or useARCH == 2 or useARCH==4){
+    if(useARCH == 1 or useARCH == 2 or useARCH==4 or useARCH==5){
     tests.emplace_back("LNX-G","NVU1_NTH1",7,40);
     tests.emplace_back("LNX-G","NVU16int_NTH64",8,42);
+   }
+    if(useARCH==5){
     tests.emplace_back("LNX-S","NVU1_NTH1",46,49);
     tests.emplace_back("LNX-S","NVU16int_NTH48",30,48);
    }

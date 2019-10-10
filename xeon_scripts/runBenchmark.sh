@@ -2,7 +2,7 @@
 
 ##### Command Line Input #####
 suite=${1:-"forPR"} # which set of benchmarks to run: full, forPR, forConf
-useARCH=${2:-0}  # 0 phi3 only, 1 lnx only, 2 phi3 + lnx, 3 phi123, 4 phi123 + lnx
+useARCH=${2:-0}  # 0 phi3 only, 1 lnx7188 only, 2 phi3 + lnx, 3 phi123, 4 phi123 + lnx7188, 5 lnx7188+lnx4108
 lnxuser=${3:-${USER}}
 
 ##### Initialize Benchmarks #####
@@ -33,7 +33,7 @@ fi
 sleep 3 ## so you can see the settings
 
 ##### Launch Tests #####
-if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 4 ]]
+if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 4 ]] || [[ ${useARCH} -eq 5 ]]
 then
 echo "Tar and send to LNX7188"
 ./xeon_scripts/tarAndSendToRemote.sh LNX-G ${suite} ${useARCH} ${lnxuser}
@@ -44,7 +44,10 @@ fi
 
 echo "Run benchmarking on LNX7188 concurrently with SKL-SP benchmarks" 
 ./xeon_scripts/benchmark-cmssw-ttbar-fulldet-build-remote.sh LNX-G ${suite} ${useARCH} ${lnxuser} >& benchmark_lnx-g_dump.txt &
+fi
 
+if [[ ${useARCH} -eq 5 ]]
+then
 echo "Tar and send to LNX4108"
 ./xeon_scripts/tarAndSendToRemote.sh LNX-S ${suite} ${useARCH} ${lnxuser}
 if [ $? -eq 1 ]; then
@@ -58,7 +61,6 @@ fi
 
 if [[ ${useARCH} -eq 3 ]] || [[ ${useARCH} -eq 4 ]]
 then
-
 echo "Tar and send to KNL"
 ./xeon_scripts/tarAndSendToRemote.sh KNL ${suite} ${useARCH} ${lnxuser}
 if [ $? -eq 1 ]; then
@@ -90,7 +92,10 @@ fi
 #echo "Running ROOT based validation"
 #./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
 
-if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]]
+if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 5 ]]
+then
+echo "Waiting for LNX-G"
+elif [[ ${useARCH} -eq 5 ]]
 then
 echo "Waiting for LNX-G and LNX-S"
 elif [[ ${useARCH} -eq 3 ]] 
@@ -98,7 +103,7 @@ then
 echo "Waiting for KNL and SNB"
 elif  [[ ${useARCH} -eq 4 ]]
 then 
-echo "Waiting for LNX-G, LNX-S, KNL, and SNB"
+echo "Waiting for LNX-G, KNL, and SNB"
 fi
 wait
 
