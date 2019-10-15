@@ -89,8 +89,8 @@ echo "Run benchmarking on SKL-SP"
 fi
 
 ###### Validation tests #####
-#echo "Running ROOT based validation"
-#./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
+echo "Running ROOT based validation"
+./val_scripts/validation-cmssw-benchmarks.sh ${suite} --mtv-like-val
 
 if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 5 ]]
 then

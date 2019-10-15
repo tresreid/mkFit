@@ -26,7 +26,7 @@ namespace
 
     if(useARCH ==0 or useARCH==2 or useARCH==3 or useARCH==4){
     tests.emplace_back("SKL-SP","NVU1_NTH1",kRed+1,kOpenTriangleUp);
-    tests.emplace_back("SKL-SP","NVU16int_NTH48",kMagenta+1,kOpenTriangleDown);
+    tests.emplace_back("SKL-SP","NVU16int_NTH64",kMagenta+1,kOpenTriangleDown);
     }
     if(useARCH ==3 or useARCH==4){
     tests.emplace_back("SNB","NVU1_NTH1",kBlue,kOpenDiamond);
