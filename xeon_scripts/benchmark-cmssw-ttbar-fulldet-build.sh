@@ -78,7 +78,7 @@ file=pu50-ccc-hs.bin
 #file=memoryFile.fv3.clean.writeAll.CCC1620.recT.082418-25daeda.bin
 
 nevents=20
-MEIFnevents=120
+MEIFnevents=500
 if [[ "${suite}" == "forConf" ]]
 then
 MEIFnevents=5000
