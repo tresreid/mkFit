@@ -7,13 +7,9 @@ if [[ ${useARCH} -eq 3 ]] || [[ ${useARCH} -eq 4 ]]
 then
 rm -rf benchmark_knl_dump.txt benchmark_snb_dump.txt
 fi
-if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 4 ]] || [[ ${useARCH} -eq 5 ]]
+if [[ ${useARCH} -eq 1 ]] || [[ ${useARCH} -eq 2 ]] || [[ ${useARCH} -eq 4 ]]
 then
-rm -rf benchmark_lnx-g_dump.txt
-fi
-if [[ ${useARCH} -eq 5 ]] 
-then
-rm -rf benchmark_lnx-s_dump.txt
+rm -rf benchmark_lnx-g_dump.txt benchmark_lnx-s_dump.txt
 fi
 
 rm -rf log_*.txt
